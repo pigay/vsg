@@ -1,0 +1,308 @@
+<!-- ##### SECTION Title ##### -->
+vsgvector2f
+
+<!-- ##### SECTION Short_Description ##### -->
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgvector2f-intro.xml" xpointer="/1/1/1"
+            parse="xml" />
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgvector2f-intro.xml" xpointer="/1/2"
+            parse="xml" />
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT VsgVector2f ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+
+<!-- ##### MACRO VSG_TYPE_VECTOR2F ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_VECTOR2F_COMP ##### -->
+<para>
+
+</para>
+
+@vec: 
+@i: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_new ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_free ##### -->
+<para>
+
+</para>
+
+@vec: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_set ##### -->
+<para>
+
+</para>
+
+@vec: 
+@x: 
+@y: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_copy ##### -->
+<para>
+
+</para>
+
+@src: 
+@dst: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_clone ##### -->
+<para>
+
+</para>
+
+@src: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_copyd ##### -->
+<para>
+
+</para>
+
+@src: 
+@dst: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_square_norm ##### -->
+<para>
+
+</para>
+
+@vec: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_norm ##### -->
+<para>
+
+</para>
+
+@vec: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_dist ##### -->
+<para>
+
+</para>
+
+@vec: 
+@other: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_normalize ##### -->
+<para>
+
+</para>
+
+@vec: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_scalp ##### -->
+<para>
+
+</para>
+
+@vec: 
+@scal: 
+@res: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_dotp ##### -->
+<para>
+
+</para>
+
+@vec: 
+@other: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_vecp ##### -->
+<para>
+
+</para>
+
+@vec: 
+@other: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_add ##### -->
+<para>
+
+</para>
+
+@vec: 
+@other: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_sub ##### -->
+<para>
+
+</para>
+
+@vec: 
+@other: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_lerp ##### -->
+<para>
+
+</para>
+
+@vec: 
+@other: 
+@factor: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_is_zero ##### -->
+<para>
+
+</para>
+
+@vec: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_write ##### -->
+<para>
+
+</para>
+
+@vec: 
+@file: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_print ##### -->
+<para>
+
+</para>
+
+@vec: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_to_polar_internal ##### -->
+<para>
+
+</para>
+
+@vec: 
+@r: 
+@cost: 
+@sint: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_to_polar ##### -->
+<para>
+
+</para>
+
+@vec: 
+@r: 
+@theta: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_from_polar_internal ##### -->
+<para>
+
+</para>
+
+@vec: 
+@r: 
+@cost: 
+@sint: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_from_polar ##### -->
+<para>
+
+</para>
+
+@vec: 
+@r: 
+@theta: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_orient ##### -->
+<para>
+
+</para>
+
+@pa: 
+@pb: 
+@pc: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_incircle ##### -->
+<para>
+
+</para>
+
+@pa: 
+@pb: 
+@pc: 
+@pd: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_vector2f_locfunc ##### -->
+<para>
+
+</para>
+
+@candidate: 
+@center: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_vector2f_vector2d_locfunc ##### -->
+<para>
+
+</para>
+
+@candidate: 
+@center: 
+@Returns: 
+
+

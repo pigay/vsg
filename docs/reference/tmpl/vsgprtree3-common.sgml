@@ -1,0 +1,167 @@
+<!-- ##### SECTION Title ##### -->
+vsgprtree3-common
+
+<!-- ##### SECTION Short_Description ##### -->
+3D Point-Region trees common types and macros.
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### MACRO VSG_LOC3_BSW ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_BSE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_BNW ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_BNE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_USW ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_USE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_UNW ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_UNE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_MASK ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_AXIS ##### -->
+<para>
+
+</para>
+
+@n: 
+
+
+<!-- ##### MACRO VSG_LOC3_X ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_Y ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC3_Z ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_RLOC3_COMP ##### -->
+<para>
+
+</para>
+
+@i: 
+
+
+<!-- ##### MACRO VSG_RLOC3_MASK ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### TYPEDEF VsgPoint3 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### TYPEDEF vsgloc3 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### TYPEDEF VsgRegion3 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### TYPEDEF vsgrloc3 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### USER_FUNCTION VsgRegion3CheckFunc ##### -->
+<para>
+
+</para>
+
+@region: 
+@user_data: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgRegion3Point3LocFunc ##### -->
+<para>
+
+</para>
+
+@region: 
+@point: 
+@Returns: 
+
+

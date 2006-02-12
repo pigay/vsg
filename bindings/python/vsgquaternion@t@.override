@@ -1,0 +1,443 @@
+/* -*- C -*- */
+%%
+/* LIBVSG - Visaurin Geometric Library
+ * Copyright (C) 2006 Pierre Gay
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+%%
+headers
+#include "vsg/vsgquaternion@t@.h"
+
+/**
+ * vsg_quaternion@t@_new:
+ * @x: abscissa
+ * @y: ordinate
+ * @z: Z coordinate
+ * @w: W coordinate
+ *
+ * Allocates a new instance of #VsgQuaternion@t@.
+ *
+ * Returns: newly allocated #VsgQuaternion@t@ instance.
+ */
+%%
+override-slot VsgQuaternion@t@.tp_flags
+
+#define _wrap_vsg_quaternion@t@_tp_flags \
+Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES
+
+%%
+override-slot VsgQuaternion@t@.tp_repr
+
+static PyObject *
+_wrap_vsg_quaternion@t@_tp_repr (PyGBoxed *self)
+{
+  gchar buffer[1024];
+
+  g_snprintf (buffer, 1024,
+              "Quaternion@t@(%@tcode@,%@tcode@,%@tcode@,%@tcode@)",
+              pyg_boxed_get (self, VsgQuaternion@t@)->x,
+              pyg_boxed_get (self, VsgQuaternion@t@)->y,
+              pyg_boxed_get (self, VsgQuaternion@t@)->z,
+              pyg_boxed_get (self, VsgQuaternion@t@)->w);
+
+  return PyString_FromString (buffer);
+}
+
+%%
+override-attr VsgQuaternion@t@.x
+
+static int
+_wrap_vsg_quaternion@t@__set_x (PyGBoxed *self, PyObject *value,
+                                void *closure)
+{
+  gdouble val = PyFloat_AsDouble (value);
+
+  if (PyErr_Occurred ())
+    return -1;
+
+  pyg_boxed_get (self, VsgQuaternion@t@)->x = (@type@) val;
+
+  return 0;
+}
+
+%%
+override-attr VsgQuaternion@t@.y
+
+static int
+_wrap_vsg_quaternion@t@__set_y (PyGBoxed *self, PyObject *value,
+                                void *closure)
+{
+  gdouble val = PyFloat_AsDouble (value);
+
+  if (PyErr_Occurred ())
+    return -1;
+
+  pyg_boxed_get (self, VsgQuaternion@t@)->y = (@type@) val;
+
+  return 0;
+}
+
+%%
+override-attr VsgQuaternion@t@.z
+
+static int
+_wrap_vsg_quaternion@t@__set_z (PyGBoxed *self, PyObject *value,
+                                void *closure)
+{
+  gdouble val = PyFloat_AsDouble (value);
+
+  if (PyErr_Occurred ())
+    return -1;
+
+  pyg_boxed_get (self, VsgQuaternion@t@)->z = (@type@) val;
+
+  return 0;
+}
+
+%%
+override-attr VsgQuaternion@t@.w
+
+static int
+_wrap_vsg_quaternion@t@__set_w (PyGBoxed *self, PyObject *value,
+                                void *closure)
+{
+  gdouble val = PyFloat_AsDouble (value);
+
+  if (PyErr_Occurred ())
+    return -1;
+
+  pyg_boxed_get (self, VsgQuaternion@t@)->w = (@type@) val;
+
+  return 0;
+}
+
+%%
+override-slot VsgQuaternion@t@.tp_as_number
+
+/**
+ * vsg_quaternion@t@___mul__:
+ * @other: a floating point or a #VsgQuaternion@t@
+ *
+ * Computes the product between @self and @other.
+ * This special method is designed as to work the same if you write
+ * @self*@other or @other*@self, @other being a floating point or a
+ * #VsgQuaternion@t@.
+ *
+ * Returns: a newly created #VsgQuaternion@t@ representing the result.
+ */
+static PyObject *
+_wrap_vsg_quaternion@t@_mul_operator (PyObject *self, PyObject *other)
+{
+  VsgQuaternion@t@ *result;
+  PyObject *vself;
+  PyObject *fother;
+  gdouble cother;
+
+  /* arguments check: one of the arguments must be a VsgQuaternion@t@ */
+  if (! pyg_boxed_check (self, VSG_TYPE_QUATERNION@T@))
+    {
+      if (! pyg_boxed_check (other, VSG_TYPE_QUATERNION@T@))
+        {
+          PyErr_SetString (PyExc_TypeError,
+                           "invalid operand type for VsgQuaternion@t@ "
+                           "operator *. First argument must be a "
+                           "VsgQuaternion@t@."
+                           );
+          return NULL;
+        }
+
+      vself = other;
+      fother = self;
+    }
+  else
+    {
+      vself = self;
+      fother = other;
+    }
+
+  /* the other argument has to be converted to a PyFloat */
+  fother = PyNumber_Float (fother);
+  if (fother == NULL)
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgQuaternion@t@ "
+                       "operator *. Second operand must be a number."
+                       );
+      return NULL;
+ 
+    }
+  cother = PyFloat_AS_DOUBLE (fother);
+  Py_XDECREF (fother);
+
+  result = vsg_quaternion@t@_new (0., 0., 0., 0.);
+
+  vsg_quaternion@t@_scalp (pyg_boxed_get (vself, VsgQuaternion@t@),
+                           cother,
+                           result);
+
+  return pyg_boxed_new (VSG_TYPE_QUATERNION@T@, result, FALSE, TRUE);
+}
+
+/**
+ * vsg_quaternion@t@___div__:
+ * @other: a floating point
+ *
+ * Computes the scalar division between @self and @other.
+ *
+ * Returns: a newly created #VsgQuaternion@t@ representing the result of the
+ * scalar division.
+ */
+static PyObject *
+_wrap_vsg_quaternion@t@_div_operator (PyObject *self, PyObject *other)
+{
+  VsgQuaternion@t@ *result;
+  PyObject *fother;
+  gdouble cother;
+
+  /* first argument must be a VsgVzctor3@t@ */
+  if (! pyg_boxed_check (self, VSG_TYPE_QUATERNION@T@))
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgQuaternion@t@ "
+                       "operator /. First argument must be a "
+                       "VsgQuaternion@t@."
+                       );
+      return NULL;
+    }
+
+  /* the other argument has to be converted to a PyFloat */
+  fother = PyNumber_Float (other);
+  if (fother == NULL)
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgQuaternion@t@ "
+                       "operator *. Second operand must be a number."
+                       );
+      return NULL;
+    }
+
+  cother = PyFloat_AS_DOUBLE (fother);
+  Py_XDECREF (fother);
+
+  /* check if the number is zero */
+  if (cother == 0.)
+    {
+      PyErr_SetString (PyExc_ZeroDivisionError,
+                       "VsgQuaternion@t@ scalar division"
+                       );
+      return NULL;
+    }
+
+  result = vsg_quaternion@t@_new (0., 0., 0., 0.);
+
+  vsg_quaternion@t@_scalp (pyg_boxed_get (self, VsgQuaternion@t@),
+                           1. / cother,
+                           result);
+
+  return pyg_boxed_new (VSG_TYPE_QUATERNION@T@, result, FALSE, TRUE);
+}
+
+/**
+ * vsg_quaternion@t@___invert__:
+ *
+ * Computes the inverse of @self.
+ *
+ * Returns: a newly created #VsgQuaternion@t@ representing the inverse of
+ * @self.
+ */
+static PyObject *
+_wrap_vsg_quaternion@t@_invert_operator (PyObject *self)
+{
+  VsgQuaternion@t@ *result;
+  gboolean ok;
+
+  if (! pyg_boxed_check (self, VSG_TYPE_QUATERNION@T@))
+    {
+      /* should not happen */
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgQuaternion@t@ "
+                       "inversion operator ~. Argument must be a "
+                       "VsgQuaternion@t@."
+                       );
+      return NULL;
+    }
+
+  result = vsg_quaternion@t@_new (0., 0., 0., 0.);
+
+  ok =
+    vsg_quaternion@t@_invert (pyg_boxed_get (self, VsgQuaternion@t@),
+                              result);
+
+  if (!ok) 
+    {
+      PyErr_SetString(PyExc_ZeroDivisionError,
+                      "invalid candidate for quaternion@t@ inversion");
+      vsg_quaternion@t@_free (result);
+      return NULL;
+    }
+
+  return pyg_boxed_new (VSG_TYPE_QUATERNION@T@,
+                        result, FALSE, TRUE);
+}
+
+static PyNumberMethods _wrap_vsg_quaternion@t@_tp_as_number = {
+  (binaryfunc) 0, /* nb_add */
+  (binaryfunc) 0, /* nb_subtract */
+  (binaryfunc) _wrap_vsg_quaternion@t@_mul_operator, /* nb_multiply */
+  (binaryfunc) _wrap_vsg_quaternion@t@_div_operator, /* nb_divide */
+  (binaryfunc) 0, /* nb_remainder */
+  (binaryfunc) 0, /* nb_divmod */
+  (ternaryfunc) 0, /* nb_power */
+  (unaryfunc) 0, /* nb_negative */
+  (unaryfunc) 0, /* nb_positive */
+  (unaryfunc) 0, /* nb_absolute */
+  (inquiry) 0, /* nb_nonzero */
+  (unaryfunc) _wrap_vsg_quaternion@t@_invert_operator, /* nb_invert */
+  (binaryfunc) 0, /* nb_lshift */
+  (binaryfunc) 0, /* nb_rshift */
+  (binaryfunc) 0, /* nb_and */
+  (binaryfunc) 0, /* nb_xor */
+  (binaryfunc) 0, /* nb_or */
+};
+
+%%
+override-slot VsgQuaternion@t@.tp_as_sequence
+
+/* shamelessly borrowed from PyGTK */
+
+/**
+ * vsg_quaternion@t@___len__:
+ *
+ * Sequence compatibility function.
+ *
+ * Returns: %4.
+ */
+static int
+_wrap_vsg_quaternion@t@_length(PyGBoxed *self)
+{
+  return 4;
+}
+
+/**
+ * vsg_quaternion@t@___getitem__:
+ * @pos: the desired component index. Must be between %0 and %3.
+ *
+ * Accessor to #VsgQuaternion@t@ components.
+ *
+ * Returns: a floating point representing the desired component
+ */
+static PyObject *
+_wrap_vsg_quaternion@t@_getitem(PyGBoxed *self, int pos)
+{
+  VsgQuaternion@t@ *quaternion@t@;
+
+  if (pos < 0) pos += 4;
+  if (pos < 0 || pos >= 4) {
+    PyErr_SetString(PyExc_IndexError, "index out of range");
+    return NULL;
+  }
+  quaternion@t@ = pyg_boxed_get(self, VsgQuaternion@t@);
+
+  return
+    PyFloat_FromDouble((gdouble) *VSG_QUATERNION@T@_COMP (quaternion@t@,
+                                                          pos));
+}
+
+/**
+ * vsg_quaternion@t@___setitem__:
+ * @pos: the desired component index. Must be between %0 and %3.
+ * @value: the floating point value to be set to.
+ *
+ * Accessor to #VsgQuaternion@t@ components.
+ */
+static int
+_wrap_vsg_quaternion@t@_setitem(PyGBoxed *self, int pos, PyObject *value)
+{
+  VsgQuaternion@t@ *quaternion@t@;
+  @type@ val;
+
+  if (pos < 0) pos += 4;
+  if (pos < 0 || pos >= 4) {
+    PyErr_SetString(PyExc_IndexError, "index out of range");
+    return -1;
+  }
+  quaternion@t@ = pyg_boxed_get(self, VsgQuaternion@t@);
+  val = (@type@) PyFloat_AsDouble(value);
+  if (PyErr_Occurred())
+    return -1;
+
+  *VSG_QUATERNION@T@_COMP (quaternion@t@, pos) = (@type@) val;
+
+  return 0;
+}
+
+static PySequenceMethods _wrap_vsg_quaternion@t@_tp_as_sequence = {
+  (inquiry)_wrap_vsg_quaternion@t@_length,
+  (binaryfunc)0,
+  (intargfunc)0,
+  (intargfunc)_wrap_vsg_quaternion@t@_getitem,
+  (intintargfunc)0,
+  (intobjargproc)_wrap_vsg_quaternion@t@_setitem,
+  (intintobjargproc)0
+};
+
+%%
+override vsg_quaternion@t@_invert kwargs
+
+/**
+ * vsg_quaternion@t@_invert:
+ * @result: a #VsgQuaternion@t@
+ *
+ * Performs #VsgQuaternion@t@ (as a 3D rotation) of @self and stores
+ * the result in @result. Argument aliasing is allowed.
+ *
+ * %NOTE this method throws #ZeroDivisionError on error.
+ */
+static PyObject *
+_wrap_vsg_quaternion@t@_invert(PyObject *self, PyObject *args,
+                               PyObject *kwargs)
+{
+  static char *kwlist[] = { "result", NULL };
+  PyObject *py_result;
+  VsgQuaternion@t@ *result = NULL;
+  gboolean ok;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                   "O:VsgQuaternion@t@.invert",
+                                   kwlist, &py_result))
+    return NULL;
+  if (pyg_boxed_check(py_result, VSG_TYPE_QUATERNION@T@))
+    result = pyg_boxed_get(py_result, VsgQuaternion@t@);
+  else {
+    PyErr_SetString(PyExc_TypeError,
+                    "result should be a VsgQuaternion@t@");
+    return NULL;
+  }
+
+  ok = vsg_quaternion@t@_invert(pyg_boxed_get(self, VsgQuaternion@t@),
+                              result);
+
+  if (!ok) 
+    {
+      PyErr_SetString(PyExc_ZeroDivisionError,
+                      "invalid candidate for quaternion@t@ inversion");
+      return NULL;
+    }
+
+  Py_INCREF(Py_None);
+  return Py_None;
+}

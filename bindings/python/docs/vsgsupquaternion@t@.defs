@@ -1,0 +1,52 @@
+;; -*- scheme -*-
+
+;; dummy definitions to get special methods in the generated doc.
+
+(define-method __mul__
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@___mul__")
+  (return-type "VsgQuaternion@t@")
+  (parameters
+    '("@type@" "other")
+  )
+)
+
+(define-method __div__
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@___div__")
+  (return-type "VsgQuaternion@t@")
+  (parameters
+    '("const-VsgQuaternion@t@*" "other")
+  )
+)
+
+(define-method __invert__
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@___invert__")
+  (return-type "VsgQuaternion@t@")
+)
+
+(define-method __len__
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@___len__")
+  (return-type "gint")
+)
+
+(define-method __getitem__
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@___getitem__")
+  (return-type "@type@")
+  (parameters
+    '("gint" "pos")
+  )
+)
+
+(define-method __setitem__
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@___setitem__")
+  (return-type "none")
+  (parameters
+    '("gint" "pos")
+    '("@type@" "value")
+  )
+)

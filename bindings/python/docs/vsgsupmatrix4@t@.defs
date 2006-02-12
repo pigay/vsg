@@ -1,0 +1,61 @@
+;; -*- scheme -*-
+
+;; dummy definitions to get special methods in the generated doc.
+
+(define-method __add__
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@___add__")
+  (return-type "VsgMatrix4@t@")
+  (parameters
+    '("@type@" "other")
+  )
+)
+
+(define-method __sub__
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@___sub__")
+  (return-type "VsgMatrix4@t@")
+  (parameters
+    '("@type@" "other")
+  )
+)
+
+(define-method __mul__
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@___mul__")
+  (return-type "VsgMatrix4@t@")
+  (parameters
+    '("@type@" "other")
+  )
+)
+
+(define-method __invert__
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@___invert__")
+  (return-type "VsgMatrix4@t@")
+)
+
+(define-method __len__
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@___len__")
+  (return-type "gint")
+)
+
+(define-method __getitem__
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@___getitem__")
+  (return-type "@type@")
+  (parameters
+    '("gint" "pos")
+  )
+)
+
+(define-method __setitem__
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@___setitem__")
+  (return-type "none")
+  (parameters
+    '("gint" "pos")
+    '("@type@" "value")
+  )
+)

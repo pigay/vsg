@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<book id="index" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <bookinfo>
+    <title>libVsg Reference Manual</title>
+  </bookinfo>
+
+  <chapter>
+    <title>Introduction</title>
+    <para>
+      LibVsg is a 2D/3D software library with a focus on basic geometric
+      manipulations. It's released under the GNU LGPL. Written for C, it
+      provides support for single and double precision arithmetics.
+    </para>
+
+    <para>
+      Provided features include several data types and the corresponding API:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>2D/3D points/vectors.</para>
+      </listitem>
+      <listitem>
+        <para>Quaternions (3D rotations presented in a 4D unit vector).</para>
+      </listitem>
+      <listitem>
+        <para>
+          2D/3D affine transforms (3x3 and 4x4 matrices, respectively).
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Geometric containers, such as spatial filters: currently only
+          Point/Region binary trees (both 2D and 3D).
+        </para>
+      </listitem>
+    </itemizedlist>
+
+    <para>
+      Although the main API is a C interface, a Python wrapper comes with the
+      library source distribution.
+    </para>
+
+    <simplesect>
+      <title>Software prerequisites</title>
+
+      <para>Vsg depends on the following software:</para>
+      <itemizedlist>
+        <listitem>
+          <ulink url="http://www.gtk.org" >glib-2.0</ulink>.
+        </listitem>
+
+        <listitem>
+          <ulink url="http://www.freedesktop.org/software/pkgconfig" >
+            pkg-config</ulink>.
+        </listitem>
+
+        <listitem>
+          <ulink url="http://www.python.org" >Python</ulink> for source
+          generation.
+        </listitem>
+      </itemizedlist>
+
+      <para>Optional software may also be needed:</para>
+      <itemizedlist>
+
+        <listitem>
+          <ulink url="http://www.gtk.org/gtk-doc" >gtk-doc</ulink> for
+          reference documentation. 
+        </listitem>
+
+        <listitem>
+          <ulink url="http://www.pygtk.org" >pygtk</ulink> for building Python
+          wrapper. 
+        </listitem>
+      </itemizedlist>
+    </simplesect>
+  </chapter>
+
+  <chapter>
+    <title>Programming with LibVsg</title>
+
+    <simplesect>
+      <title>Using LibVsg</title>
+      <para>
+        LibVsg comes in 3 libraries. The first two,
+        <emphasis>libvsgf</emphasis> and <emphasis>libvsgd</emphasis> are
+        single and double precision versions of the library (think: f=float
+        and d=double). Each is similar except for precision of the
+        arithmetics involved in its data types. The third library, simply
+        named <emphasis>libvsg</emphasis> is a convenience gathering of the
+        two former.
+      </para>
+      <para>
+        In order to use any of the three Vsg libraries in your program just
+        compile it with the result of the following commands, replacing lib
+        with your choice for library (vsg, vsgd or vsgf).
+      </para>
+      <cmdsynopsis>
+        <command>pkg-config</command>
+        <arg choice="plain">--cflags</arg>
+        <replaceable>lib</replaceable>
+      </cmdsynopsis>
+      <cmdsynopsis>
+        <command>pkg-config</command>
+        <arg choice="plain">--libs</arg>
+        <replaceable>lib</replaceable>
+      </cmdsynopsis>
+    </simplesect>
+
+    <simplesect>
+      <title>Geometric data types</title>
+      <para>
+        LibVsg data types (single and double precision version) come in two
+        flavours: transparent and opaque types. Transparent types, such as
+        2D/3D vectors, matrices and quaternions are public C structures. Being
+        simple types only dedicated to store a kind of numeric value, anyone
+        can directly access to their members.
+      </para>
+      <para>
+        Transparent types can be
+        allocated on the stack (declared as function local variable) or be
+        static or even included in another structure. They can also be
+        allocated on the heap with the corresponding API (*_new() and *_free()
+        functions).
+      </para>
+      <para>
+        On the contrary, opaque data type fields may only be accessed through
+        the provided interface (get/set functions most of the time). They can
+        only be allocated on the heap (new/free functions). Opaque data types
+        are typically containers such as spatial filters.
+      </para>
+      <para>
+        Additionally, all Vsg data types conform to glib-object type system
+        and provided a GType number (see VSG_TYPE_*). These types are subtypes
+        of GBoxed and can therefore be used with the corresponding functions
+        (g_boxed_copy() and g_boxed_free).
+      </para>
+    </simplesect>
+  </chapter>
+
+  <chapter>
+    <title>Initialization</title>
+    <xi:include href="xml/vsgd.xml"/>
+    <xi:include href="xml/vsgf.xml"/>
+    <xi:include href="xml/vsg.xml"/>
+  </chapter>
+
+  <chapter>
+    <title>Vectors and points</title>
+      <xi:include href="xml/vsgvector2d.xml"/>
+      <xi:include href="xml/vsgvector2f.xml"/>
+      <xi:include href="xml/vsgvector3d.xml"/>
+      <xi:include href="xml/vsgvector3f.xml"/>
+  </chapter>
+
+  <chapter>
+      <title>3x3 and 4x4 Matrices</title>
+      <xi:include href="xml/vsgmatrix3d.xml"/>
+      <xi:include href="xml/vsgmatrix3f.xml"/>
+      <xi:include href="xml/vsgmatrix4d.xml"/>
+      <xi:include href="xml/vsgmatrix4f.xml"/>
+      <xi:include href="xml/vsgquaterniond.xml"/>
+      <xi:include href="xml/vsgquaternionf.xml"/>
+  </chapter>
+
+  <chapter>
+    <title>Spatial filters</title>
+      <xi:include href="xml/vsgprtree2-common.xml"/>
+      <xi:include href="xml/vsgprtree2d.xml"/>
+      <xi:include href="xml/vsgprtree2f.xml"/>
+      <xi:include href="xml/vsgprtree3-common.xml"/>
+      <xi:include href="xml/vsgprtree3d.xml"/>
+      <xi:include href="xml/vsgprtree3f.xml"/>
+  </chapter>
+
+</book>

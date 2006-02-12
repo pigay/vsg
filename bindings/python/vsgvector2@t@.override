@@ -1,0 +1,457 @@
+/* -*- C -*- */
+%%
+/* LIBVSG - Visaurin Geometric Library
+ * Copyright (C) 2006 Pierre Gay
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+%%
+headers
+#include "vsg/vsgvector2@t@.h"
+
+/**
+ * vsg_vector2@t@_new:
+ * @x: abscissa
+ * @y: ordinate
+ *
+ * Allocates a new instance of #VsgVector2@t@.
+ *
+ * Returns: newly allocated #VsgVector2@t@ instance.
+ */
+%%
+override-slot VsgVector2@t@.tp_flags
+
+#define _wrap_vsg_vector2@t@_tp_flags \
+Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES
+
+%%
+override-slot VsgVector2@t@.tp_repr
+
+static PyObject *
+_wrap_vsg_vector2@t@_tp_repr (PyGBoxed *self)
+{
+  gchar buffer[1024];
+
+  g_snprintf (buffer, 1024,
+              "Vector2@t@(%@tcode@,%@tcode@)",
+              pyg_boxed_get (self, VsgVector2@t@)->x,
+              pyg_boxed_get (self, VsgVector2@t@)->y);
+
+  return PyString_FromString (buffer);
+}
+
+%%
+override-attr VsgVector2@t@.x
+
+static int
+_wrap_vsg_vector2@t@__set_x (PyGBoxed *self, PyObject *value,
+                             void *closure)
+{
+  gdouble val = PyFloat_AsDouble (value);
+
+  if (PyErr_Occurred ())
+    return -1;
+
+  pyg_boxed_get (self, VsgVector2@t@)->x = (@type@) val;
+
+  return 0;
+}
+
+%%
+override-attr VsgVector2@t@.y
+
+static int
+_wrap_vsg_vector2@t@__set_y (PyGBoxed *self, PyObject *value,
+                           void *closure)
+{
+  gdouble val = PyFloat_AsDouble (value);
+
+  if (PyErr_Occurred ())
+    return -1;
+
+  pyg_boxed_get (self, VsgVector2@t@)->y = (@type@) val;
+
+  return 0;
+}
+
+%%
+override-slot VsgVector2@t@.tp_as_number
+
+/**
+ * vsg_vector2@t@___add__:
+ * @other: an other #VsgVector2@t@.
+ *
+ * Computes the vector addition between @self and @other.
+ *
+ * Returns: a newly created #VsgVector2@t@ represnting the result of the
+ * addition.
+ */
+static PyObject *
+_wrap_vsg_vector2@t@_add_operator (PyObject *self, PyObject *other)
+{
+  VsgVector2@t@ *result;
+
+  if ((! pyg_boxed_check (self, VSG_TYPE_VECTOR2@T@)) ||
+      (! pyg_boxed_check (other, VSG_TYPE_VECTOR2@T@)))
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgVector2@t@ "
+                       "operator +."
+                       );
+      return NULL;
+    }
+
+  result = vsg_vector2@t@_new (0., 0.);
+  vsg_vector2@t@_add (pyg_boxed_get (self, VsgVector2@t@),
+                      pyg_boxed_get (other, VsgVector2@t@),
+                      result);
+
+  return pyg_boxed_new (VSG_TYPE_VECTOR2@T@, result, FALSE, TRUE);
+}
+
+/**
+ * vsg_vector2@t@___sub__:
+ * @other: an other #VsgVector2@t@.
+ *
+ * Computes the vector substraction between @self and @other.
+ *
+ * Returns: a newly created #VsgVector2@t@ represnting the result of the
+ * substraction.
+ */
+static PyObject *
+_wrap_vsg_vector2@t@_sub_operator (PyObject *self, PyObject *other)
+{
+  VsgVector2@t@ *result;
+
+  if ((! pyg_boxed_check (self, VSG_TYPE_VECTOR2@T@)) ||
+      (! pyg_boxed_check (other, VSG_TYPE_VECTOR2@T@)))
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgVector2@t@ "
+                       "operator -."
+                       );
+      return NULL;
+    }
+
+  result = vsg_vector2@t@_new (0., 0.);
+
+  vsg_vector2@t@_sub (pyg_boxed_get (self, VsgVector2@t@),
+                      pyg_boxed_get (other, VsgVector2@t@),
+                      result);
+
+  return pyg_boxed_new (VSG_TYPE_VECTOR2@T@, result, FALSE, TRUE);
+}
+
+/**
+ * vsg_vector2@t@___mul__:
+ * @other: a floating point or a #VsgVector2@t@
+ *
+ * Computes the scalar or dot product between @self and @other.
+ * This special method is designed as to work the same if you write
+ * @self*@other or @other*@self, @other being a floating point or a
+ * #VsgVector2@t@.
+ *
+ * Returns: a newly created #VsgVector2@t@ in the case of a scalar product or
+ * a floating point in the case of a dot product.
+ */
+static PyObject *
+_wrap_vsg_vector2@t@_mul_operator (PyObject *self, PyObject *other)
+{
+  VsgVector2@t@ *result;
+  PyObject *vself;
+  PyObject *fother;
+  gdouble cother;
+
+  /* arguments check: one of the arguments must be a VsgVector2@t@ */
+  if (pyg_boxed_check (self, VSG_TYPE_VECTOR2@T@))
+    {
+      /* if both arguments are VsgVector2@t@, we do a dot product */
+      if (pyg_boxed_check (other, VSG_TYPE_VECTOR2@T@))
+        {
+          gdouble result;
+
+          result =
+            vsg_vector2@t@_dotp (pyg_boxed_get (self, VsgVector2@t@),
+                                 pyg_boxed_get (other, VsgVector2@t@));
+
+          return PyFloat_FromDouble (result);
+        }
+
+      vself = self;
+      fother = other;
+    }
+  else
+    {
+      if (! pyg_boxed_check (other, VSG_TYPE_VECTOR2@T@))
+        {
+          PyErr_SetString (PyExc_TypeError,
+                           "invalid operand type for VsgVector2@t@ "
+                           "operator *. First argument must be a "
+                           "VsgVector2@t@."
+                           );
+          return NULL;
+        }
+
+      vself = other;
+      fother = self;
+    }
+
+  /* the other argument has to be converted to a PyFloat */
+  fother = PyNumber_Float (fother);
+  if (fother == NULL)
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgVector2@t@ "
+                       "operator *. Second operand must be a number."
+                       );
+      return NULL;
+ 
+    }
+  cother = PyFloat_AS_DOUBLE (fother);
+  Py_XDECREF (fother);
+
+  result = vsg_vector2@t@_new (0., 0.);
+
+  vsg_vector2@t@_scalp (pyg_boxed_get (vself, VsgVector2@t@),
+                        cother,
+                        result);
+
+  return pyg_boxed_new (VSG_TYPE_VECTOR2@T@, result, FALSE, TRUE);
+}
+
+/**
+ * vsg_vector2@t@___div__:
+ * @other: a floating point
+ *
+ * Computes the scalar division between @self and @other.
+ *
+ * Returns: a newly created #VsgVector2@t@ representing the result of the
+ * scalar division.
+ */
+static PyObject *
+_wrap_vsg_vector2@t@_div_operator (PyObject *self, PyObject *other)
+{
+  VsgVector2@t@ *result;
+  PyObject *fother;
+  gdouble cother;
+
+  /* first argument must be a VsgVector2@t@ */
+  if (! pyg_boxed_check (self, VSG_TYPE_VECTOR2@T@))
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgVector2@t@ "
+                       "operator /. First argument must be a "
+                       "VsgVector2@t@."
+                       );
+      return NULL;
+    }
+
+  /* the other argument has to be converted to a PyFloat */
+  fother = PyNumber_Float (other);
+  if (fother == NULL)
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgVector2@t@ "
+                       "operator *. Second operand must be a number."
+                       );
+      return NULL;
+    }
+
+  cother = PyFloat_AS_DOUBLE (fother);
+  Py_XDECREF (fother);
+
+  /* check if the number is zero */
+  if (cother == 0.)
+    {
+      PyErr_SetString (PyExc_ZeroDivisionError,
+                       "VsgVector2@t@ scalar division"
+                       );
+      return NULL;
+    }
+
+  result = vsg_vector2@t@_new (0., 0.);
+
+  vsg_vector2@t@_scalp (pyg_boxed_get (self, VsgVector2@t@),
+                        1. / cother,
+                        result);
+
+  return pyg_boxed_new (VSG_TYPE_VECTOR2@T@, result, FALSE, TRUE);
+}
+
+/**
+ * vsg_vector2@t@___xor__:
+ * @other: an other #VsgVector2@t@.
+ *
+ * Computes the vector product beween @self and @other. This special method
+ * is provided to allow writing the vector product @self^@other.
+ *
+ * Returns: a floating point representing the 2D vector product.
+ */
+static PyObject *
+_wrap_vsg_vector2@t@_xor_operator (PyObject *self, PyObject *other)
+{
+  gdouble result;
+
+  if ((! pyg_boxed_check (self, VSG_TYPE_VECTOR2@T@)) ||
+      (! pyg_boxed_check (other, VSG_TYPE_VECTOR2@T@)))
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgVector2@t@ "
+                       "operator ^."
+                       );
+      return NULL;
+    }
+
+  result = vsg_vector2@t@_vecp (pyg_boxed_get (self, VsgVector2@t@),
+                                pyg_boxed_get (other, VsgVector2@t@));
+
+  return PyFloat_FromDouble (result);
+}
+
+static PyNumberMethods _wrap_vsg_vector2@t@_tp_as_number = {
+  (binaryfunc) _wrap_vsg_vector2@t@_add_operator, /* nb_add */
+  (binaryfunc) _wrap_vsg_vector2@t@_sub_operator, /* nb_subtract */
+  (binaryfunc) _wrap_vsg_vector2@t@_mul_operator, /* nb_multiply */
+  (binaryfunc) _wrap_vsg_vector2@t@_div_operator, /* nb_divide */
+  (binaryfunc) 0, /* nb_remainder */
+  (binaryfunc) 0, /* nb_divmod */
+  (ternaryfunc) 0, /* nb_power */
+  (unaryfunc) 0, /* nb_negative */
+  (unaryfunc) 0, /* nb_positive */
+  (unaryfunc) 0, /* nb_absolute */
+  (inquiry) 0, /* nb_nonzero */
+  (unaryfunc) 0, /* nb_invert */
+  (binaryfunc) 0, /* nb_lshift */
+  (binaryfunc) 0, /* nb_rshift */
+  (binaryfunc) 0, /* nb_and */
+  (binaryfunc) _wrap_vsg_vector2@t@_xor_operator, /* nb_xor */
+  (binaryfunc) 0, /* nb_or */
+};
+
+%%
+override-slot VsgVector2@t@.tp_as_sequence
+
+/* shamelessly borrowed from PyGTK */
+
+/**
+ * vsg_vector2@t@___len__:
+ *
+ * Sequence compatibility function.
+ *
+ * Returns: %2.
+ */
+static int
+_wrap_vsg_vector2@t@_length(PyGBoxed *self)
+{
+  return 2;
+}
+
+/**
+ * vsg_vector2@t@___getitem__:
+ * @pos: the desired component index. Must be between %0 and %1.
+ *
+ * Accessor to #VsgVector2@t@ components.
+ *
+ * Returns: a floating point representing the desired component
+ */
+static PyObject *
+_wrap_vsg_vector2@t@_getitem(PyGBoxed *self, int pos)
+{
+  VsgVector2@t@ *vector2@t@;
+
+  if (pos < 0) pos += 2;
+  if (pos < 0 || pos >= 2) {
+    PyErr_SetString(PyExc_IndexError, "index out of range");
+    return NULL;
+  }
+  vector2@t@ = pyg_boxed_get(self, VsgVector2@t@);
+  return
+    PyFloat_FromDouble((gdouble) *VSG_VECTOR2@T@_COMP (vector2@t@,
+                                                       pos));
+}
+
+/**
+ * vsg_vector2@t@___setitem__:
+ * @pos: the desired component index. Must be between %0 and %1.
+ * @value: the floating point value to be set to.
+ *
+ * Accessor to #VsgVector2@t@ components.
+ */
+static int
+_wrap_vsg_vector2@t@_setitem(PyGBoxed *self, int pos, PyObject *value)
+{
+  VsgVector2@t@ *vector2@t@;
+  @type@ val;
+
+  if (pos < 0) pos += 2;
+  if (pos < 0 || pos >= 2) {
+    PyErr_SetString(PyExc_IndexError, "index out of range");
+    return -1;
+  }
+  vector2@t@ = pyg_boxed_get(self, VsgVector2@t@);
+  val = (@type@) PyFloat_AsDouble(value);
+  if (PyErr_Occurred())
+        return -1;
+
+  *VSG_VECTOR2@T@_COMP (vector2@t@, pos) = (@type@) val;
+  return 0;
+}
+
+static PySequenceMethods _wrap_vsg_vector2@t@_tp_as_sequence = {
+    (inquiry)_wrap_vsg_vector2@t@_length,
+    (binaryfunc)0,
+    (intargfunc)0,
+    (intargfunc)_wrap_vsg_vector2@t@_getitem,
+    (intintargfunc)0,
+    (intobjargproc)_wrap_vsg_vector2@t@_setitem,
+    (intintobjargproc)0
+};
+
+%%
+override vsg_vector2@t@_to_polar_internal noargs
+
+/**
+ * vsg_vector2@t@_to_polar_internal:
+ *
+ * Computes polar coordinate intermediary results 
+ *
+ * Returns: a tuple consisting of radius, cos(theta) and sin(theta)
+ */
+
+static PyObject *
+_wrap_vsg_vector2@t@_to_polar_internal (PyObject *self)
+{
+  @type@ r, cost, sint;
+
+  vsg_vector2@t@_to_polar_internal (pyg_boxed_get (self, VsgVector2@t@),
+                                    &r, &cost, &sint);
+
+  return Py_BuildValue ("@t@@t@@t@", r, cost, sint);
+}
+
+%%
+override vsg_vector2@t@_to_polar noargs
+
+static PyObject *
+_wrap_vsg_vector2@t@_to_polar (PyObject *self)
+{
+  @type@ r, t;
+
+  vsg_vector2@t@_to_polar (pyg_boxed_get (self, VsgVector2@t@),
+                           &r, &t);
+
+  return Py_BuildValue ("@t@@t@", r, t);
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+<book xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!-- short description -->
+  <para>
+    <phrase>
+      <type>@type@</type>-based 3D vectors.
+    </phrase>
+  </para>
+
+  <!-- long description -->
+  <para>
+  </para>
+</book>

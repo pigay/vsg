@@ -1,0 +1,342 @@
+/* -*- C -*- */
+%%
+/* LIBVSG - Visaurin Geometric Library
+ * Copyright (C) 2006 Pierre Gay
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+%%
+headers
+#include "vsg/vsgmatrix4@t@.h"
+
+%%
+override-slot VsgMatrix4@t@.tp_flags
+
+#define _wrap_vsg_matrix4@t@_tp_flags \
+Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES
+
+%%
+override-slot VsgMatrix4@t@.tp_repr
+
+static PyObject *
+_wrap_vsg_matrix4@t@_tp_repr (PyGBoxed *self)
+{
+  VsgMatrix4@t@ *matrix = pyg_boxed_get (self, VsgMatrix4@t@);
+  gchar buffer[1024];
+
+  g_snprintf (buffer, 1024,
+              "Matrix4@t@("
+              "%@tcode@,%@tcode@,%@tcode@,%@tcode@,"
+              "%@tcode@,%@tcode@,%@tcode@,%@tcode@,"
+              "%@tcode@,%@tcode@,%@tcode@,%@tcode@,"
+              "%@tcode@,%@tcode@,%@tcode@,%@tcode@)",
+              matrix->components[0],
+              matrix->components[1],
+              matrix->components[2],
+              matrix->components[3],
+              matrix->components[4],
+              matrix->components[5],
+              matrix->components[6],
+              matrix->components[7],
+              matrix->components[8],
+              matrix->components[9],
+              matrix->components[10],
+              matrix->components[11],
+              matrix->components[12],
+              matrix->components[13],
+              matrix->components[14],
+              matrix->components[15]);
+
+  return PyString_FromString (buffer);
+}
+
+%%
+override-slot VsgMatrix4@t@.tp_as_number
+
+/**
+ * vsg_matrix4@t@___add__:
+ * @other: an other #VsgMatrix4@t@.
+ *
+ * Computes the vector addition between @self and @other.
+ *
+ * Returns: a newly created #VsgMatrix4@t@ represnting the result of the
+ * addition.
+ */
+static PyObject *
+_wrap_vsg_matrix4@t@_add_operator (PyObject *self, PyObject *other)
+{
+  VsgMatrix4@t@ *result;
+
+  if ((! pyg_boxed_check (self, VSG_TYPE_MATRIX4@T@)) ||
+      (! pyg_boxed_check (other, VSG_TYPE_MATRIX4@T@)))
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgMatrix4@t@ "
+                       "operator +."
+                       );
+      return NULL;
+    }
+
+  result = vsg_matrix4@t@_new (0., 0., 0., 0.,
+                               0., 0., 0., 0.,
+                               0., 0., 0., 0.,
+                               0., 0., 0., 0.);
+
+  vsg_matrix4@t@_add (pyg_boxed_get (self, VsgMatrix4@t@),
+                      pyg_boxed_get (other, VsgMatrix4@t@),
+                      result);
+
+  return pyg_boxed_new (VSG_TYPE_MATRIX4@T@, result, FALSE, TRUE);
+}
+
+/**
+ * vsg_matrix4@t@___sub__:
+ * @other: an other #VsgMatrix4@t@.
+ *
+ * Computes the vector substraction between @self and @other.
+ *
+ * Returns: a newly created #VsgMatrix4@t@ represnting the result of the
+ * substraction.
+ */
+static PyObject *
+_wrap_vsg_matrix4@t@_sub_operator (PyObject *self, PyObject *other)
+{
+  VsgMatrix4@t@ *result;
+
+  if ((! pyg_boxed_check (self, VSG_TYPE_MATRIX4@T@)) ||
+      (! pyg_boxed_check (other, VSG_TYPE_MATRIX4@T@)))
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgMatrix4@t@ "
+                       "operator -."
+                       );
+      return NULL;
+    }
+
+  result = vsg_matrix4@t@_new (0., 0., 0., 0.,
+                               0., 0., 0., 0.,
+                               0., 0., 0., 0.,
+                               0., 0., 0., 0.);
+
+  vsg_matrix4@t@_sub (pyg_boxed_get (self, VsgMatrix4@t@),
+                      pyg_boxed_get (other, VsgMatrix4@t@),
+                      result);
+
+  return pyg_boxed_new (VSG_TYPE_MATRIX4@T@, result, FALSE, TRUE);
+}
+
+/**
+ * vsg_matrix4@t@___mul__:
+ * @other: a #VsgMatrix4@t@ or a #VsgVector3@t@
+ *
+ * Computes the matrix product between @self and @other.
+ * This special method is designed as to work the same @other being a
+ * #VsgMatrix4@t@ or a #VsgVector3@t@.
+ *
+ * Returns: a newly created #VsgMatrix4@t@ or #VsgVector3@t@.
+ */
+static PyObject *
+_wrap_vsg_matrix4@t@_mul_operator (PyObject *self, PyObject *other)
+{
+  /* arguments check: forst argument must be a VsgMatrix4@t@ */
+  if (pyg_boxed_check (self, VSG_TYPE_MATRIX4@T@))
+    {
+      if (pyg_boxed_check (other, VSG_TYPE_MATRIX4@T@))
+        {
+          VsgMatrix4@t@ *result = vsg_matrix4@t@_new (0., 0., 0., 0.,
+                                                      0., 0., 0., 0.,
+                                                      0., 0., 0., 0.,
+                                                      0., 0., 0., 0.);
+
+          vsg_matrix4@t@_matmult (pyg_boxed_get (self, VsgMatrix4@t@),
+                                  pyg_boxed_get (other, VsgMatrix4@t@),
+                                  result);
+
+          return pyg_boxed_new (VSG_TYPE_MATRIX4@T@,
+                                result, FALSE, TRUE);
+        }
+      else if (pyg_boxed_check (other, VSG_TYPE_VECTOR3@T@))
+        {
+          VsgVector3@t@ *result = vsg_vector3@t@_new (0., 0., 0.);
+
+          vsg_matrix4@t@_vecmult (pyg_boxed_get (self, VsgMatrix4@t@),
+                                  pyg_boxed_get (other, VsgVector3@t@),
+                                  result);
+
+          return pyg_boxed_new (VSG_TYPE_VECTOR3@T@,
+                                result, FALSE, TRUE);
+        }
+
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgMatrix4@t@ "
+                       "operator *."
+                       );
+      return NULL;
+    }
+  PyErr_SetString (PyExc_TypeError,
+                   "invalid operand type for VsgMatrix4@t@ "
+                   "operator *. First argument must be a "
+                   "VsgMatrix4@t@."
+                   );
+  return NULL;
+}
+
+/**
+ * vsg_matrix4@t@___invert__:
+ *
+ * Computes the inverse of @self.
+ *
+ * Returns: a newly created #VsgMatrix4@t@ representing the inverse of
+ * @self.
+ */
+static PyObject *
+_wrap_vsg_matrix4@t@_invert_operator (PyObject *self)
+{
+  VsgMatrix4@t@ *result;
+  gboolean ok;
+
+  if (! pyg_boxed_check (self, VSG_TYPE_MATRIX4@T@))
+    {
+      /* should not happen */
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgMatrix4@t@ "
+                       "inversion operator ~. Argument must be a "
+                       "VsgMatrix4@t@."
+                       );
+      return NULL;
+    }
+
+  result = vsg_matrix4@t@_new (0., 0., 0., 0.,
+                               0., 0., 0., 0.,
+                               0., 0., 0., 0.,
+                               0., 0., 0., 0.);
+
+  ok = vsg_matrix4@t@_invert (pyg_boxed_get (self, VsgMatrix4@t@),
+                              result);
+
+  if (!ok)
+    {
+      PyErr_SetString(PyExc_ZeroDivisionError,
+                      "invalid candidate for VsgMatrix4@t@ inversion");
+      vsg_matrix4@t@_free (result);
+      return NULL;
+    }
+
+  return pyg_boxed_new (VSG_TYPE_MATRIX4@T@,
+                        result, FALSE, TRUE);
+}
+
+static PyNumberMethods _wrap_vsg_matrix4@t@_tp_as_number = {
+  (binaryfunc) _wrap_vsg_matrix4@t@_add_operator, /* nb_add */
+  (binaryfunc) _wrap_vsg_matrix4@t@_sub_operator, /* nb_subtract */
+  (binaryfunc) _wrap_vsg_matrix4@t@_mul_operator, /* nb_multiply */
+  (binaryfunc) 0, /* nb_divide */
+  (binaryfunc) 0, /* nb_remainder */
+  (binaryfunc) 0, /* nb_divmod */
+  (ternaryfunc) 0, /* nb_power */
+  (unaryfunc) 0, /* nb_negative */
+  (unaryfunc) 0, /* nb_positive */
+  (unaryfunc) 0, /* nb_absolute */
+  (inquiry) 0, /* nb_nonzero */
+  (unaryfunc) _wrap_vsg_matrix4@t@_invert_operator, /* nb_invert */
+  (binaryfunc) 0, /* nb_lshift */
+  (binaryfunc) 0, /* nb_rshift */
+  (binaryfunc) 0, /* nb_and */
+  (binaryfunc) 0, /* nb_xor */
+  (binaryfunc) 0, /* nb_or */
+};
+
+%%
+override-slot VsgMatrix4@t@.tp_as_sequence
+
+/* shamelessly borrowed from PyGTK */
+
+/**
+ * vsg_matrix4@t@___len__:
+ *
+ * Sequence compatibility function.
+ *
+ * Returns: %16.
+ */
+static int
+_wrap_vsg_matrix4@t@_length(PyGBoxed *self)
+{
+  return 16;
+}
+
+/**
+ * vsg_matrix4@t@___getitem__:
+ * @pos: the desired component index. Must be between %0 and %15.
+ *
+ * Accessor to #VsgMatrix4@t@ components.
+ *
+ * Returns: a floating point representing the desired component
+ */
+static PyObject *
+_wrap_vsg_matrix4@t@_getitem(PyGBoxed *self, int pos)
+{
+  VsgMatrix4@t@ *matrix4@t@;
+
+  if (pos < 0) pos += 16;
+  if (pos < 0 || pos >= 16) {
+    PyErr_SetString(PyExc_IndexError, "index out of range");
+    return NULL;
+  }
+  matrix4@t@ = pyg_boxed_get(self, VsgMatrix4@t@);
+
+  return
+    PyFloat_FromDouble((gdouble) matrix4@t@->components[pos]);
+}
+
+/**
+ * vsg_matrix4@t@___setitem__:
+ * @pos: the desired component index. Must be between %0 and %15.
+ * @value: the floating point value to be set to.
+ *
+ * Accessor to #VsgMatrix4@t@ components.
+ */
+static int
+_wrap_vsg_matrix4@t@_setitem(PyGBoxed *self, int pos, PyObject *value)
+{
+  VsgMatrix4@t@ *matrix4@t@;
+  @type@ val;
+
+  if (pos < 0) pos += 16;
+  if (pos < 0 || pos >= 16) {
+    PyErr_SetString(PyExc_IndexError, "index out of range");
+    return -1;
+  }
+  matrix4@t@ = pyg_boxed_get(self, VsgMatrix4@t@);
+
+  val = (@type@) PyFloat_AsDouble(value);
+
+  if (PyErr_Occurred())
+    return -1;
+
+  matrix4@t@->components[pos] = (@type@) val;
+
+  return 0;
+}
+
+static PySequenceMethods _wrap_vsg_matrix4@t@_tp_as_sequence = {
+  (inquiry)_wrap_vsg_matrix4@t@_length,
+  (binaryfunc)0,
+  (intargfunc)0,
+  (intargfunc)_wrap_vsg_matrix4@t@_getitem,
+  (intintargfunc)0,
+  (intobjargproc)_wrap_vsg_matrix4@t@_setitem,
+  (intintobjargproc)0
+};

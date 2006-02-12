@@ -1,0 +1,58 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+    "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+<book id="index" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <bookinfo>
+    <title>PyVsg Docs</title>
+    <authorgroup>
+      <author>
+        <firstname>Pierre</firstname>
+        <surname>Gay</surname>
+	<email>gay-pierre@wanadoo.fr</email>
+      </author>
+    </authorgroup>
+  </bookinfo>
+
+
+  <chapter id="vectors-and-points">
+    <title>Vectors and points</title>
+
+    <xi:include href="xml/pyvsg-vsgvector2d.xml"/>
+    <xi:include href="xml/pyvsg-vsgvector2f.xml"/>
+    <xi:include href="xml/pyvsg-vsgvector3d.xml"/>
+    <xi:include href="xml/pyvsg-vsgvector3f.xml"/>
+  </chapter>
+
+  <chapter id="3x3-and-4x4-matrices">
+    <title>3x3 and 4x4 Matrices</title>
+
+    <xi:include href="xml/pyvsg-vsgmatrix3d.xml"/>
+    <xi:include href="xml/pyvsg-vsgmatrix3f.xml"/>
+    <xi:include href="xml/pyvsg-vsgmatrix4d.xml"/>
+    <xi:include href="xml/pyvsg-vsgmatrix4f.xml"/>
+    <xi:include href="xml/pyvsg-vsgquaterniond.xml"/>
+    <xi:include href="xml/pyvsg-vsgquaternionf.xml"/>
+  </chapter>
+
+  <chapter id="spatial-filters">
+    <title>Spatial Filters</title>
+
+    <xi:include href="xml/pyvsg-vsgprtree2d.xml"/>
+    <xi:include href="xml/pyvsg-vsgprtree2f.xml"/>
+    <xi:include href="xml/pyvsg-vsgprtree2dnodeinfo.xml"/>
+    <xi:include href="xml/pyvsg-vsgprtree2fnodeinfo.xml"/>
+
+    <xi:include href="xml/pyvsg-vsgprtree3d.xml"/>
+    <xi:include href="xml/pyvsg-vsgprtree3f.xml"/>
+    <xi:include href="xml/pyvsg-vsgprtree3dnodeinfo.xml"/>
+    <xi:include href="xml/pyvsg-vsgprtree3fnodeinfo.xml"/>
+  </chapter>
+  <chapter id="class-hierarchy">
+    <title>Class Hierarchy</title>
+
+    <xi:include href="xml/pyvsg-hierarchy.xml"/>
+  </chapter>
+
+</book>

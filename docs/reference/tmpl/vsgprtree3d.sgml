@@ -1,0 +1,420 @@
+<!-- ##### SECTION Title ##### -->
+vsgprtree3d
+
+<!-- ##### SECTION Short_Description ##### -->
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgprtree3d-intro.xml" xpointer="/1/1/1"
+            parse="xml" />
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgprtree3d-intro.xml" xpointer="/1/2"
+            parse="xml" />
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT VsgPRTree3d ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT VsgPRTree3dNodeInfo ##### -->
+<para>
+
+</para>
+
+@lbound: 
+@ubound: 
+@center: 
+@father_info: 
+@point_list: 
+@region_list: 
+@point_count: 
+@region_count: 
+@depth: 
+@user_data: 
+@isleaf: 
+
+<!-- ##### USER_FUNCTION VsgPoint3dLocFunc ##### -->
+<para>
+
+</para>
+
+@candidate: 
+@center: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgRegion3dLocFunc ##### -->
+<para>
+
+</para>
+
+@region: 
+@center: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgPoint3dDistFunc ##### -->
+<para>
+
+</para>
+
+@one: 
+@other: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgPoint3dLocMarshall ##### -->
+<para>
+
+</para>
+
+@candidate: 
+@center: 
+@data: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgRegion3dLocMarshall ##### -->
+<para>
+
+</para>
+
+@region: 
+@center: 
+@data: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgPoint3dDistMarshall ##### -->
+<para>
+
+</para>
+
+@one: 
+@other: 
+@data: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgPRTree3dFunc ##### -->
+<para>
+
+</para>
+
+@node_info: 
+@user_data: 
+
+
+<!-- ##### USER_FUNCTION VsgPRTree3dInteractionFunc ##### -->
+<para>
+
+</para>
+
+@one_info: 
+@other_info: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_new_full ##### -->
+<para>
+
+</para>
+
+@lbound: 
+@ubound: 
+@point_locfunc: 
+@point_distfunc: 
+@region_locfunc: 
+@max_point: 
+@Returns: 
+
+
+<!-- ##### MACRO vsg_prtree3d_new ##### -->
+<para>
+
+</para>
+
+@lbound: 
+@ubound: 
+@region_locfunc: 
+<!-- # Unused Parameters # -->
+@point_locfunc: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_free ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_clone ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_set_point_loc_marshall ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@marshall: 
+@locdata: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_set_region_loc_marshall ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@marshall: 
+@locdata: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_set_point_dist_marshall ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@marshall: 
+@distdata: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_get_tolerance ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_set_tolerance ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@tolerance: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_set_node_data ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@user_data_type: 
+@user_data_model: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_get_bounds ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@lbound: 
+@ubound: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_depth ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_point_count ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_region_count ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_insert_point ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@point: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_remove_point ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@point: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_insert_region ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@region: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_remove_region ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@region: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_write ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@file: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_print ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_foreach_point ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_foreach_point_custom ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@selector: 
+@locfunc: 
+@func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_foreach_region ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_foreach_region_custom ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@selector: 
+@func: 
+@user_data: 
+<!-- # Unused Parameters # -->
+@locfunc: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_find_deep_region ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@point: 
+@check: 
+@user_data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_find_point ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@selector: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_near_far_traversal ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@far_func: 
+@near_func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_traverse_custom ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@order: 
+@selector: 
+@func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_traverse ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@order: 
+@func: 
+@user_data: 
+
+

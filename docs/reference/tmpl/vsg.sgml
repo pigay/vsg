@@ -1,0 +1,23 @@
+<!-- ##### SECTION Title ##### -->
+vsg
+
+<!-- ##### SECTION Short_Description ##### -->
+Global Vsg library initialization.
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+Use this function to initialize libvsg.
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION vsg_init ##### -->
+<para>
+
+</para>
+
+
+

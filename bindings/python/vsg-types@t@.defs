@@ -1,0 +1,113 @@
+;; -*- scheme -*-
+
+
+(define-boxed "Matrix3@t@"
+  (in-module "Vsg")
+  (c-name "VsgMatrix3@t@")
+  (gtype-id "VSG_TYPE_MATRIX3@T@")
+  (copy-func "vsg_matrix3@t@_boxed_copy")
+  (release-func "vsg_matrix3@t@_free")
+)
+
+(define-boxed "Matrix4@t@"
+  (in-module "Vsg")
+  (c-name "VsgMatrix4@t@")
+  (gtype-id "VSG_TYPE_MATRIX4@T@")
+  (copy-func "vsg_matrix4@t@_boxed_copy")
+  (release-func "vsg_matrix4@t@_free")
+)
+
+(define-boxed PRTree2@t@
+  (in-module "Vsg")
+  (c-name "VsgPRTree2@t@")
+  (gtype-id "VSG_TYPE_PRTREE2@T@")
+  (copy-func "vsg_prtree2@t@_clone")
+  (release-func "vsg_prtree2@t@_free")
+)
+
+(define-boxed PRTree2@t@NodeInfo
+  (in-module "Vsg")
+  (c-name "VsgPRTree2@t@NodeInfo")
+  (gtype-id "VSG_TYPE_PRTREE2@T@_NODE_INFO")
+  (copy-func "vsg_prtree2@t@_node_info_clone")
+  (release-func "vsg_prtree2@t@_node_info_free")
+  (fields
+   '("VsgVector2@t@" "lbound")
+   '("VsgVector2@t@" "ubound")
+   '("VsgVector2@t@" "center")
+   '("GSList*" "point_list")
+   '("GSList*" "region_list")
+   '("guint" "point_count")
+   '("guint" "region_count")
+   '("gpointer" "user_data")
+   '("VsgPRTree2@t@NodeInfo*" "father_info")
+   '("gboolean" "isleaf")
+   )
+)
+
+(define-boxed PRTree3@t@
+  (in-module "Vsg")
+  (c-name "VsgPRTree3@t@")
+  (gtype-id "VSG_TYPE_PRTREE3@T@")
+  (copy-func "vsg_prtree3@t@_clone")
+  (release-func "vsg_prtree3@t@_free")
+)
+
+(define-boxed PRTree3@t@NodeInfo
+  (in-module "Vsg")
+  (c-name "VsgPRTree3@t@NodeInfo")
+  (gtype-id "VSG_TYPE_PRTREE3@T@_NODE_INFO")
+  (copy-func "vsg_prtree3@t@_node_info_clone")
+  (release-func "vsg_prtree3@t@_node_info_free")
+  (fields
+   '("VsgVector3@t@" "lbound")
+   '("VsgVector3@t@" "ubound")
+   '("VsgVector3@t@" "center")
+   '("GSList*" "point_list")
+   '("GSList*" "region_list")
+   '("guint" "point_count")
+   '("guint" "region_count")
+   '("gpointer" "user_data")
+   '("VsgPRTree3@t@NodeInfo*" "father_info")
+   '("gboolean" "isleaf")
+   )
+)
+
+(define-boxed "Quaternion@t@"
+  (in-module "Vsg")
+  (c-name "VsgQuaternion@t@")
+  (gtype-id "VSG_TYPE_QUATERNION@T@")
+  (copy-func "vsg_quaternion@t@_boxed_copy")
+  (release-func "vsg_quaternion@t@_free")
+  (fields
+   '("@type@" "x")
+   '("@type@" "y")
+   '("@type@" "z")
+   '("@type@" "w")
+   )
+)
+
+(define-boxed Vector2@t@
+  (in-module "Vsg")
+  (c-name "VsgVector2@t@")
+  (gtype-id "VSG_TYPE_VECTOR2@T@")
+  (copy-func "vsg_vector2@t@_boxed_copy")
+  (release-func "vsg_vector2@t@_free")
+  (fields
+   '("@type@" "x")
+   '("@type@" "y")
+   )
+)
+
+(define-boxed Vector3@t@
+  (in-module "Vsg")
+  (c-name "VsgVector3@t@")
+  (gtype-id "VSG_TYPE_VECTOR3@T@")
+  (copy-func "vsg_vector3@t@_boxed_copy")
+  (release-func "vsg_vector3@t@_free")
+  (fields
+   '("@type@" "x")
+   '("@type@" "y")
+   '("@type@" "z")
+   )
+)

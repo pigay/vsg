@@ -1,0 +1,391 @@
+<!-- ##### SECTION Title ##### -->
+vsgmatrix4d
+
+<!-- ##### SECTION Short_Description ##### -->
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgmatrix4d-intro.xml" xpointer="/1/1/1"
+            parse="xml" />
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgmatrix4d-intro.xml" xpointer="/1/2"
+            parse="xml" />
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT VsgMatrix4d ##### -->
+<para>
+
+</para>
+
+@components: 
+
+<!-- ##### MACRO VSG_TYPE_MATRIX4D ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION vsg_matrix4d_new ##### -->
+<para>
+
+</para>
+
+@a00: 
+@a01: 
+@a02: 
+@a03: 
+@a10: 
+@a11: 
+@a12: 
+@a13: 
+@a20: 
+@a21: 
+@a22: 
+@a23: 
+@a30: 
+@a31: 
+@a32: 
+@a33: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_free ##### -->
+<para>
+
+</para>
+
+@mat: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_identity_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_rotate_cardan_new ##### -->
+<para>
+
+</para>
+
+@ax: 
+@ay: 
+@az: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_rotate_euler_new ##### -->
+<para>
+
+</para>
+
+@alpha: 
+@beta: 
+@gamma: 
+@Returns: 
+<!-- # Unused Parameters # -->
+@ax: 
+@ay: 
+@az: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_translate_new ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+@z: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_scale_new ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+@z: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_quaterniond_new ##### -->
+<para>
+
+</para>
+
+@quat: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_set ##### -->
+<para>
+
+</para>
+
+@mat: 
+@a00: 
+@a01: 
+@a02: 
+@a03: 
+@a10: 
+@a11: 
+@a12: 
+@a13: 
+@a20: 
+@a21: 
+@a22: 
+@a23: 
+@a30: 
+@a31: 
+@a32: 
+@a33: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_identity ##### -->
+<para>
+
+</para>
+
+@mat: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_copy ##### -->
+<para>
+
+</para>
+
+@src: 
+@dst: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_clone ##### -->
+<para>
+
+</para>
+
+@src: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_rotate_x ##### -->
+<para>
+
+</para>
+
+@mat: 
+@angle: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_rotate_y ##### -->
+<para>
+
+</para>
+
+@mat: 
+@angle: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_rotate_z ##### -->
+<para>
+
+</para>
+
+@mat: 
+@angle: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_rotate_cardan ##### -->
+<para>
+
+</para>
+
+@mat: 
+@ax: 
+@ay: 
+@az: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_rotate_euler ##### -->
+<para>
+
+</para>
+
+@mat: 
+@alpha: 
+@beta: 
+@gamma: 
+<!-- # Unused Parameters # -->
+@ax: 
+@ay: 
+@az: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_translate ##### -->
+<para>
+
+</para>
+
+@mat: 
+@x: 
+@y: 
+@z: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_scale ##### -->
+<para>
+
+</para>
+
+@mat: 
+@x: 
+@y: 
+@z: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_quaterniond_set ##### -->
+<para>
+
+</para>
+
+@mat: 
+@quat: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_quaterniond ##### -->
+<para>
+
+</para>
+
+@mat: 
+@quat: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_add ##### -->
+<para>
+
+</para>
+
+@mat: 
+@other: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_sub ##### -->
+<para>
+
+</para>
+
+@mat: 
+@other: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_matmult ##### -->
+<para>
+
+</para>
+
+@mat: 
+@other: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_vecmult ##### -->
+<para>
+
+</para>
+
+@mat: 
+@vec: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_vec4mult ##### -->
+<para>
+
+</para>
+
+@mat: 
+@vec: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_vec4mult_T ##### -->
+<para>
+
+</para>
+
+@mat: 
+@vec: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_det ##### -->
+<para>
+
+</para>
+
+@mat: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_invert ##### -->
+<para>
+
+</para>
+
+@mat: 
+@result: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_component ##### -->
+<para>
+
+</para>
+
+@mat: 
+@i: 
+@j: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_transpose ##### -->
+<para>
+
+</para>
+
+@mat: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_write ##### -->
+<para>
+
+</para>
+
+@mat: 
+@file: 
+
+
+<!-- ##### FUNCTION vsg_matrix4d_print ##### -->
+<para>
+
+</para>
+
+@mat: 
+
+

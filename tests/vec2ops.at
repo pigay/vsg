@@ -1,0 +1,51 @@
+# -*- autoconf -*-
+# Process this file with autom4te to create testsuite.
+
+# Test suite for LIBVSG - Visaurin Geometric Library
+# Copyright (C) 2006 Pierre Gay
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
+AT_TESTED([vec2add vec2sub vec2dotp vec2scalp vec2vecp vec2norm vec2pred])
+
+AT_SETUP(VsgVector2d addition)
+AT_CHECK(vec2add, 0)
+AT_CLEANUP
+
+AT_SETUP(VsgVector2d substraction)
+AT_CHECK(vec2sub, 0)
+AT_CLEANUP
+
+AT_SETUP(VsgVector2d dot product)
+AT_CHECK(vec2dotp, 0)
+AT_CLEANUP
+
+AT_SETUP(VsgVector2d scalar product)
+AT_CHECK(vec2scalp, 0)
+AT_CLEANUP
+
+AT_SETUP(VsgVector2d vector product)
+AT_CHECK(vec2vecp, 0)
+AT_CLEANUP
+
+AT_SETUP(VsgVector2d norm calculation)
+AT_CHECK(vec2norm, 0)
+AT_CLEANUP
+
+AT_SETUP(VsgVector2d orient/incircle function)
+AT_CHECK(vec2pred, 0)
+AT_CLEANUP
+

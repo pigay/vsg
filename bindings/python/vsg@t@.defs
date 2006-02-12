@@ -1,0 +1,1936 @@
+;; -*- scheme -*-
+; object definitions ...
+;; Enumerations and flags ...
+
+
+;; From ../../src/vsgmatrix3@t@.h
+
+(define-function vsg_matrix3@t@_get_type
+  (c-name "vsg_matrix3@t@_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+(define-function vsg_matrix3@t@_new
+  (c-name "vsg_matrix3@t@_new")
+  (is-constructor-of "VsgMatrix3@t@")
+  (return-type "VsgMatrix3@t@*")
+  (parameters
+    '("@type@" "a00")
+    '("@type@" "a01")
+    '("@type@" "a02")
+    '("@type@" "a10")
+    '("@type@" "a11")
+    '("@type@" "a12")
+    '("@type@" "a20")
+    '("@type@" "a21")
+    '("@type@" "a22")
+  )
+)
+
+(define-method free
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_free")
+  (return-type "none")
+)
+
+(define-function vsg_matrix3@t@_identity_new
+  (c-name "vsg_matrix3@t@_identity_new")
+  (return-type "VsgMatrix3@t@*")
+  (parameters
+  )
+)
+
+(define-function vsg_matrix3@t@_rotate_new
+  (c-name "vsg_matrix3@t@_rotate_new")
+  (return-type "VsgMatrix3@t@*")
+  (parameters
+    '("@type@" "a")
+  )
+)
+
+(define-function vsg_matrix3@t@_translate_new
+  (c-name "vsg_matrix3@t@_translate_new")
+  (return-type "VsgMatrix3@t@*")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+  )
+)
+
+(define-function vsg_matrix3@t@_scale_new
+  (c-name "vsg_matrix3@t@_scale_new")
+  (return-type "VsgMatrix3@t@*")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+  )
+)
+
+(define-method set
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_set")
+  (return-type "none")
+  (parameters
+    '("@type@" "a00")
+    '("@type@" "a01")
+    '("@type@" "a02")
+    '("@type@" "a10")
+    '("@type@" "a11")
+    '("@type@" "a12")
+    '("@type@" "a20")
+    '("@type@" "a21")
+    '("@type@" "a22")
+  )
+)
+
+(define-method identity
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_identity")
+  (return-type "none")
+)
+
+(define-method copy
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_copy")
+  (return-type "none")
+  (parameters
+    '("VsgMatrix3@t@*" "dst")
+  )
+)
+
+(define-method clone
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_clone")
+  (return-type "VsgMatrix3@t@*")
+)
+
+(define-method rotate
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_rotate")
+  (return-type "none")
+  (parameters
+    '("@type@" "a")
+  )
+)
+
+(define-method translate
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_translate")
+  (return-type "none")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+  )
+)
+
+(define-method scale
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_scale")
+  (return-type "none")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+  )
+)
+
+(define-method add
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_add")
+  (return-type "none")
+  (parameters
+    '("const-VsgMatrix3@t@*" "other")
+    '("VsgMatrix3@t@*" "result")
+  )
+)
+
+(define-method sub
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_sub")
+  (return-type "none")
+  (parameters
+    '("const-VsgMatrix3@t@*" "other")
+    '("VsgMatrix3@t@*" "result")
+  )
+)
+
+(define-method matmult
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_matmult")
+  (return-type "none")
+  (parameters
+    '("const-VsgMatrix3@t@*" "other")
+    '("VsgMatrix3@t@*" "result")
+  )
+)
+
+(define-method vecmult
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_vecmult")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector2@t@*" "vec")
+    '("VsgVector2@t@*" "result")
+  )
+)
+
+(define-method vec3mult
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_vec3mult")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector3@t@*" "vec")
+    '("VsgVector3@t@*" "result")
+  )
+)
+
+(define-method vec3mult_T
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_vec3mult_T")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector3@t@*" "vec")
+    '("VsgVector3@t@*" "result")
+  )
+)
+
+(define-method det
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_det")
+  (return-type "@type@")
+)
+
+(define-method invert
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_invert")
+  (return-type "gboolean")
+  (parameters
+    '("VsgMatrix3@t@*" "result")
+  )
+)
+
+(define-method component
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_component")
+  (return-type "@type@")
+  (parameters
+    '("guint" "i")
+    '("guint" "j")
+  )
+)
+
+(define-method transpose
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_transpose")
+  (return-type "none")
+  (parameters
+    '("VsgMatrix3@t@*" "result")
+  )
+)
+
+(define-method write
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_write")
+  (return-type "none")
+  (parameters
+    '("FILE*" "file")
+  )
+)
+
+(define-method print
+  (of-object "VsgMatrix3@t@")
+  (c-name "vsg_matrix3@t@_print")
+  (return-type "none")
+)
+
+
+
+;; From ../../src/vsgmatrix4@t@.h
+
+(define-function vsg_matrix4@t@_get_type
+  (c-name "vsg_matrix4@t@_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+(define-function vsg_matrix4@t@_new
+  (c-name "vsg_matrix4@t@_new")
+  (is-constructor-of "VsgMatrix4@t@")
+  (return-type "VsgMatrix4@t@*")
+  (parameters
+    '("@type@" "a00")
+    '("@type@" "a01")
+    '("@type@" "a02")
+    '("@type@" "a03")
+    '("@type@" "a10")
+    '("@type@" "a11")
+    '("@type@" "a12")
+    '("@type@" "a13")
+    '("@type@" "a20")
+    '("@type@" "a21")
+    '("@type@" "a22")
+    '("@type@" "a23")
+    '("@type@" "a30")
+    '("@type@" "a31")
+    '("@type@" "a32")
+    '("@type@" "a33")
+  )
+)
+
+(define-method free
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_free")
+  (return-type "none")
+)
+
+(define-function vsg_matrix4@t@_identity_new
+  (c-name "vsg_matrix4@t@_identity_new")
+  (return-type "VsgMatrix4@t@*")
+  (parameters
+  )
+)
+
+(define-function vsg_matrix4@t@_rotate_cardan_new
+  (c-name "vsg_matrix4@t@_rotate_cardan_new")
+  (return-type "VsgMatrix4@t@*")
+  (parameters
+    '("@type@" "ax")
+    '("@type@" "ay")
+    '("@type@" "az")
+  )
+)
+
+(define-function vsg_matrix4@t@_rotate_euler_new
+  (c-name "vsg_matrix4@t@_rotate_euler_new")
+  (return-type "VsgMatrix4@t@*")
+  (parameters
+    '("@type@" "alpha")
+    '("@type@" "beta")
+    '("@type@" "gamma")
+  )
+)
+
+(define-function vsg_matrix4@t@_translate_new
+  (c-name "vsg_matrix4@t@_translate_new")
+  (return-type "VsgMatrix4@t@*")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+    '("@type@" "z")
+  )
+)
+
+(define-function vsg_matrix4@t@_scale_new
+  (c-name "vsg_matrix4@t@_scale_new")
+  (return-type "VsgMatrix4@t@*")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+    '("@type@" "z")
+  )
+)
+
+(define-function vsg_matrix4@t@_quaternion@t@_new
+  (c-name "vsg_matrix4@t@_quaternion@t@_new")
+  (return-type "VsgMatrix4@t@*")
+  (parameters
+    '("const-VsgQuaternion@t@*" "quat")
+  )
+)
+
+(define-method set
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_set")
+  (return-type "none")
+  (parameters
+    '("@type@" "a00")
+    '("@type@" "a01")
+    '("@type@" "a02")
+    '("@type@" "a03")
+    '("@type@" "a10")
+    '("@type@" "a11")
+    '("@type@" "a12")
+    '("@type@" "a13")
+    '("@type@" "a20")
+    '("@type@" "a21")
+    '("@type@" "a22")
+    '("@type@" "a23")
+    '("@type@" "a30")
+    '("@type@" "a31")
+    '("@type@" "a32")
+    '("@type@" "a33")
+  )
+)
+
+(define-method identity
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_identity")
+  (return-type "none")
+)
+
+(define-method copy
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_copy")
+  (return-type "none")
+  (parameters
+    '("VsgMatrix4@t@*" "dst")
+  )
+)
+
+(define-method clone
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_clone")
+  (return-type "VsgMatrix4@t@*")
+)
+
+(define-method rotate_cardan
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_rotate_cardan")
+  (return-type "none")
+  (parameters
+    '("@type@" "ax")
+    '("@type@" "ay")
+    '("@type@" "az")
+  )
+)
+
+(define-method rotate_x
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_rotate_x")
+  (return-type "none")
+  (parameters
+    '("@type@" "angle")
+  )
+)
+
+(define-method rotate_y
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_rotate_y")
+  (return-type "none")
+  (parameters
+    '("@type@" "angle")
+  )
+)
+
+(define-method rotate_z
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_rotate_z")
+  (return-type "none")
+  (parameters
+    '("@type@" "angle")
+  )
+)
+
+(define-method rotate_euler
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_rotate_euler")
+  (return-type "none")
+  (parameters
+    '("@type@" "alpha")
+    '("@type@" "beta")
+    '("@type@" "gamma")
+  )
+)
+
+(define-method translate
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_translate")
+  (return-type "none")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+    '("@type@" "z")
+  )
+)
+
+(define-method scale
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_scale")
+  (return-type "none")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+    '("@type@" "z")
+  )
+)
+
+(define-method quaternion@t@_set
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_quaternion@t@_set")
+  (return-type "none")
+  (parameters
+    '("const-VsgQuaternion@t@*" "quat")
+  )
+)
+
+(define-method quaternion@t@
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_quaternion@t@")
+  (return-type "none")
+  (parameters
+    '("const-VsgQuaternion@t@*" "quat")
+  )
+)
+
+(define-method add
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_add")
+  (return-type "none")
+  (parameters
+    '("const-VsgMatrix4@t@*" "other")
+    '("VsgMatrix4@t@*" "result")
+  )
+)
+
+(define-method sub
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_sub")
+  (return-type "none")
+  (parameters
+    '("const-VsgMatrix4@t@*" "other")
+    '("VsgMatrix4@t@*" "result")
+  )
+)
+
+(define-method matmult
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_matmult")
+  (return-type "none")
+  (parameters
+    '("const-VsgMatrix4@t@*" "other")
+    '("VsgMatrix4@t@*" "result")
+  )
+)
+
+(define-method vecmult
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_vecmult")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector3@t@*" "vec")
+    '("VsgVector3@t@*" "result")
+  )
+)
+
+(define-method vec4mult
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_vec4mult")
+  (return-type "none")
+  (parameters
+    '("const-VsgQuaternion@t@*" "vec")
+    '("VsgQuaternion@t@*" "result")
+  )
+)
+
+(define-method vec4mult_T
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_vec4mult_T")
+  (return-type "none")
+  (parameters
+    '("const-VsgQuaternion@t@*" "vec")
+    '("VsgQuaternion@t@*" "result")
+  )
+)
+
+(define-method det
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_det")
+  (return-type "@type@")
+)
+
+(define-method invert
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_invert")
+  (return-type "gboolean")
+  (parameters
+    '("VsgMatrix4@t@*" "result")
+  )
+)
+
+(define-method component
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_component")
+  (return-type "@type@")
+  (parameters
+    '("guint" "i")
+    '("guint" "j")
+  )
+)
+
+(define-method transpose
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_transpose")
+  (return-type "none")
+  (parameters
+    '("VsgMatrix4@t@*" "result")
+  )
+)
+
+(define-method write
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_write")
+  (return-type "none")
+  (parameters
+    '("FILE*" "file")
+  )
+)
+
+(define-method print
+  (of-object "VsgMatrix4@t@")
+  (c-name "vsg_matrix4@t@_print")
+  (return-type "none")
+)
+
+
+
+;; From ../../src/vsgprtree2@t@.h
+
+(define-function vsg_prtree2@t@_node_info_get_type
+  (c-name "vsg_prtree2@t@_node_info_get_type")
+  (return-type "GType")
+)
+
+(define-method free
+  (of-object "VsgPRTree2@t@NodeInfo")
+  (c-name "vsg_prtree2@t@_node_info_free")
+  (return-type "none")
+)
+
+(define-method clone
+  (of-object "VsgPRTree2@t@NodeInfo")
+  (c-name "vsg_prtree2@t@_node_info_clone")
+  (return-type "VsgPRTree2@t@NodeInfo*")
+)
+
+(define-function vsg_prtree2@t@_get_type
+  (c-name "vsg_prtree2@t@_get_type")
+  (return-type "GType")
+)
+
+(define-function vsg_prtree2@t@_new_full
+  (c-name "vsg_prtree2@t@_new_full")
+  (return-type "VsgPRTree2@t@*")
+  (parameters
+    '("const-VsgVector2@t@*" "lbound")
+    '("const-VsgVector2@t@*" "ubound")
+    '("const-VsgPoint2@t@LocFunc" "point_locfunc")
+    '("const-VsgPoint2@t@DistFunc" "point_distfunc")
+    '("const-VsgRegion2@t@LocFunc" "region_locfunc")
+    '("guint" "max_point")
+  )
+)
+
+(define-method free
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_free")
+  (return-type "none")
+)
+
+(define-method clone
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_clone")
+  (return-type "VsgPRTree2@t@*")
+)
+
+(define-method set_point_loc_marshall
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_set_point_loc_marshall")
+  (return-type "none")
+  (parameters
+    '("VsgPoint2@t@LocMarshall" "marshall")
+    '("gpointer" "locdata")
+  )
+)
+
+(define-method set_region_loc_marshall
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_set_region_loc_marshall")
+  (return-type "none")
+  (parameters
+    '("VsgRegion2@t@LocMarshall" "marshall")
+    '("gpointer" "locdata")
+  )
+)
+
+(define-method set_point_dist_marshall
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_set_point_dist_marshall")
+  (return-type "none")
+  (parameters
+    '("VsgPoint2@t@DistMarshall" "marshall")
+    '("gpointer" "distdata")
+  )
+)
+
+(define-method get_tolerance
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_get_tolerance")
+  (return-type "@type@")
+)
+
+(define-method set_tolerance
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_set_tolerance")
+  (return-type "none")
+  (parameters
+    '("@type@" "tolerance")
+  )
+)
+
+(define-method set_node_data
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_set_node_data")
+  (return-type "none")
+  (parameters
+    '("GType" "user_data_type")
+    '("gpointer" "user_data_model")
+  )
+)
+
+(define-method get_bounds
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_get_bounds")
+  (return-type "none")
+  (parameters
+    '("VsgVector2@t@*" "lbound")
+    '("VsgVector2@t@*" "ubound")
+  )
+)
+
+(define-method depth
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_depth")
+  (return-type "guint")
+)
+
+(define-method point_count
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_point_count")
+  (return-type "guint")
+)
+
+(define-method region_count
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_region_count")
+  (return-type "guint")
+)
+
+(define-method insert_point
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_insert_point")
+  (return-type "none")
+  (parameters
+    '("VsgPoint2" "point")
+  )
+)
+
+(define-method remove_point
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_remove_point")
+  (return-type "gboolean")
+  (parameters
+    '("VsgPoint2" "point")
+  )
+)
+
+(define-method insert_region
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_insert_region")
+  (return-type "none")
+  (parameters
+    '("VsgRegion2" "region")
+  )
+)
+
+(define-method remove_region
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_remove_region")
+  (return-type "gboolean")
+  (parameters
+    '("VsgRegion2" "region")
+  )
+)
+
+(define-method write
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_write")
+  (return-type "none")
+  (parameters
+    '("FILE*" "file")
+  )
+)
+
+(define-method print
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_print")
+  (return-type "none")
+)
+
+(define-method find_point
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_find_point")
+  (return-type "VsgPoint2")
+  (parameters
+    '("VsgPoint2" "selector")
+  )
+)
+
+(define-method foreach_point
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_foreach_point")
+  (return-type "none")
+  (parameters
+    '("GFunc" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method foreach_point_custom
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_foreach_point_custom")
+  (return-type "none")
+  (parameters
+    '("VsgRegion2" "selector")
+    '("VsgRegion2Point2LocFunc" "locfunc")
+    '("GFunc" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method foreach_region
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_foreach_region")
+  (return-type "none")
+  (parameters
+    '("GFunc" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method foreach_region_custom
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_foreach_region_custom")
+  (return-type "none")
+  (parameters
+    '("VsgRegion2" "selector")
+    '("GFunc" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method find_deep_region
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_find_deep_region")
+  (return-type "VsgRegion2")
+  (parameters
+    '("VsgPoint2" "point")
+    '("VsgRegion2CheckFunc" "check")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method traverse
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_traverse")
+  (return-type "none")
+  (parameters
+    '("GTraverseType" "order")
+    '("VsgPRTree2@t@Func" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method traverse_custom
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_traverse_custom")
+  (return-type "none")
+  (parameters
+    '("GTraverseType" "order")
+    '("VsgRegion2" "selector")
+    '("VsgPRTree2@t@Func" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+
+
+;; From ../../src/vsgprtree2-common.h
+
+
+
+;; From ../../src/vsgprtree2@t@-extras.h
+
+(define-method near_far_traversal
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_near_far_traversal")
+  (return-type "none")
+  (parameters
+    '("VsgPRTree2@t@InteractionFunc" "far_func")
+    '("VsgPRTree2@t@InteractionFunc" "near_func")
+    '("gpointer" "user_data")
+  )
+)
+
+
+
+;; From ../../src/vsgprtree3@t@.h
+
+(define-function vsg_prtree3@t@_node_info_get_type
+  (c-name "vsg_prtree3@t@_node_info_get_type")
+  (return-type "GType")
+)
+
+(define-method free
+  (of-object "VsgPRTree3@t@NodeInfo")
+  (c-name "vsg_prtree3@t@_node_info_free")
+  (return-type "none")
+)
+
+(define-method clone
+  (of-object "VsgPRTree3@t@NodeInfo")
+  (c-name "vsg_prtree3@t@_node_info_clone")
+  (return-type "VsgPRTree3@t@NodeInfo*")
+)
+
+(define-function vsg_prtree3@t@_get_type
+  (c-name "vsg_prtree3@t@_get_type")
+  (return-type "GType")
+)
+
+(define-function vsg_prtree3@t@_new_full
+  (c-name "vsg_prtree3@t@_new_full")
+  (return-type "VsgPRTree3@t@*")
+  (parameters
+    '("const-VsgVector3@t@*" "lbound")
+    '("const-VsgVector3@t@*" "ubound")
+    '("const-VsgPoint3@t@LocFunc" "point_locfunc")
+    '("const-VsgPoint3@t@DistFunc" "point_distfunc")
+    '("const-VsgRegion3@t@LocFunc" "region_locfunc")
+    '("guint" "max_point")
+  )
+)
+
+(define-method free
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_free")
+  (return-type "none")
+)
+
+(define-method clone
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_clone")
+  (return-type "VsgPRTree3@t@*")
+)
+
+(define-method set_point_loc_marshall
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_set_point_loc_marshall")
+  (return-type "none")
+  (parameters
+    '("VsgPoint3@t@LocMarshall" "marshall")
+    '("gpointer" "locdata")
+  )
+)
+
+(define-method set_region_loc_marshall
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_set_region_loc_marshall")
+  (return-type "none")
+  (parameters
+    '("VsgRegion3@t@LocMarshall" "marshall")
+    '("gpointer" "locdata")
+  )
+)
+
+(define-method set_point_dist_marshall
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_set_point_dist_marshall")
+  (return-type "none")
+  (parameters
+    '("VsgPoint3@t@DistMarshall" "marshall")
+    '("gpointer" "distdata")
+  )
+)
+
+(define-method get_tolerance
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_get_tolerance")
+  (return-type "@type@")
+)
+
+(define-method set_tolerance
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_set_tolerance")
+  (return-type "none")
+  (parameters
+    '("@type@" "tolerance")
+  )
+)
+
+(define-method set_node_data
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_set_node_data")
+  (return-type "none")
+  (parameters
+    '("GType" "user_data_type")
+    '("gpointer" "user_data_model")
+  )
+)
+
+(define-method get_bounds
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_get_bounds")
+  (return-type "none")
+  (parameters
+    '("VsgVector3@t@*" "lbound")
+    '("VsgVector3@t@*" "ubound")
+  )
+)
+
+(define-method depth
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_depth")
+  (return-type "guint")
+)
+
+(define-method point_count
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_point_count")
+  (return-type "guint")
+)
+
+(define-method region_count
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_region_count")
+  (return-type "guint")
+)
+
+(define-method insert_point
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_insert_point")
+  (return-type "none")
+  (parameters
+    '("VsgPoint3" "point")
+  )
+)
+
+(define-method remove_point
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_remove_point")
+  (return-type "gboolean")
+  (parameters
+    '("VsgPoint3" "point")
+  )
+)
+
+(define-method insert_region
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_insert_region")
+  (return-type "none")
+  (parameters
+    '("VsgRegion3" "region")
+  )
+)
+
+(define-method remove_region
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_remove_region")
+  (return-type "gboolean")
+  (parameters
+    '("VsgRegion3" "region")
+  )
+)
+
+(define-method write
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_write")
+  (return-type "none")
+  (parameters
+    '("FILE*" "file")
+  )
+)
+
+(define-method print
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_print")
+  (return-type "none")
+)
+
+(define-method find_point
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_find_point")
+  (return-type "VsgPoint3")
+  (parameters
+    '("VsgPoint3" "selector")
+  )
+)
+
+(define-method foreach_point
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_foreach_point")
+  (return-type "none")
+  (parameters
+    '("GFunc" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method foreach_point_custom
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_foreach_point_custom")
+  (return-type "none")
+  (parameters
+    '("VsgRegion3" "selector")
+    '("VsgRegion3Point3LocFunc" "locfunc")
+    '("GFunc" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method foreach_region
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_foreach_region")
+  (return-type "none")
+  (parameters
+    '("GFunc" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method foreach_region_custom
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_foreach_region_custom")
+  (return-type "none")
+  (parameters
+    '("VsgRegion3" "selector")
+    '("GFunc" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method find_deep_region
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_find_deep_region")
+  (return-type "VsgRegion3")
+  (parameters
+    '("VsgPoint3" "point")
+    '("VsgRegion3CheckFunc" "check")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method traverse
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_traverse")
+  (return-type "none")
+  (parameters
+    '("GTraverseType" "order")
+    '("VsgPRTree3@t@Func" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method traverse_custom
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_traverse_custom")
+  (return-type "none")
+  (parameters
+    '("GTraverseType" "order")
+    '("VsgRegion3" "selector")
+    '("VsgPRTree3@t@Func" "func")
+    '("gpointer" "user_data")
+  )
+)
+
+
+
+;; From ../../src/vsgprtree3-common.h
+
+
+
+;; From ../../src/vsgprtree3@t@-extras.h
+
+(define-method near_far_traversal
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_near_far_traversal")
+  (return-type "none")
+  (parameters
+    '("VsgPRTree3@t@InteractionFunc" "far_func")
+    '("VsgPRTree3@t@InteractionFunc" "near_func")
+    '("gpointer" "user_data")
+  )
+)
+
+
+
+;; From ../../src/vsgquaternion@t@.h
+
+(define-function vsg_quaternion@t@_get_type
+  (c-name "vsg_quaternion@t@_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+(define-function vsg_quaternion@t@_new
+  (c-name "vsg_quaternion@t@_new")
+  (is-constructor-of "VsgQuaternion@t@")
+  (return-type "VsgQuaternion@t@*")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+    '("@type@" "z")
+    '("@type@" "w")
+  )
+)
+
+(define-method free
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_free")
+  (return-type "none")
+)
+
+(define-function vsg_quaternion@t@_identity_new
+  (c-name "vsg_quaternion@t@_identity_new")
+  (return-type "VsgQuaternion@t@*")
+  (parameters
+  )
+)
+
+(define-function vsg_quaternion@t@_vector3@t@_new
+  (c-name "vsg_quaternion@t@_vector3@t@_new")
+  (return-type "VsgQuaternion@t@*")
+  (parameters
+    '("const-VsgVector3@t@*" "vector")
+  )
+)
+
+(define-function vsg_quaternion@t@_vector3@alt_t@_new
+  (c-name "vsg_quaternion@t@_vector3@alt_t@_new")
+  (return-type "VsgQuaternion@t@*")
+  (parameters
+    '("const-VsgVector3@alt_t@*" "vector")
+  )
+)
+
+(define-method set
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_set")
+  (return-type "none")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+    '("@type@" "z")
+    '("@type@" "w")
+  )
+)
+
+(define-method vector3@t@_set
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_vector3@t@_set")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector3@t@*" "vector")
+  )
+)
+
+(define-method vector3@alt_t@_set
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_vector3@alt_t@_set")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector3@alt_t@*" "vector")
+  )
+)
+
+(define-method identity
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_identity")
+  (return-type "none")
+)
+
+(define-method make_rotate@t@
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_make_rotate@t@")
+  (return-type "none")
+  (parameters
+    '("@type@" "angle")
+    '("const-VsgVector3@t@*" "vec")
+  )
+)
+
+(define-method rotate@t@_set
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_rotate@t@_set")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector3@t@*" "from")
+    '("const-VsgVector3@t@*" "to")
+  )
+)
+
+(define-method rotate_x
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_rotate_x")
+  (return-type "none")
+  (parameters
+    '("@type@" "angle")
+  )
+)
+
+(define-method rotate_y
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_rotate_y")
+  (return-type "none")
+  (parameters
+    '("@type@" "angle")
+  )
+)
+
+(define-method rotate_z
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_rotate_z")
+  (return-type "none")
+  (parameters
+    '("@type@" "angle")
+  )
+)
+
+(define-method rotate_cardan
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_rotate_cardan")
+  (return-type "none")
+  (parameters
+    '("@type@" "ax")
+    '("@type@" "ay")
+    '("@type@" "az")
+  )
+)
+
+(define-method rotate_euler
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_rotate_euler")
+  (return-type "none")
+  (parameters
+    '("@type@" "alpha")
+    '("@type@" "beta")
+    '("@type@" "gamma")
+  )
+)
+
+(define-method copy
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_copy")
+  (return-type "none")
+  (parameters
+    '("VsgQuaternion@t@*" "dst")
+  )
+)
+
+(define-method clone
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_clone")
+  (return-type "VsgQuaternion@t@*")
+)
+
+(define-method square_norm
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_square_norm")
+  (return-type "@type@")
+)
+
+(define-method norm
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_norm")
+  (return-type "@type@")
+)
+
+(define-method normalize
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_normalize")
+  (return-type "none")
+)
+
+(define-method scalp
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_scalp")
+  (return-type "none")
+  (parameters
+    '("@type@" "scal")
+    '("VsgQuaternion@t@*" "result")
+  )
+)
+
+(define-method dotp
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_dotp")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgQuaternion@t@*" "other")
+  )
+)
+
+(define-method mult
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_mult")
+  (return-type "none")
+  (parameters
+    '("const-VsgQuaternion@t@*" "other")
+    '("VsgQuaternion@t@*" "result")
+  )
+)
+
+(define-method invert
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_invert")
+  (return-type "gboolean")
+  (parameters
+    '("VsgQuaternion@t@*" "result")
+  )
+)
+
+(define-method slerp
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_slerp")
+  (return-type "none")
+  (parameters
+    '("const-VsgQuaternion@t@*" "quat2")
+    '("@type@" "t")
+    '("VsgQuaternion@t@*" "result")
+  )
+)
+
+(define-method conjugate
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_conjugate")
+  (return-type "none")
+  (parameters
+    '("VsgQuaternion@t@*" "result")
+  )
+)
+
+(define-method write
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_write")
+  (return-type "none")
+  (parameters
+    '("FILE*" "file")
+  )
+)
+
+(define-method print
+  (of-object "VsgQuaternion@t@")
+  (c-name "vsg_quaternion@t@_print")
+  (return-type "none")
+)
+
+
+
+;; From ../../src/vsgvector2@t@.h
+
+(define-function vsg_vector2@t@_get_type
+  (c-name "vsg_vector2@t@_get_type")
+  (return-type "GType")
+)
+
+(define-function vsg_vector2@t@_new
+  (c-name "vsg_vector2@t@_new")
+  (is-constructor-of "VsgVector2@t@")
+  (return-type "VsgVector2@t@*")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+  )
+)
+
+(define-method free
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_free")
+  (return-type "none")
+)
+
+(define-method set
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_set")
+  (return-type "none")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+  )
+)
+
+(define-method copy
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_copy")
+  (return-type "none")
+  (parameters
+    '("VsgVector2@t@*" "dst")
+  )
+)
+
+(define-method clone
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_clone")
+  (return-type "VsgVector2@t@*")
+)
+
+(define-method square_norm
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_square_norm")
+  (return-type "@type@")
+)
+
+(define-method norm
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_norm")
+  (return-type "@type@")
+)
+
+(define-method dist
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_dist")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgVector2@t@*" "other")
+  )
+)
+
+(define-method normalize
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_normalize")
+  (return-type "none")
+)
+
+(define-method scalp
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_scalp")
+  (return-type "none")
+  (parameters
+    '("@type@" "scal")
+    '("VsgVector2@t@*" "res")
+  )
+)
+
+(define-method dotp
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_dotp")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgVector2@t@*" "other")
+  )
+)
+
+(define-method vecp
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_vecp")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgVector2@t@*" "other")
+  )
+)
+
+(define-method add
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_add")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector2@t@*" "other")
+    '("VsgVector2@t@*" "result")
+  )
+)
+
+(define-method sub
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_sub")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector2@t@*" "other")
+    '("VsgVector2@t@*" "result")
+  )
+)
+
+(define-method lerp
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_lerp")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector2@t@*" "other")
+    '("@type@" "factor")
+    '("VsgVector2@t@*" "result")
+  )
+)
+
+(define-method copy@alt_t@
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_copy@alt_t@")
+  (return-type "none")
+  (parameters
+    '("VsgVector2@alt_t@*" "dst")
+  )
+)
+
+(define-method is_zero
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_is_zero")
+  (return-type "gboolean")
+)
+
+(define-method write
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_write")
+  (return-type "none")
+  (parameters
+    '("FILE*" "file")
+  )
+)
+
+(define-method print
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_print")
+  (return-type "none")
+)
+
+(define-method to_polar_internal
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_to_polar_internal")
+  (return-type "none")
+  (parameters
+    '("@type@*" "r")
+    '("@type@*" "cost")
+    '("@type@*" "sint")
+  )
+)
+
+(define-method to_polar
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_to_polar")
+  (return-type "none")
+  (parameters
+    '("@type@*" "r")
+    '("@type@*" "theta")
+  )
+)
+
+(define-method from_polar_internal
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_from_polar_internal")
+  (return-type "none")
+  (parameters
+    '("@type@" "r")
+    '("@type@" "cost")
+    '("@type@" "sint")
+  )
+)
+
+(define-method from_polar
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_from_polar")
+  (return-type "none")
+  (parameters
+    '("@type@" "r")
+    '("@type@" "theta")
+  )
+)
+
+(define-method orient
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_orient")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgVector2@t@*" "pb")
+    '("const-VsgVector2@t@*" "pc")
+  )
+)
+
+(define-method incircle
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_incircle")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgVector2@t@*" "pb")
+    '("const-VsgVector2@t@*" "pc")
+    '("const-VsgVector2@t@*" "pd")
+  )
+)
+
+(define-method vector2@t@_locfunc
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_vector2@t@_locfunc")
+  (return-type "vsgloc2")
+  (parameters
+    '("const-VsgVector2@t@*" "center")
+  )
+)
+
+(define-method vector2@alt_t@_locfunc
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@_vector2@alt_t@_locfunc")
+  (return-type "vsgloc2")
+  (parameters
+    '("const-VsgVector2@alt_t@*" "center")
+  )
+)
+
+
+
+;; From ../../src/vsgvector3@t@.h
+
+(define-function vsg_vector3@t@_get_type
+  (c-name "vsg_vector3@t@_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+(define-function vsg_vector3@t@_new
+  (c-name "vsg_vector3@t@_new")
+  (is-constructor-of "VsgVector3@t@")
+  (return-type "VsgVector3@t@*")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+    '("@type@" "z")
+  )
+)
+
+(define-method free
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_free")
+  (return-type "none")
+)
+
+(define-method set
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_set")
+  (return-type "none")
+  (parameters
+    '("@type@" "x")
+    '("@type@" "y")
+    '("@type@" "z")
+  )
+)
+
+(define-method copy
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_copy")
+  (return-type "none")
+  (parameters
+    '("VsgVector3@t@*" "dst")
+  )
+)
+
+(define-method clone
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_clone")
+  (return-type "VsgVector3@t@*")
+)
+
+(define-method square_norm
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_square_norm")
+  (return-type "@type@")
+)
+
+(define-method norm
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_norm")
+  (return-type "@type@")
+)
+
+(define-method dist
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_dist")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgVector3@t@*" "other")
+  )
+)
+
+(define-method normalize
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_normalize")
+  (return-type "none")
+)
+
+(define-method scalp
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_scalp")
+  (return-type "none")
+  (parameters
+    '("@type@" "scal")
+    '("VsgVector3@t@*" "res")
+  )
+)
+
+(define-method dotp
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_dotp")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgVector3@t@*" "other")
+  )
+)
+
+(define-method vecp
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_vecp")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector3@t@*" "other")
+    '("VsgVector3@t@*" "result")
+  )
+)
+
+(define-method add
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_add")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector3@t@*" "other")
+    '("VsgVector3@t@*" "result")
+  )
+)
+
+(define-method sub
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_sub")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector3@t@*" "other")
+    '("VsgVector3@t@*" "result")
+  )
+)
+
+(define-method lerp
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_lerp")
+  (return-type "none")
+  (parameters
+    '("const-VsgVector3@t@*" "other")
+    '("@type@" "factor")
+    '("VsgVector3@t@*" "result")
+  )
+)
+
+(define-method copy@alt_t@
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_copy@alt_t@")
+  (return-type "none")
+  (parameters
+    '("VsgVector3@alt_t@*" "dst")
+  )
+)
+
+(define-method is_zero
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_is_zero")
+  (return-type "gboolean")
+)
+
+(define-method write
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_write")
+  (return-type "none")
+  (parameters
+    '("FILE*" "file")
+  )
+)
+
+(define-method print
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_print")
+  (return-type "none")
+)
+
+(define-method to_spherical_internal
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_to_spherical_internal")
+  (return-type "none")
+  (parameters
+    '("@type@*" "r")
+    '("@type@*" "cost")
+    '("@type@*" "sint")
+    '("@type@*" "cosp")
+    '("@type@*" "sinp")
+  )
+)
+
+(define-method to_spherical
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_to_spherical")
+  (return-type "none")
+  (parameters
+    '("@type@*" "r")
+    '("@type@*" "theta")
+    '("@type@*" "phi")
+  )
+)
+
+(define-method from_spherical_internal
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_from_spherical_internal")
+  (return-type "none")
+  (parameters
+    '("@type@" "r")
+    '("@type@" "cost")
+    '("@type@" "sint")
+    '("@type@" "cosp")
+    '("@type@" "sinp")
+  )
+)
+
+(define-method from_spherical
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_from_spherical")
+  (return-type "none")
+  (parameters
+    '("@type@" "r")
+    '("@type@" "theta")
+    '("@type@" "phi")
+  )
+)
+
+(define-method orient
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_orient")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgVector3@t@*" "pb")
+    '("const-VsgVector3@t@*" "pc")
+    '("const-VsgVector3@t@*" "pd")
+  )
+)
+
+(define-method insphere
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_insphere")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgVector3@t@*" "pb")
+    '("const-VsgVector3@t@*" "pc")
+    '("const-VsgVector3@t@*" "pd")
+    '("const-VsgVector3@t@*" "pe")
+  )
+)
+
+(define-method vector3@t@_locfunc
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_vector3@t@_locfunc")
+  (return-type "vsgloc3")
+  (parameters
+    '("const-VsgVector3@t@*" "center")
+  )
+)
+
+(define-method vector3@alt_t@_locfunc
+  (of-object "VsgVector3@t@")
+  (c-name "vsg_vector3@t@_vector3@alt_t@_locfunc")
+  (return-type "vsgloc3")
+  (parameters
+    '("const-VsgVector3@alt_t@*" "center")
+  )
+)
+
+

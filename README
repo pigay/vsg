@@ -1,0 +1,27 @@
+General Information
+===================
+
+LibVsg is a 2D/3D software library with a focus on basic geometric
+manipulations. It's released under the GNU LGPL. Written for C, it
+provides support for single and double precision arithmetics.
+
+Provided features include several datatypes and the corresponding API:
+
+  - 2D/3D points/vectors.
+  - Quaternions (3D rotations presented in a 4D unit vector).
+  - 2D/3D affine transforms (3x3 and 4x4 martices, repsectively).
+  - Geometric containers, such as spatial filters: currently only
+    Point/Region binray trees (both 2D and 3D).
+
+Although the main API is a C interface, a Python wrapper comes with the
+library source distribution.
+
+Installation
+============
+
+See the file 'INSTALL'
+
+Documentation
+=============
+
+See the doc/reference of the distribution.

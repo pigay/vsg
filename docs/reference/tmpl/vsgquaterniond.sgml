@@ -1,0 +1,325 @@
+<!-- ##### SECTION Title ##### -->
+vsgquaterniond
+
+<!-- ##### SECTION Short_Description ##### -->
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgquaterniond-intro.xml" xpointer="/1/1/1"
+            parse="xml" />
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgquaterniond-intro.xml" xpointer="/1/2"
+            parse="xml" />
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT VsgQuaterniond ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+@z: 
+@w: 
+
+<!-- ##### MACRO VSG_TYPE_QUATERNIOND ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_QUATERNIOND_COMP ##### -->
+<para>
+
+</para>
+
+@quat: 
+@i: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_new ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+@z: 
+@w: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_free ##### -->
+<para>
+
+</para>
+
+@quat: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_identity_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_vector3d_new ##### -->
+<para>
+
+</para>
+
+@vector: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_vector3f_new ##### -->
+<para>
+
+</para>
+
+@vector: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_set ##### -->
+<para>
+
+</para>
+
+@quat: 
+@x: 
+@y: 
+@z: 
+@w: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_vector3d_set ##### -->
+<para>
+
+</para>
+
+@quat: 
+@vector: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_vector3f_set ##### -->
+<para>
+
+</para>
+
+@quat: 
+@vector: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_identity ##### -->
+<para>
+
+</para>
+
+@quat: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_make_rotated ##### -->
+<para>
+
+</para>
+
+@quat: 
+@angle: 
+@vec: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_rotated_set ##### -->
+<para>
+
+</para>
+
+@quat: 
+@from: 
+@to: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_rotate_x ##### -->
+<para>
+
+</para>
+
+@quat: 
+@angle: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_rotate_y ##### -->
+<para>
+
+</para>
+
+@quat: 
+@angle: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_rotate_z ##### -->
+<para>
+
+</para>
+
+@quat: 
+@angle: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_rotate_cardan ##### -->
+<para>
+
+</para>
+
+@quat: 
+@ax: 
+@ay: 
+@az: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_rotate_euler ##### -->
+<para>
+
+</para>
+
+@quat: 
+@alpha: 
+@beta: 
+@gamma: 
+<!-- # Unused Parameters # -->
+@ax: 
+@ay: 
+@az: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_copy ##### -->
+<para>
+
+</para>
+
+@src: 
+@dst: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_clone ##### -->
+<para>
+
+</para>
+
+@src: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_square_norm ##### -->
+<para>
+
+</para>
+
+@quat: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_norm ##### -->
+<para>
+
+</para>
+
+@quat: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_normalize ##### -->
+<para>
+
+</para>
+
+@quat: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_scalp ##### -->
+<para>
+
+</para>
+
+@quat: 
+@scal: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_dotp ##### -->
+<para>
+
+</para>
+
+@quat: 
+@other: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_mult ##### -->
+<para>
+
+</para>
+
+@quat: 
+@other: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_invert ##### -->
+<para>
+
+</para>
+
+@quat: 
+@result: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_slerp ##### -->
+<para>
+
+</para>
+
+@quat1: 
+@quat2: 
+@t: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_conjugate ##### -->
+<para>
+
+</para>
+
+@quat: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_write ##### -->
+<para>
+
+</para>
+
+@quat: 
+@file: 
+
+
+<!-- ##### FUNCTION vsg_quaterniond_print ##### -->
+<para>
+
+</para>
+
+@quat: 
+
+

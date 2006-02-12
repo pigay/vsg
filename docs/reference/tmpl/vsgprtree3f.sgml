@@ -1,0 +1,422 @@
+<!-- ##### SECTION Title ##### -->
+vsgprtree3f
+
+<!-- ##### SECTION Short_Description ##### -->
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgprtree3f-intro.xml" xpointer="/1/1/1"
+            parse="xml" />
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgprtree3f-intro.xml" xpointer="/1/2"
+            parse="xml" />
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT VsgPRTree3f ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT VsgPRTree3fNodeInfo ##### -->
+<para>
+
+</para>
+
+@lbound: 
+@ubound: 
+@center: 
+@father_info: 
+@point_list: 
+@region_list: 
+@point_count: 
+@region_count: 
+@depth: 
+@user_data: 
+@isleaf: 
+
+<!-- ##### USER_FUNCTION VsgPoint3fLocFunc ##### -->
+<para>
+
+</para>
+
+@candidate: 
+@center: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgRegion3fLocFunc ##### -->
+<para>
+
+</para>
+
+@region: 
+@center: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgPoint3fDistFunc ##### -->
+<para>
+
+</para>
+
+@one: 
+@other: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgPoint3fLocMarshall ##### -->
+<para>
+
+</para>
+
+@candidate: 
+@center: 
+@data: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgRegion3fLocMarshall ##### -->
+<para>
+
+</para>
+
+@region: 
+@center: 
+@data: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgPoint3fDistMarshall ##### -->
+<para>
+
+</para>
+
+@one: 
+@other: 
+@data: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgPRTree3fFunc ##### -->
+<para>
+
+</para>
+
+@node_info: 
+@user_data: 
+
+
+<!-- ##### USER_FUNCTION VsgPRTree3fInteractionFunc ##### -->
+<para>
+
+</para>
+
+@one_info: 
+@other_info: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_new_full ##### -->
+<para>
+
+</para>
+
+@lbound: 
+@ubound: 
+@point_locfunc: 
+@point_distfunc: 
+@region_locfunc: 
+@max_point: 
+@Returns: 
+<!-- # Unused Parameters # -->
+@Param4: 
+
+
+<!-- ##### MACRO vsg_prtree3f_new ##### -->
+<para>
+
+</para>
+
+@lbound: 
+@ubound: 
+@region_locfunc: 
+<!-- # Unused Parameters # -->
+@point_locfunc: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_free ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_clone ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_set_point_loc_marshall ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@marshall: 
+@locdata: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_set_region_loc_marshall ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@marshall: 
+@locdata: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_set_point_dist_marshall ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@marshall: 
+@distdata: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_get_tolerance ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_set_tolerance ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@tolerance: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_set_node_data ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@user_data_type: 
+@user_data_model: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_get_bounds ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@lbound: 
+@ubound: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_depth ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_point_count ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_region_count ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_insert_point ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@point: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_remove_point ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@point: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_insert_region ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@region: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_remove_region ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@region: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_write ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@file: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_print ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_foreach_point ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_foreach_point_custom ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@selector: 
+@locfunc: 
+@func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_foreach_region ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_foreach_region_custom ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@selector: 
+@func: 
+@user_data: 
+<!-- # Unused Parameters # -->
+@locfunc: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_find_deep_region ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@point: 
+@check: 
+@user_data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_find_point ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@selector: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_near_far_traversal ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@far_func: 
+@near_func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_traverse_custom ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@order: 
+@selector: 
+@func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_traverse ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@order: 
+@func: 
+@user_data: 
+
+

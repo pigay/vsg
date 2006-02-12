@@ -1,0 +1,285 @@
+<!-- ##### SECTION Title ##### -->
+vsgmatrix3f
+
+<!-- ##### SECTION Short_Description ##### -->
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgmatrix3f-intro.xml" xpointer="/1/1/1"
+            parse="xml" />
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+            href="../tmpl/vsgmatrix3d-intro.xml" xpointer="/1/2"
+            parse="xml" />
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT VsgMatrix3f ##### -->
+<para>
+
+</para>
+
+@components: 
+
+<!-- ##### MACRO VSG_TYPE_MATRIX3F ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION vsg_matrix3f_new ##### -->
+<para>
+
+</para>
+
+@a00: 
+@a01: 
+@a02: 
+@a10: 
+@a11: 
+@a12: 
+@a20: 
+@a21: 
+@a22: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_free ##### -->
+<para>
+
+</para>
+
+@mat: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_identity_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_rotate_new ##### -->
+<para>
+
+</para>
+
+@a: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_translate_new ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_scale_new ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_set ##### -->
+<para>
+
+</para>
+
+@mat: 
+@a00: 
+@a01: 
+@a02: 
+@a10: 
+@a11: 
+@a12: 
+@a20: 
+@a21: 
+@a22: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_identity ##### -->
+<para>
+
+</para>
+
+@mat: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_copy ##### -->
+<para>
+
+</para>
+
+@src: 
+@dst: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_clone ##### -->
+<para>
+
+</para>
+
+@src: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_rotate ##### -->
+<para>
+
+</para>
+
+@mat: 
+@a: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_translate ##### -->
+<para>
+
+</para>
+
+@mat: 
+@x: 
+@y: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_scale ##### -->
+<para>
+
+</para>
+
+@mat: 
+@x: 
+@y: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_add ##### -->
+<para>
+
+</para>
+
+@mat: 
+@other: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_sub ##### -->
+<para>
+
+</para>
+
+@mat: 
+@other: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_matmult ##### -->
+<para>
+
+</para>
+
+@mat: 
+@other: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_vecmult ##### -->
+<para>
+
+</para>
+
+@mat: 
+@vec: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_vec3mult ##### -->
+<para>
+
+</para>
+
+@mat: 
+@vec: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_vec3mult_T ##### -->
+<para>
+
+</para>
+
+@mat: 
+@vec: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_det ##### -->
+<para>
+
+</para>
+
+@mat: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_invert ##### -->
+<para>
+
+</para>
+
+@mat: 
+@result: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_component ##### -->
+<para>
+
+</para>
+
+@mat: 
+@i: 
+@j: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_transpose ##### -->
+<para>
+
+</para>
+
+@mat: 
+@result: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_write ##### -->
+<para>
+
+</para>
+
+@mat: 
+@file: 
+
+
+<!-- ##### FUNCTION vsg_matrix3f_print ##### -->
+<para>
+
+</para>
+
+@mat: 
+
+

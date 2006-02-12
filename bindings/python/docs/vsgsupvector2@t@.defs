@@ -1,0 +1,72 @@
+;; -*- scheme -*-
+
+;; dummy definitions to get special methods in the generated doc.
+
+(define-method __add__
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@___add__")
+  (return-type "VsgVector2@t@")
+  (parameters
+    '("const-VsgVector2@t@*" "other")
+  )
+)
+
+(define-method __sub__
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@___sub__")
+  (return-type "VsgVector2@t@")
+  (parameters
+    '("const-VsgVector2@t@*" "other")
+  )
+)
+
+(define-method __mul__
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@___mul__")
+  (return-type "VsgVector2@t@")
+  (parameters
+    '("@type@" "other")
+  )
+)
+
+(define-method __div__
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@___div__")
+  (return-type "VsgVector2@t@")
+  (parameters
+    '("const-VsgVector2@t@*" "other")
+  )
+)
+
+(define-method __xor__
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@___xor__")
+  (return-type "@type@")
+  (parameters
+    '("const-VsgVector2@t@*" "other")
+  )
+)
+
+(define-method __len__
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@___len__")
+  (return-type "gint")
+)
+
+(define-method __getitem__
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@___getitem__")
+  (return-type "@type@")
+  (parameters
+    '("gint" "pos")
+  )
+)
+(define-method __setitem__
+  (of-object "VsgVector2@t@")
+  (c-name "vsg_vector2@t@___setitem__")
+  (return-type "none")
+  (parameters
+    '("gint" "pos")
+    '("@type@" "value")
+  )
+)

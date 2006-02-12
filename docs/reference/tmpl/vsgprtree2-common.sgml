@@ -1,0 +1,132 @@
+<!-- ##### SECTION Title ##### -->
+vsgprtree2-common
+
+<!-- ##### SECTION Short_Description ##### -->
+2D Point-Region trees common types and macros.
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### MACRO VSG_LOC2_SW ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC2_SE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC2_NW ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC2_NE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC2_MASK ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC2_AXIS ##### -->
+<para>
+
+</para>
+
+@n: 
+
+
+<!-- ##### MACRO VSG_LOC2_X ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_LOC2_Y ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_RLOC2_COMP ##### -->
+<para>
+
+</para>
+
+@i: 
+
+
+<!-- ##### MACRO VSG_RLOC2_MASK ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### TYPEDEF VsgPoint2 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### TYPEDEF vsgloc2 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### TYPEDEF VsgRegion2 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### TYPEDEF vsgrloc2 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### USER_FUNCTION VsgRegion2CheckFunc ##### -->
+<para>
+
+</para>
+
+@region: 
+@user_data: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION VsgRegion2Point2LocFunc ##### -->
+<para>
+
+</para>
+
+@region: 
+@point: 
+@Returns: 
+
+

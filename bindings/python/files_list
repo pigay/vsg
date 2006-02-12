@@ -1,0 +1,11 @@
+../../src/vsgmatrix3@t@.h
+../../src/vsgmatrix4@t@.h
+../../src/vsgprtree2@t@.h
+../../src/vsgprtree2-common.h
+../../src/vsgprtree2@t@-extras.h
+../../src/vsgprtree3@t@.h
+../../src/vsgprtree3-common.h
+../../src/vsgprtree3@t@-extras.h
+../../src/vsgquaternion@t@.h
+../../src/vsgvector2@t@.h
+../../src/vsgvector3@t@.h

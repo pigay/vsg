@@ -1,0 +1,46 @@
+;; -*- scheme -*-
+
+(define-module Vsg)
+
+
+(include "vsg-typesf.defs")
+(include "vsg-typesd.defs")
+
+(include "vsgf.defs")
+(include "vsgd.defs")
+
+;; vsgprtree2-common.h macros
+
+(define-function RLOC2_COMP
+  (c-name "VSG_RLOC2_COMP")
+  (return-type "vsgrloc2")
+  (parameters
+    '("vsgrloc2" "i")
+  )
+)
+
+(define-function RLOC2_AXIS
+  (c-name "VSG_LOC2_AXIS")
+  (return-type "vsgrloc2")
+  (parameters
+    '("vsgrloc2" "n")
+  )
+)
+
+;; vsgprtree3-common.h macros
+
+(define-function RLOC3_COMP
+  (c-name "VSG_RLOC3_COMP")
+  (return-type "vsgrloc3")
+  (parameters
+    '("vsgrloc3" "i")
+  )
+)
+
+(define-function RLOC3_AXIS
+  (c-name "VSG_LOC3_AXIS")
+  (return-type "vsgrloc3")
+  (parameters
+    '("vsgrloc3" "n")
+  )
+)
