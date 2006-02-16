@@ -233,6 +233,7 @@ build/vsg/Makefile
 gencode/Makefile
 docs/Makefile
 docs/reference/Makefile
+docs/reference/version.xml
 tests/Makefile
 tests/atlocal
 bindings/Makefile
