@@ -19,18 +19,12 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+AT_TESTED([prtree3pt prtree3nftrav])
 
-AT_INIT([vsg_test])
+AT_SETUP(VsgPRTree3d point operations)
+AT_CHECK(prtree3pt, 0)
+AT_CLEANUP
 
-
-m4_include([vec2ops.at])
-
-m4_include([vec3ops.at])
-
-m4_include([mat3ops.at])
-
-m4_include([mat4ops.at])
-
-m4_include([prtree2.at])
-
-m4_include([prtree3.at])
+AT_SETUP(VsgPRTree3d near/far traversals)
+AT_CHECK(prtree3nftrav, 0)
+AT_CLEANUP
