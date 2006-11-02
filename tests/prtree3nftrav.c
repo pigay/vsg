@@ -182,7 +182,7 @@ gint main (gint argc, gchar ** argv)
                                    (VsgPRTree3dInteractionFunc) near,
                                    &ret);
 
-  /*  distribute bacj the point counts across the tree */
+  /*  distribute back the point counts across the tree */
   vsg_prtree3d_traverse (tree, G_PRE_ORDER, (VsgPRTree3dFunc) down, NULL);
 
   /* check the results */

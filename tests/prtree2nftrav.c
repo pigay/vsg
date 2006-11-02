@@ -169,7 +169,7 @@ gint main (gint argc, gchar ** argv)
                                    (VsgPRTree2dInteractionFunc) near,
                                    &ret);
 
-  /*  distribute bacj the point counts across the tree */
+  /*  distribute back the point counts across the tree */
   vsg_prtree2d_traverse (tree, G_PRE_ORDER, (VsgPRTree2dFunc) down, NULL);
 
   /* check the results */
