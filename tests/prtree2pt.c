@@ -1,13 +1,20 @@
+/* basic point insertion, removal and traversal on VsgPRTree2d */
+
 #include "vsg-config.h"
 
 #include "vsg/vsgd.h"
 
 #include <math.h>
 
+static void increment (VsgVector2d *pt, gint *count)
+{
+  (*count) ++;
+}
+
+/* tree traversal function that accumulates the total number of points */
 static void traverse_point_count (VsgPRTree2dNodeInfo *node_info, gint *count)
 {
-  if (node_info->isleaf)
-    *count += node_info->point_count;
+  g_slist_foreach (node_info->point_list, (GFunc) increment, count);
 }
 
 gint main (gint argc, gchar ** argv)
@@ -37,18 +44,23 @@ gint main (gint argc, gchar ** argv)
       return 0;
     }
 
+  vsg_init_gdouble ();
+
+  /* create the tree */
   tree = vsg_prtree2d_new (&lb, &ub, NULL);
 
+  /* insert some points */
   for (i=0; i<n; i++)
     {
       vsg_prtree2d_insert_point (tree, &points[i]);
     }
 
+  /* do some traversal */
   i=0;
-
   vsg_prtree2d_traverse (tree, G_PRE_ORDER,
                          (VsgPRTree2dFunc) traverse_point_count, &i);
 
+  /* check the results */
   if (i != n)
     {
       g_printerr ("ERROR: traverse point count %d (should be %d)\n",
@@ -57,11 +69,13 @@ gint main (gint argc, gchar ** argv)
       ret ++;
     }
 
+  /* remove the points */
   for (i=0; i<n; i++)
     {
       vsg_prtree2d_remove_point (tree, &points[i]);
     }
 
+  /* destroy the tree */
   vsg_prtree2d_free (tree);
 
   return ret;
