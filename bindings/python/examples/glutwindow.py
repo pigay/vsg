@@ -38,14 +38,15 @@ class GL2DNav (object):
         self.__old_x = 0
         self.__old_y = 0
         self.__pressed_button = -1
-        self.lb = vsg.Vector2d (-1., -1.)
-        self.ub = vsg.Vector2d (1., 1.)
 
         self.right_button_cb = None
+        self.ctrl_right_button_cb = None
 
     def show_box (self, lb, ub):
-        self.lb = lb
-        self.ub = ub
+        self.center = (lb+ub) * 0.5
+        scale = ub-self.center
+        self.scale = min (scale.x, scale.y)
+        glutPostRedisplay ()
 
     def motion (self, x, y):
         if self.__pressed_button < 0: return
@@ -53,9 +54,8 @@ class GL2DNav (object):
         dy = (self.__old_y - y) * 1. / self.h
         if self.__pressed_button == GLUT_LEFT_BUTTON:
             # pan
-            diag = (self.ub-self.lb)*0.5
-            dx *= diag.x
-            dy *= diag.y
+            dx *= 2. * self.scale
+            dy *= 2. * self.scale
             pan = vsg.Vector2d (dx, dy)
             self.center = self.center - pan
         elif self.__pressed_button == GLUT_MIDDLE_BUTTON:
@@ -73,11 +73,16 @@ class GL2DNav (object):
             self.__old_x = x
             self.__old_y = y
         else:
-            if button == GLUT_RIGHT_BUTTON and self.right_button_cb:
-                diag = (self.ub-self.lb)
-                xx = (self.lb.x + (x*diag.x/self.w))*self.ratio
-                yy = self.ub.y - (y*diag.y/self.h)
-                self.right_button_cb (xx, yy)
+            if button == GLUT_RIGHT_BUTTON:
+                x1 = 2. * float (x)/self.w - 1.
+                y1 = 1. - float (y)/self.h * 2.
+                xx = (self.center.x + x1*self.scale) * self.ratio
+                yy = self.center.y + y1*self.scale
+                modifiers = glutGetModifiers ()
+                if modifiers & GLUT_ACTIVE_CTRL:
+                    self.ctrl_right_button_cb (xx, yy, 3*self.scale/self.h)
+                else:
+                    self.right_button_cb (xx, yy)
             self.__pressed_button = -1
             self.__old_x = 0
             self.__old_y = 0
@@ -87,9 +92,8 @@ class GL2DNav (object):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         
-        lb = (self.lb + self.center) * self.scale
-        ub = (self.ub + self.center) * self.scale
-
+        lb = self.center - self.scale * vsg.Vector2d (1., 1.)
+        ub = self.center + self.scale * vsg.Vector2d (1., 1.)
         gluOrtho2D (lb.x*self.ratio, ub.x*self.ratio, lb.y, ub.y)
 
         # Initialize ModelView matrix

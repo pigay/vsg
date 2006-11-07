@@ -14,7 +14,7 @@ class Circle (object):
 
         if dist <= circle.radius: return vsg.RLOC2_MASK
 
-        retult = 0
+        result = 0
         center_pos = circle.center.vector2d_locfunc (center)
 
         result |= vsg.RLOC2_COMP (center_pos)
@@ -54,6 +54,9 @@ def _display_node (node_info, user_data):
 def _display_point (point, user_data):
     _vertex2d (point)
 
+def _selection_store (point, list):
+    list.append (point)
+
 class PRTree2dRenderer (GLRenderer):
     def __init__ (self):
         lbound = vsg.Vector2d (-.5, -.5)
@@ -83,9 +86,20 @@ class PRTree2dRenderer (GLRenderer):
 
     def add_point (self, x, y):
         point = vsg.Vector2d (x, y)
+        print "adding", x, y
         self.prtree.insert_point (point)
         glutPostRedisplay ()
-        print "add", x, y
+
+    def remove_point (self, x, y, radius):
+        circle = Circle (vsg.Vector2d (x, y), radius)
+        points = []
+        print "remove inside circle", x, y, radius
+        self.prtree.foreach_point_custom (circle, Circle.loc2, _selection_store,
+                                          points)
+        for point in points:
+            print "removing", point.x, point.y
+            self.prtree.remove_point (point)
+        glutPostRedisplay ()
 
 if __name__ == "__main__":
     # Initialize Glut
@@ -95,8 +109,8 @@ if __name__ == "__main__":
 
     # Open a window
     win = GLUTWindow ("prtree2d", 0, 0, 640, 480)
-
     ptree2drender = PRTree2dRenderer ()
     win.register ("ptree2drender", ptree2drender)
     win.nav.right_button_cb = ptree2drender.add_point
+    win.nav.ctrl_right_button_cb = ptree2drender.remove_point
     glutMainLoop ()
