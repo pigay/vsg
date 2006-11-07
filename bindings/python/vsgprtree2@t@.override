@@ -339,6 +339,14 @@ _wrap_vsg_prtree2@t@_insert_region (PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple(args, "O:VsgPRTree2@t@.insert_region", &region))
       return NULL;
 
+  if (pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data == NULL)
+    {
+      PyErr_SetString(PyExc_ValueError,
+                      "VsgPRTree2@t@.insert_region must be called on a tree " \
+                      "that possesses a region_locfunc method.");
+      return NULL;;
+    }
+
   test = pyvsg_region2@t@_locfunc (region, &testv,
                                   pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data);
 
@@ -375,6 +383,14 @@ _wrap_vsg_prtree2@t@_remove_region (PyObject *self, PyObject *args)
 
   if (!PyArg_ParseTuple(args, "O:VsgPRTree2@t@.remove_region", &region))
       return NULL;
+
+  if (pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data == NULL)
+    {
+      PyErr_SetString(PyExc_ValueError,
+                      "VsgPRTree2@t@.remove_region must be called on a tree " \
+                      "that possesses a region_locfunc method.");
+      return NULL;;
+    }
 
   test = pyvsg_region2@t@_locfunc (region, &testv,
                                   pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data);
@@ -602,8 +618,16 @@ _wrap_vsg_prtree2@t@_foreach_point_custom (PyObject *self, PyObject *args)
                         &func, &user_data))
     return NULL;
 
+  if (pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data == NULL)
+    {
+      PyErr_SetString(PyExc_ValueError,
+                      "VsgPRTree2@t@.foreach_point_custom must be called on a tree " \
+                      "that possesses a region_locfunc method.");
+      return NULL;;
+    }
+
   test = pyvsg_region2@t@_locfunc (selector, &testv,
-                                  pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data);
+                                   pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data);
 
   if (test == NULL || !PyInt_Check (test))
     {
@@ -780,6 +804,14 @@ _wrap_vsg_prtree2@t@_foreach_region_custom (PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple(args, "OOO:VsgPRTree2@t@.foreach_region_custom",
                         &selector, &func, &user_data))
     return NULL;
+
+  if (pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data == NULL)
+    {
+      PyErr_SetString(PyExc_ValueError,
+                      "VsgPRTree2@t@.foreach_region_custom must be called on a tree " \
+                      "that possesses a region_locfunc method.");
+      return NULL;;
+    }
 
   test = pyvsg_region2@t@_locfunc (selector, &testv,
                                   pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data);
@@ -1223,6 +1255,14 @@ _wrap_vsg_prtree2@t@_traverse_custom (PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple(args, "iOOO:VsgPRTree2@t@.traverse",
                         &order, &selector, &func, &user_data))
     return NULL;
+
+  if (pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data == NULL)
+    {
+      PyErr_SetString(PyExc_ValueError,
+                      "VsgPRTree2@t@.traverse_custom must be called on a tree " \
+                      "that possesses a region_locfunc method.");
+      return NULL;;
+    }
 
   test = pyvsg_region2@t@_locfunc (selector, &testv,
                                   pyg_boxed_get (self, VsgPRTree2@t@)->config.region_loc_data);
