@@ -23,6 +23,7 @@
 
 #include "vsgprtree2@t@-private.h"
 
+#include <string.h>
 
 #define VSG_PRTREE2@T@_PREALLOC 32
 #define PRTREE2@T@NODE_PREALLOC 256
@@ -190,10 +191,8 @@ static VsgPRTree2@t@Node *_int_alloc (const VsgVector2@t@ *lbound,
                                       const VsgPRTree2@t@Config *config)
 {
   VsgPRTree2@t@Node *node = _prtree2@t@node_alloc (lbound, ubound, config);
-
   vsgloc2 i;
-
-  PRTREE2@T@NODE_CHILD (node, 0) = (VsgPRTree2@t@Node *) 1;
+  VsgPRTree2@t@Node *children[4];
 
   for (i=0; i<4; i++)
     {
@@ -202,17 +201,24 @@ static VsgPRTree2@t@Node *_int_alloc (const VsgVector2@t@ *lbound,
       if ((child == NULL) || (i != loc))
         {
           _prtree2@t@node_child_get_bounds (node, i, &lbound, &ubound);
-          PRTREE2@T@NODE_CHILD (node, i) = _leaf_alloc (&lbound, &ubound,
-                                                        config);
+          children[i] = _leaf_alloc (&lbound, &ubound, config);
         }
       else
         {
-          PRTREE2@T@NODE_CHILD (node, loc) = child;
+          children[i] = child;
 
           node->point_count += child->point_count;
           node->region_count += child->region_count;
         }
     }
+
+  /* It is very important that new leaves are inserted once all calls to
+   * _leaf_alloc are done, leaving the tree state consistent, because
+   * certain language bindings do weird things with the tree when node_data
+   * are duplicated. For example, Python and its cyclic garbage collector.
+   */
+  memcpy (PRTREE2@T@NODE_INT (node).children, children,
+          4*sizeof (VsgPRTree2@t@Node*));
 
   return node;
 }
@@ -447,16 +453,12 @@ static void _prtree2@t@node_make_int (VsgPRTree2@t@Node *node,
   GSList *stolen_point;
   GSList *stolen_region;
   vsgloc2 i;
+  VsgPRTree2@t@Node *children[4];
 
   g_return_if_fail (PRTREE2@T@NODE_ISLEAF(node));
 
   stolen_point = _prtree2@t@node_steal_point (node);
   stolen_region = _prtree2@t@node_steal_region (node);
-
-  /* enforcing PRTREE2@T@NODE_ISINT (node).
-   * This will be true in a while
-   */
-  PRTREE2@T@NODE_CHILD (node, 0) = (VsgPRTree2@t@Node *) 1;
 
   for (i=0; i<4; i++)
     {
@@ -464,8 +466,16 @@ static void _prtree2@t@node_make_int (VsgPRTree2@t@Node *node,
 
       _prtree2@t@node_child_get_bounds (node, i, &lbound, &ubound);
 
-      PRTREE2@T@NODE_CHILD (node, i) = _leaf_alloc (&lbound, &ubound, config);
+      children[i] = _leaf_alloc (&lbound, &ubound, config);
     }
+
+  /* It is very important that new leaves are inserted once all calls to
+   * _leaf_alloc are done, leaving the tree state consistent, because
+   * certain language bindings do weird things with the tree when node_data
+   * are duplicated. For example, Python and its cyclic garbage collector.
+   */
+  memcpy (PRTREE2@T@NODE_INT (node).children, children,
+          4*sizeof (VsgPRTree2@t@Node*));
 
   _prtree2@t@node_insert_point_list(node, stolen_point, config);
   _prtree2@t@node_insert_region_list(node, stolen_region, config);

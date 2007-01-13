@@ -14,6 +14,9 @@ Double precision Vsg library initialization.
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### FUNCTION vsg_init_gdouble ##### -->
 <para>
 

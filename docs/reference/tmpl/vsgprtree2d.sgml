@@ -19,6 +19,9 @@ vsgprtree2d
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### MACRO VSG_TYPE_PRTREE2D ##### -->
 <para>
 
@@ -363,8 +366,6 @@ vsgprtree2d
 @selector: 
 @func: 
 @user_data: 
-<!-- # Unused Parameters # -->
-@locfunc: 
 
 
 <!-- ##### FUNCTION vsg_prtree2d_find_deep_region ##### -->

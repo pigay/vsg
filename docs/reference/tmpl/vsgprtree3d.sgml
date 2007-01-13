@@ -19,6 +19,9 @@ vsgprtree3d
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### STRUCT VsgPRTree3d ##### -->
 <para>
 
@@ -146,8 +149,6 @@ vsgprtree3d
 @lbound: 
 @ubound: 
 @region_locfunc: 
-<!-- # Unused Parameters # -->
-@point_locfunc: 
 
 
 <!-- ##### FUNCTION vsg_prtree3d_free ##### -->
@@ -358,8 +359,6 @@ vsgprtree3d
 @selector: 
 @func: 
 @user_data: 
-<!-- # Unused Parameters # -->
-@locfunc: 
 
 
 <!-- ##### FUNCTION vsg_prtree3d_find_deep_region ##### -->

@@ -19,6 +19,9 @@ vsgprtree3f
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### STRUCT VsgPRTree3f ##### -->
 <para>
 
@@ -136,8 +139,6 @@ vsgprtree3f
 @region_locfunc: 
 @max_point: 
 @Returns: 
-<!-- # Unused Parameters # -->
-@Param4: 
 
 
 <!-- ##### MACRO vsg_prtree3f_new ##### -->
@@ -148,8 +149,6 @@ vsgprtree3f
 @lbound: 
 @ubound: 
 @region_locfunc: 
-<!-- # Unused Parameters # -->
-@point_locfunc: 
 
 
 <!-- ##### FUNCTION vsg_prtree3f_free ##### -->
@@ -360,8 +359,6 @@ vsgprtree3f
 @selector: 
 @func: 
 @user_data: 
-<!-- # Unused Parameters # -->
-@locfunc: 
 
 
 <!-- ##### FUNCTION vsg_prtree3f_find_deep_region ##### -->

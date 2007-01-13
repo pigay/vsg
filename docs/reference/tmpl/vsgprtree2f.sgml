@@ -19,6 +19,9 @@ vsgprtree2f
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### MACRO VSG_TYPE_PRTREE2F ##### -->
 <para>
 
@@ -143,8 +146,6 @@ vsgprtree2f
 @region_locfunc: 
 @max_point: 
 @Returns: 
-<!-- # Unused Parameters # -->
-@Param4: 
 
 
 <!-- ##### MACRO vsg_prtree2f_new ##### -->
@@ -365,8 +366,6 @@ vsgprtree2f
 @selector: 
 @func: 
 @user_data: 
-<!-- # Unused Parameters # -->
-@locfunc: 
 
 
 <!-- ##### FUNCTION vsg_prtree2f_find_deep_region ##### -->
