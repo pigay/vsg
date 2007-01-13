@@ -23,6 +23,7 @@
 
 #include "vsgprtree3@t@-private.h"
 
+#include <string.h>
 
 #define VSG_PRTREE3@T@_PREALLOC 32
 #define PRTREE3@T@NODE_PREALLOC 256
@@ -201,10 +202,9 @@ static VsgPRTree3@t@Node *_int_alloc (const VsgVector3@t@ *lbound,
                                       const VsgPRTree3@t@Config *config)
 {
   VsgPRTree3@t@Node *node = _prtree3@t@node_alloc (lbound, ubound, config);
-
   vsgloc3 i;
+  VsgPRTree3@t@Node *children[8];
 
-  PRTREE3@T@NODE_CHILD (node, 0) = (VsgPRTree3@t@Node *) 1;
   for (i=0; i<8; i++)
     {
       VsgVector3@t@ lbound, ubound;
@@ -212,17 +212,24 @@ static VsgPRTree3@t@Node *_int_alloc (const VsgVector3@t@ *lbound,
       if ((child == NULL) || (i != loc))
         {
           _prtree3@t@node_child_get_bounds (node, i, &lbound, &ubound);
-          PRTREE3@T@NODE_CHILD (node, i) = _leaf_alloc (&lbound, &ubound,
-                                                        config);
+          children[i] = _leaf_alloc (&lbound, &ubound, config);
         }
       else
         {
-          PRTREE3@T@NODE_CHILD (node, loc) = child;
+          children[i] = child;
 
           node->point_count += child->point_count;
           node->region_count += child->region_count;
         }
     }
+
+  /* It is very important that new leaves are inserted once all calls to
+   * _leaf_alloc are done, leaving the tree state consistent, because
+   * certain language bindings do weird things with the tree when node_data
+   * are duplicated. For example, Python and its cyclic garbage collector.
+   */
+  memcpy (PRTREE3@T@NODE_INT (node).children, children,
+          8*sizeof (VsgPRTree3@t@Node*));
 
   return node;
 }
@@ -457,16 +464,12 @@ static void _prtree3@t@node_make_int (VsgPRTree3@t@Node *node,
   GSList *stolen_point;
   GSList *stolen_region;
   vsgloc3 i;
+  VsgPRTree3@t@Node *children[8];
 
   g_return_if_fail (PRTREE3@T@NODE_ISLEAF(node));
 
   stolen_point = _prtree3@t@node_steal_point (node);
   stolen_region = _prtree3@t@node_steal_region (node);
-
-  /* enforcing PRTREE3@T@NODE_ISINT (node).
-   * This will be true in a while
-   */
-  PRTREE3@T@NODE_CHILD (node, 0) = (VsgPRTree3@t@Node *) 1;
 
   for (i=0; i<8; i++)
     {
@@ -474,8 +477,16 @@ static void _prtree3@t@node_make_int (VsgPRTree3@t@Node *node,
 
       _prtree3@t@node_child_get_bounds (node, i, &lbound, &ubound);
 
-      PRTREE3@T@NODE_CHILD (node, i) = _leaf_alloc (&lbound, &ubound, config);
+      children[i] = _leaf_alloc (&lbound, &ubound, config);
     }
+
+  /* It is very important that new leaves are inserted once all calls to
+   * _leaf_alloc are done, leaving the tree state consistent, because
+   * certain language bindings do weird things with the tree when node_data
+   * are duplicated. For example, Python and its cyclic garbage collector.
+   */
+  memcpy (PRTREE3@T@NODE_INT (node).children, children,
+          8*sizeof (VsgPRTree3@t@Node*));
 
   _prtree3@t@node_insert_point_list(node, stolen_point, config);
   _prtree3@t@node_insert_region_list(node, stolen_region, config);
