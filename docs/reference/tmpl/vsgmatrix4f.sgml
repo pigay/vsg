@@ -19,6 +19,9 @@ vsgmatrix4f
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### STRUCT VsgMatrix4f ##### -->
 <para>
 
@@ -93,10 +96,6 @@ vsgmatrix4f
 @beta: 
 @gamma: 
 @Returns: 
-<!-- # Unused Parameters # -->
-@ax: 
-@ay: 
-@az: 
 
 
 <!-- ##### FUNCTION vsg_matrix4f_translate_new ##### -->
@@ -227,10 +226,6 @@ vsgmatrix4f
 @alpha: 
 @beta: 
 @gamma: 
-<!-- # Unused Parameters # -->
-@ax: 
-@ay: 
-@az: 
 
 
 <!-- ##### FUNCTION vsg_matrix4f_translate ##### -->

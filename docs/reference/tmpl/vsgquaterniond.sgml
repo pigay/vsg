@@ -19,6 +19,9 @@ vsgquaterniond
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### STRUCT VsgQuaterniond ##### -->
 <para>
 
@@ -196,10 +199,6 @@ vsgquaterniond
 @alpha: 
 @beta: 
 @gamma: 
-<!-- # Unused Parameters # -->
-@ax: 
-@ay: 
-@az: 
 
 
 <!-- ##### FUNCTION vsg_quaterniond_copy ##### -->
