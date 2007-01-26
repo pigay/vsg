@@ -66,9 +66,9 @@ typedef void (*VsgPRTree3@t@Func) (const VsgPRTree3@t@NodeInfo *node_info,
 /* structures */
 struct _VsgPRTree3@t@NodeInfo {
 
+  VsgVector3@t@ center;
   VsgVector3@t@ lbound;
   VsgVector3@t@ ubound;
-  VsgVector3@t@ center;
 
   VsgPRTree3@t@NodeInfo *father_info;
 

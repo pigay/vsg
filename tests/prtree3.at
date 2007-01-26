@@ -28,3 +28,7 @@ AT_CLEANUP
 AT_SETUP(VsgPRTree3d near/far traversals)
 AT_CHECK(prtree3nftrav, 0)
 AT_CLEANUP
+
+AT_SETUP(VsgPRTree3d near/far extended traversals)
+AT_CHECK(prtree3nftrave, 0)
+AT_CLEANUP

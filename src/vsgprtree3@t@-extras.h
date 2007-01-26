@@ -26,13 +26,17 @@ G_BEGIN_DECLS;
 
 /* forward typedefs */
 typedef void (*VsgPRTree3@t@InteractionFunc) (VsgPRTree3@t@NodeInfo *one_info,
-                                              VsgPRTree3@t@NodeInfo *other_info,
-                                              gpointer user_data);
+					      VsgPRTree3@t@NodeInfo *other_info,
+					      gpointer user_data);
+
+typedef gboolean (*VsgPRTree3@t@FarInteractionFunc) (VsgPRTree3@t@NodeInfo *one_info,
+						     VsgPRTree3@t@NodeInfo *other_info,
+						     gpointer user_data);
 
 /* public functions */
 void
 vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
-                                   VsgPRTree3@t@InteractionFunc far_func,
+                                   VsgPRTree3@t@FarInteractionFunc far_func,
                                    VsgPRTree3@t@InteractionFunc near_func,
                                    gpointer user_data);
 

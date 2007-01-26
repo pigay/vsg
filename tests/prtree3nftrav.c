@@ -71,7 +71,7 @@ static void near (VsgPRTree3dNodeInfo *one_info,
                      &one_info->point_count);
 }
 
-static void far (VsgPRTree3dNodeInfo *one_info,
+static gboolean far (VsgPRTree3dNodeInfo *one_info,
                  VsgPRTree3dNodeInfo *other_info,
                  gint *err)
 {
@@ -80,6 +80,8 @@ static void far (VsgPRTree3dNodeInfo *one_info,
 
   ((NodeCounter *) other_info->user_data)->out_count +=
     ((NodeCounter *) one_info->user_data)->in_count;
+
+  return TRUE;
 }
 
 static void up (VsgPRTree3dNodeInfo *node_info, gpointer data)
@@ -174,11 +176,15 @@ gint main (gint argc, gchar ** argv)
       vsg_prtree3d_insert_point (tree, &points[i]);
     }
 
+/*    g_printerr ("ok depth = %d size = %d\n", */
+/*                vsg_prtree3d_depth (tree), */
+/*                vsg_prtree3d_point_count (tree)); */
+
   /* accumulate the point counts across the tree */
   vsg_prtree3d_traverse (tree, G_POST_ORDER, (VsgPRTree3dFunc) up, NULL);
 
   /* do some near/far traversal */
-  vsg_prtree3d_near_far_traversal (tree, (VsgPRTree3dInteractionFunc) far,
+  vsg_prtree3d_near_far_traversal (tree, (VsgPRTree3dFarInteractionFunc) far,
                                    (VsgPRTree3dInteractionFunc) near,
                                    &ret);
 

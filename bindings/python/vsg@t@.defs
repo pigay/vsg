@@ -867,7 +867,7 @@
   (c-name "vsg_prtree2@t@_near_far_traversal")
   (return-type "none")
   (parameters
-    '("VsgPRTree2@t@InteractionFunc" "far_func")
+    '("VsgPRTree2@t@FarInteractionFunc" "far_func")
     '("VsgPRTree2@t@InteractionFunc" "near_func")
     '("gpointer" "user_data")
   )
@@ -1157,7 +1157,7 @@
   (c-name "vsg_prtree3@t@_near_far_traversal")
   (return-type "none")
   (parameters
-    '("VsgPRTree3@t@InteractionFunc" "far_func")
+    '("VsgPRTree3@t@FarInteractionFunc" "far_func")
     '("VsgPRTree3@t@InteractionFunc" "near_func")
     '("gpointer" "user_data")
   )

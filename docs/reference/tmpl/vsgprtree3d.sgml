@@ -33,9 +33,9 @@ vsgprtree3d
 
 </para>
 
+@center: 
 @lbound: 
 @ubound: 
-@center: 
 @father_info: 
 @point_list: 
 @region_list: 
@@ -115,6 +115,17 @@ vsgprtree3d
 
 @node_info: 
 @user_data: 
+
+
+<!-- ##### USER_FUNCTION VsgPRTree3dFarInteractionFunc ##### -->
+<para>
+
+</para>
+
+@one_info: 
+@other_info: 
+@user_data: 
+@Returns: 
 
 
 <!-- ##### USER_FUNCTION VsgPRTree3dInteractionFunc ##### -->

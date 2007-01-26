@@ -1325,7 +1325,7 @@ struct _NearFar3@t@Data
   gboolean success;
 };
 
-static void
+static gboolean
 _prtree3@t@_far_func_marshall (VsgPRTree3@t@NodeInfo *one_info,
                                 VsgPRTree3@t@NodeInfo *other_info,
                                 NearFar3@t@Data *marshall_data)
@@ -1336,6 +1336,7 @@ _prtree3@t@_far_func_marshall (VsgPRTree3@t@NodeInfo *one_info,
                                          other_info, FALSE, FALSE);
   PyObject *args = PyTuple_New (3);
   PyObject *pyret;
+  gboolean ret;
 
   Py_INCREF (pyoneinfo); /* since tuple steals ref on items */
   PyTuple_SetItem (args, 0, pyoneinfo);
@@ -1356,10 +1357,14 @@ _prtree3@t@_far_func_marshall (VsgPRTree3@t@NodeInfo *one_info,
     {
       /* an error occured */
       marshall_data->success = FALSE;
-      return;
+      return FALSE;
     }
 
+  ret = PyObject_IsTrue (pyret);
+
   Py_DECREF (pyret);
+
+  return ret;
 }
 
 static void
@@ -1434,7 +1439,7 @@ _wrap_vsg_prtree3@t@_near_far_traversal (PyObject *self, PyObject *args)
   marshall_data.success = TRUE;
 
   vsg_prtree3@t@_near_far_traversal (pyg_boxed_get (self, VsgPRTree3@t@),
-                                      (VsgPRTree3@t@InteractionFunc) _prtree3@t@_far_func_marshall,
+                                      (VsgPRTree3@t@FarInteractionFunc) _prtree3@t@_far_func_marshall,
                                       (VsgPRTree3@t@InteractionFunc) _prtree3@t@_near_func_marshall,
                                       &marshall_data);
 

@@ -212,6 +212,7 @@ VsgRegion2dLocMarshall
 VsgPoint2dDistMarshall
 
 VsgPRTree2dFunc
+VsgPRTree2dFarInteractionFunc
 VsgPRTree2dInteractionFunc
 
 vsg_prtree2d_new_full
@@ -271,6 +272,7 @@ VsgRegion2fLocMarshall
 VsgPoint2fDistMarshall
 
 VsgPRTree2fFunc
+VsgPRTree2fFarInteractionFunc
 VsgPRTree2fInteractionFunc
 
 vsg_prtree2f_new_full
@@ -358,6 +360,7 @@ VsgRegion3dLocMarshall
 VsgPoint3dDistMarshall
 
 VsgPRTree3dFunc
+VsgPRTree3dFarInteractionFunc
 VsgPRTree3dInteractionFunc
 
 vsg_prtree3d_new_full
@@ -416,6 +419,7 @@ VsgRegion3fLocMarshall
 VsgPoint3fDistMarshall
 
 VsgPRTree3fFunc
+VsgPRTree3fFarInteractionFunc
 VsgPRTree3fInteractionFunc
 
 vsg_prtree3f_new_full

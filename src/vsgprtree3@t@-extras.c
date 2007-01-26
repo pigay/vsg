@@ -188,13 +188,57 @@ void _vsg_prtree3@t@node_get_info (VsgPRTree3@t@Node *node,
   node_info->user_data = node->user_data;
 }
 
+static void recursive_near_func (VsgPRTree3@t@Node *one,
+                                 VsgPRTree3@t@NodeInfo *one_info,
+                                 VsgPRTree3@t@Node *other,
+                                 VsgPRTree3@t@NodeInfo *other_info,
+                                 VsgPRTree3@t@InteractionFunc near_func,
+                                 gpointer user_data)
+{
+  vsgloc3 i;
+
+  if (PRTREE3@T@NODE_ISINT (one))
+    {
+      for (i=0; i<8; i++)
+        {
+          VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(one, i);
+          VsgPRTree3@t@NodeInfo one_child_info;
+          _vsg_prtree3@t@node_get_info (one_child, &one_child_info,
+                                        one_info);
+
+          recursive_near_func (one_child, &one_child_info, other, other_info,
+                               near_func, user_data);
+        }
+    }
+  else if (PRTREE3@T@NODE_ISINT (other))
+    {
+      for (i=0; i<8; i++)
+        {
+          VsgPRTree3@t@Node *other_child = PRTREE3@T@NODE_CHILD(other, i);
+          VsgPRTree3@t@NodeInfo other_child_info;
+          _vsg_prtree3@t@node_get_info (other_child, &other_child_info,
+                                        other_info);
+
+          recursive_near_func (one, one_info, other_child, &other_child_info,
+                               near_func, user_data);
+        }
+    }
+  else
+    {
+      /* near interaction between one and other */
+      near_func (one_info, other_info, user_data);
+    }
+
+
+}
+
 static void
 _sub_neighborhood_near_far_traversal (VsgPRTree3@t@Node *one,
-				      VsgPRTree3@t@NodeInfo *one_info,
+                                      VsgPRTree3@t@NodeInfo *one_info,
 				      VsgPRTree3@t@Node *other,
-				      VsgPRTree3@t@NodeInfo *other_info,
+                                      VsgPRTree3@t@NodeInfo *other_info,
 				      gint8 x, gint8 y, gint8 z,
-				      VsgPRTree3@t@InteractionFunc far_func,
+				      VsgPRTree3@t@FarInteractionFunc far_func,
 				      VsgPRTree3@t@InteractionFunc near_func,
 				      gpointer user_data)
 {
@@ -213,99 +257,22 @@ _sub_neighborhood_near_far_traversal (VsgPRTree3@t@Node *one,
   if (one->point_count==0 || other->point_count==0)
     return;
 
-  if (PRTREE3@T@NODE_ISINT (one))
+  if (PRTREE3@T@NODE_ISINT (one) && PRTREE3@T@NODE_ISINT (other))
     {
-      if (PRTREE3@T@NODE_ISINT (other))
-	{
-	  /* near/far interaction between one and other children */
+      /* near/far interaction between one and other children */
 
-	  for (i=0; i<8; i++)
-	    {
-              VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(one, i);
-              VsgPRTree3@t@NodeInfo one_child_info;
-              _vsg_prtree3@t@node_get_info (one_child, &one_child_info,
-                                            one_info);
-	      si = sym[i];
+      for (i=0; i<8; i++)
+        {
+          VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(one, i);
+          VsgPRTree3@t@NodeInfo one_child_info;
+          _vsg_prtree3@t@node_get_info (one_child, &one_child_info,
+                                        one_info);
 
-	      for (j=0; j<8; j++)
-		{
-		  gboolean far;
-                  VsgPRTree3@t@Node *other_child =
-                    PRTREE3@T@NODE_CHILD(other, j);
-                  VsgPRTree3@t@NodeInfo other_child_info;
+          si = sym[i];
 
-                  _vsg_prtree3@t@node_get_info (other_child,
-                                                &other_child_info,
-                                                other_info);
-
-		  sj = sym[j];
-
-		  far = NEAR_FAR (x, y, z, si, sj);
-
-		  if (far)
-		    {
-		      /* far interaction between one and other */
-		      if (far_func &&
-			  one_child_info.point_count != 0 &&
-			  other_child_info.point_count != 0)
-			{
-			  far_func (&one_child_info, &other_child_info,
-				    user_data);
-			}
-		    }
-		  else
-		    {
-		      gint8 newx = _SUB_INTERACTION (i, j, x, _X);
-		      gint8 newy = _SUB_INTERACTION (i, j, y, _Y);
-		      gint8 newz = _SUB_INTERACTION (i, j, z, _Z);
-
-		      _sub_neighborhood_near_far_traversal (one_child,
-                                                            &one_child_info,
-							    other_child,
-                                                            &other_child_info,
-							    newx, newy, newz,
-							    far_func,
-							    near_func,
-							    user_data);
-		      
-		    }
-		}
-	    }
-
-	}
-      else
-	{
-	  /* Near interaction between one children and other.
-	   * We can use _sub_neighborhood_near_far_traversal since we are sure
-	   * that it will never fall in the far interaction case.
-	   */
-	  for (i=0; i<8; i++)
+          for (j=0; j<8; j++)
             {
-              VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(one, i);
-              VsgPRTree3@t@NodeInfo one_child_info;
-              _vsg_prtree3@t@node_get_info (one_child, &one_child_info,
-                                            one_info);
-              
-              _sub_neighborhood_near_far_traversal (one_child,
-                                                    &one_child_info,
-                                                    other,
-                                                    other_info,
-                                                    x, y, z,
-                                                    far_func, near_func,
-                                                    user_data);
-            }
-	}
-    }
-  else
-    {
-      if (PRTREE3@T@NODE_ISINT (other))
-	{
-	  /* Near interaction between other children and one.
-	   * We can use _sub_neighborhood_near_far_traversal since we are sure
-	   * that it will never fall in the far interaction case.
-	   */
-	  for (j=0; j<8; j++)
-            {
+              gboolean far;
               VsgPRTree3@t@Node *other_child =
                 PRTREE3@T@NODE_CHILD(other, j);
               VsgPRTree3@t@NodeInfo other_child_info;
@@ -314,30 +281,64 @@ _sub_neighborhood_near_far_traversal (VsgPRTree3@t@Node *one,
                                             &other_child_info,
                                             other_info);
 
-              _sub_neighborhood_near_far_traversal (one,
-                                                    one_info,
-                                                    other_child,
-                                                    &other_child_info,
-                                                    x, y, z,
-                                                    far_func, near_func,
-                                                    user_data);
-            }
-	}
-      else
-	{
-	  if (near_func)
-	    {
-	      /* near interaction between one and other */
-	      near_func (one_info, other_info, user_data);
+              sj = sym[j];
+
+              far = NEAR_FAR (x, y, z, si, sj);
+
+	      if (far)
+                {
+                  /* far interaction between one and other */
+                  if (far_func &&
+                      one_child_info.point_count != 0 &&
+                      other_child_info.point_count != 0)
+                    {
+                      gboolean far_done;
+                      far_done = far_func (&one_child_info, &other_child_info,
+					   user_data);
+		      if (!far_done)
+			{
+			  /* near interaction between one and other */
+			  recursive_near_func (one_child, &one_child_info,
+					       other_child, &other_child_info,
+					       near_func,
+					       user_data);
+			}
+                    }
+                }
+	      else
+		{
+		  gint8 newx = _SUB_INTERACTION (i, j, x, _X);
+		  gint8 newy = _SUB_INTERACTION (i, j, y, _Y);
+		  gint8 newz = _SUB_INTERACTION (i, j, z, _Z);
+
+		  _sub_neighborhood_near_far_traversal (one_child,
+							&one_child_info,
+							other_child,
+							&other_child_info,
+							newx, newy, newz,
+							far_func,
+							near_func,
+							user_data);
+		}
 	    }
-	}
+        }
+
+    }
+  else
+    {
+      if (near_func)
+        {
+          /* near interaction between one and other */
+          recursive_near_func (one, one_info, other, other_info, near_func,
+                               user_data);
+        }
     }
 }
 
 static void
 vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@Node *node,
                                        VsgPRTree3@t@NodeInfo *father_info,
-                                       VsgPRTree3@t@InteractionFunc far_func,
+                                       VsgPRTree3@t@FarInteractionFunc far_func,
                                        VsgPRTree3@t@InteractionFunc near_func,
                                        gpointer user_data)
 {
@@ -348,8 +349,17 @@ vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@Node *node,
 
   if (node->point_count==0) return;
 
-  if (PRTREE3@T@NODE_ISINT (node))
+  if (PRTREE3@T@NODE_ISLEAF (node))
     {
+      if (near_func)
+	{
+	  /* reflexive near interaction on node */
+	  near_func (&node_info, &node_info, user_data);
+	}
+    }
+  else
+    {
+      /* interactions between node's children */
       for (i=0; i<8; i++)
         {
           VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(node, i);
@@ -358,42 +368,35 @@ vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@Node *node,
                                         &node_info);
           for (j=i+1; j<8; j++)
             {
-              gint8 x, y, z;
               VsgPRTree3@t@Node *other_child =
                 PRTREE3@T@NODE_CHILD(node, j);
               VsgPRTree3@t@NodeInfo other_child_info;
+	      gint8 x, y, z;
+	      x = _AXIS_DIFF (i, j, _X);
+	      y = _AXIS_DIFF (i, j, _Y);
+	      z = _AXIS_DIFF (i, j, _Z);
+
 
               _vsg_prtree3@t@node_get_info (other_child,
                                             &other_child_info,
                                             &node_info);
 
-              x = _AXIS_DIFF (i, j, _X);
-              y = _AXIS_DIFF (i, j, _Y);
-              z = _AXIS_DIFF (i, j, _Z);
-
-              _sub_neighborhood_near_far_traversal (one_child,
-                                                    &one_child_info,
-                                                    other_child,
-                                                    &other_child_info,
-                                                    x, y, z,
-                                                    far_func, near_func,
-                                                    user_data); 
+	      _sub_neighborhood_near_far_traversal (one_child,
+						    &one_child_info,
+						    other_child,
+						    &other_child_info,
+						    x, y, z,
+						    far_func, near_func,
+						    user_data); 
             }
         }
 
+      /* interactions in node's children descendants */
       for (i=0; i<8; i++)
-	vsg_prtree3@t@node_near_far_traversal (PRTREE3@T@NODE_CHILD(node, i),
+        vsg_prtree3@t@node_near_far_traversal (PRTREE3@T@NODE_CHILD(node, i),
                                                &node_info,
                                                far_func, near_func,
                                                user_data);
-    }
-  else
-    {
-      if (near_func)
-	{
-	  /* reflexive near interaction on node */
-	  near_func (&node_info, &node_info, user_data);
-	}
     }
 }
 
@@ -441,6 +444,22 @@ vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@Node *node,
  * A type of functions for #VsgPRTree3@t@ nodes interaction traversals.
  */
 
+/**
+ * VsgPRTree3@t@FarInteractionFunc:
+ * @one_info: a #VsgPRTree3@t@NodeInfo.
+ * @other_info: a #VsgPRTree3@t@NodeInfo.
+ * @user_data: user provided data.
+ *
+ * A type of functions for #VsgPRTree3@t@ nodes interaction traversals. Used
+ * for far interactions, the function should return %TRUE when it effectively
+ * realizes the far interaction computations. Alternatively, the function can
+ * return %FALSE if the far interaction won't be computed (for any reason).
+ * In this case, vsg_prtree3@t@_near_far_traversal() will fallback to near
+ * interaction evaluation.
+ *
+ * Returns: Confirmation that the interaction really occurred.
+ */
+
 /*-------------------------------------------------------------------*/
 /* public functions */
 /*-------------------------------------------------------------------*/
@@ -455,7 +474,10 @@ vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@Node *node,
  * Computes an interaction traversal for @prtree3@t@. This means that
  * @near_func will be called once for every couple of neighbour @prtree3@t@
  * leaf nodes (this is reflexive) and @far_func will be called once for every
- * couple of non neighbour nodes which parents are neighbours.
+ * couple of non neighbour nodes which parents are neighbours. If @far_func
+ * happens to return %FALSE, the far interaction would be considered not
+ * treated. In this case, @near_func will be called on every pair of @far_func
+ * actual nodes arguments' descendants.
  * 
  * This kind of traversal is mainly provided for multipole algorithms.
  *
@@ -464,7 +486,7 @@ vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@Node *node,
  */
 void
 vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
-                                   VsgPRTree3@t@InteractionFunc far_func,
+                                   VsgPRTree3@t@FarInteractionFunc far_func,
                                    VsgPRTree3@t@InteractionFunc near_func,
                                    gpointer user_data)
 {

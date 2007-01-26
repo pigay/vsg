@@ -71,7 +71,7 @@ static void near (VsgPRTree2dNodeInfo *one_info,
                      &one_info->point_count);
 }
 
-static void far (VsgPRTree2dNodeInfo *one_info,
+static gboolean far (VsgPRTree2dNodeInfo *one_info,
                  VsgPRTree2dNodeInfo *other_info,
                  gint *err)
 {
@@ -80,6 +80,8 @@ static void far (VsgPRTree2dNodeInfo *one_info,
 
   ((NodeCounter *) other_info->user_data)->out_count +=
     ((NodeCounter *) one_info->user_data)->in_count;
+
+  return TRUE;
 }
 
 static void up (VsgPRTree2dNodeInfo *node_info, gpointer data)
@@ -165,7 +167,7 @@ gint main (gint argc, gchar ** argv)
   vsg_prtree2d_traverse (tree, G_POST_ORDER, (VsgPRTree2dFunc) up, NULL);
 
   /* do some near/far traversal */
-  vsg_prtree2d_near_far_traversal (tree, (VsgPRTree2dInteractionFunc) far,
+  vsg_prtree2d_near_far_traversal (tree, (VsgPRTree2dFarInteractionFunc) far,
                                    (VsgPRTree2dInteractionFunc) near,
                                    &ret);
 
