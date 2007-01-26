@@ -1,4 +1,180 @@
-2006-02-12 21:19  Pierre Gay <peyo@berlios.de>
+2007-01-26 09:14  Pierre Gay <peyo@libvsg.org>
 
-	* Initial Berlios import.
+	* [r27] svn2cl-authors.xml: Added svn2cl authors file.
+
+2007-01-13 20:53  Pierre Gay <peyo@libvsg.org>
+
+	* [r22] docs/reference/tmpl/vsg.sgml,
+	  docs/reference/tmpl/vsgd.sgml, docs/reference/tmpl/vsgf.sgml,
+	  docs/reference/tmpl/vsgmatrix3d.sgml,
+	  docs/reference/tmpl/vsgmatrix3f.sgml,
+	  docs/reference/tmpl/vsgmatrix4d.sgml,
+	  docs/reference/tmpl/vsgmatrix4f.sgml,
+	  docs/reference/tmpl/vsgprtree2-common.sgml,
+	  docs/reference/tmpl/vsgprtree2d.sgml,
+	  docs/reference/tmpl/vsgprtree2f.sgml,
+	  docs/reference/tmpl/vsgprtree3-common.sgml,
+	  docs/reference/tmpl/vsgprtree3d.sgml,
+	  docs/reference/tmpl/vsgprtree3f.sgml,
+	  docs/reference/tmpl/vsgquaterniond.sgml,
+	  docs/reference/tmpl/vsgquaternionf.sgml,
+	  docs/reference/tmpl/vsgvector2d.sgml,
+	  docs/reference/tmpl/vsgvector2f.sgml,
+	  docs/reference/tmpl/vsgvector3d.sgml,
+	  docs/reference/tmpl/vsgvector3f.sgml, src/vsgprtree2@t@.c,
+	  src/vsgprtree3@t@.c: Merged -r 20:21 from vsg-0.1 branch (Fixes a
+	  bug with Python bindings).
+
+2006-11-07 20:41  Pierre Gay <peyo@libvsg.org>
+
+	* [r17] bindings/python/vsgprtree2@t@.override,
+	  bindings/python/vsgprtree3@t@.override: More argument checks in
+	  PRTree2/3 wrappers.
+
+2006-11-07 20:33  Pierre Gay <peyo@libvsg.org>
+
+	* [r16] bindings/python/examples/glutwindow.py,
+	  bindings/python/examples/prtree2d.py: PRTree2d example
+	  enhancements.
+
+2006-11-02 21:13  Pierre Gay <peyo@libvsg.org>
+
+	* [r15] tests/prtree2nftrav.c, tests/prtree3nftrav.c: Comment typo.
+
+2006-11-02 21:09  Pierre Gay <peyo@libvsg.org>
+
+	* [r14] tests/prtree2nftrav.c, tests/prtree2pt.c,
+	  tests/prtree3nftrav.c, tests/prtree3pt.c: VsgPRTree* tests
+	  correction and enhancements.
+
+2006-10-31 21:29  Pierre Gay <peyo@libvsg.org>
+
+	* [r13] tests/Makefile.am, tests/prtree2.at, tests/prtree2nftrav.c,
+	  tests/prtree2pt.c, tests/prtree3.at, tests/prtree3nftrav.c,
+	  tests/prtree3pt.c, tests/testsuite.at: Added some tests for basic
+	  VsgPRTree2d and VsgPRTree3d features.
+
+2006-10-18 18:56  Pierre Gay <peyo@libvsg.org>
+
+	* [r12] bindings/python/examples/glutwindow.py,
+	  bindings/python/examples/prtree2d.py: Added a basic Python
+	  example for displaying VsgPRTree2d with PyOpenGL.
+
+2006-04-25 21:01  Pierre Gay <peyo@libvsg.org>
+
+	* [r11] aclocal.m4: Removed unneeded file aclocal.m4 from SVN
+	  repository.
+
+2006-02-23 21:22  Pierre Gay <peyo@libvsg.org>
+
+	* [r10] configure.ac: Bump version number.
+
+2006-02-23 21:11  Pierre Gay <peyo@libvsg.org>
+
+	* [r9] bindings/python/docs/pyvsgdocs.xml: doc fix.
+
+2006-02-16 21:33  Pierre Gay <peyo@libvsg.org>
+
+	* [r7] configure.ac, docs/reference/version.xml.in,
+	  docs/reference/vsg-docs.xml: Added a reference to package version
+	  in API docs main page.
+
+2006-02-13 21:21  Pierre Gay <peyo@libvsg.org>
+
+	* [r4] ChangeLog: Initialzed Changelog.
+
+2006-02-12 21:19  Pierre Gay <peyo@libvsg.org>
+
+	* [r1] ., AUTHORS, COPYING, ChangeLog, INSTALL, Makefile.am, NEWS,
+	  README, acinclude.m4, aclocal.m4, autogen.sh, bindings,
+	  bindings/Makefile.am, bindings/python,
+	  bindings/python/Makefile.am, bindings/python/__init__.py,
+	  bindings/python/docs, bindings/python/docs/Makefile.am,
+	  bindings/python/docs/devhelp.xsl, bindings/python/docs/images,
+	  bindings/python/docs/images/Makefile.am,
+	  bindings/python/docs/images/home.png,
+	  bindings/python/docs/images/left.png,
+	  bindings/python/docs/images/right.png,
+	  bindings/python/docs/images/up.png,
+	  bindings/python/docs/pyvsgdocs.xml,
+	  bindings/python/docs/pyvsgdocs.xsl,
+	  bindings/python/docs/vsgdocgen.py,
+	  bindings/python/docs/vsgsupmatrix3@t@.defs,
+	  bindings/python/docs/vsgsupmatrix4@t@.defs,
+	  bindings/python/docs/vsgsupquaternion@t@.defs,
+	  bindings/python/docs/vsgsupvector2@t@.defs,
+	  bindings/python/docs/vsgsupvector3@t@.defs,
+	  bindings/python/examples, bindings/python/examples/Makefile.am,
+	  bindings/python/examples/prtree2d.py,
+	  bindings/python/examples/quatf.py,
+	  bindings/python/examples/v2f.py, bindings/python/examples/v3f.py,
+	  bindings/python/files_list, bindings/python/h2def.py,
+	  bindings/python/pyvsg_boxed_pyobject.c,
+	  bindings/python/pyvsg_boxed_pyobject.h,
+	  bindings/python/vsg-types@t@.defs, bindings/python/vsg.defs,
+	  bindings/python/vsg@t@.defs, bindings/python/vsg@t@.override,
+	  bindings/python/vsgconstants.c, bindings/python/vsgconstants.h,
+	  bindings/python/vsgconstants@t@.c,
+	  bindings/python/vsgconstants@t@.h,
+	  bindings/python/vsgmatrix3@t@.override,
+	  bindings/python/vsgmatrix4@t@.override,
+	  bindings/python/vsgmodule.c,
+	  bindings/python/vsgprtree2@t@.override,
+	  bindings/python/vsgprtree3@t@.override,
+	  bindings/python/vsgquaternion@t@.override,
+	  bindings/python/vsgtypedefs.py,
+	  bindings/python/vsgvector2@t@.override,
+	  bindings/python/vsgvector3@t@.override, build, build/Makefile.am,
+	  build/vsg, build/vsg/Makefile.am, configure.ac, docs,
+	  docs/Makefile.am, docs/reference, docs/reference/Makefile.am,
+	  docs/reference/tmpl, docs/reference/tmpl/vsg-unused.sgml,
+	  docs/reference/tmpl/vsg.sgml, docs/reference/tmpl/vsgd.sgml,
+	  docs/reference/tmpl/vsgf.sgml,
+	  docs/reference/tmpl/vsgmatrix3@t@-intro.xml,
+	  docs/reference/tmpl/vsgmatrix3d.sgml,
+	  docs/reference/tmpl/vsgmatrix3f.sgml,
+	  docs/reference/tmpl/vsgmatrix4@t@-intro.xml,
+	  docs/reference/tmpl/vsgmatrix4d.sgml,
+	  docs/reference/tmpl/vsgmatrix4f.sgml,
+	  docs/reference/tmpl/vsgprtree2-common.sgml,
+	  docs/reference/tmpl/vsgprtree2@t@-intro.xml,
+	  docs/reference/tmpl/vsgprtree2d.sgml,
+	  docs/reference/tmpl/vsgprtree2f.sgml,
+	  docs/reference/tmpl/vsgprtree3-common.sgml,
+	  docs/reference/tmpl/vsgprtree3@t@-intro.xml,
+	  docs/reference/tmpl/vsgprtree3d.sgml,
+	  docs/reference/tmpl/vsgprtree3f.sgml,
+	  docs/reference/tmpl/vsgquaternion@t@-intro.xml,
+	  docs/reference/tmpl/vsgquaterniond.sgml,
+	  docs/reference/tmpl/vsgquaternionf.sgml,
+	  docs/reference/tmpl/vsgvector2@t@-intro.xml,
+	  docs/reference/tmpl/vsgvector2d.sgml,
+	  docs/reference/tmpl/vsgvector2f.sgml,
+	  docs/reference/tmpl/vsgvector3@t@-intro.xml,
+	  docs/reference/tmpl/vsgvector3d.sgml,
+	  docs/reference/tmpl/vsgvector3f.sgml,
+	  docs/reference/vsg-docs.xml, docs/reference/vsg-sections.txt,
+	  docs/reference/vsg.types, gencode, gencode/Makefile.am,
+	  gencode/typegens.py, m4, m4/Makefile.am,
+	  m4/vl_prog_cc_warnings.m4, src, src/Makefile.am,
+	  src/prtreetest.c, src/sources.list, src/vsg.c, src/vsg.h,
+	  src/vsg@t@.c, src/vsg@t@.h, src/vsgmatrix3@t@.c,
+	  src/vsgmatrix3@t@.h, src/vsgmatrix4@t@.c, src/vsgmatrix4@t@.h,
+	  src/vsgprtree2-common.h, src/vsgprtree2@t@-extras.c,
+	  src/vsgprtree2@t@-extras.h, src/vsgprtree2@t@-private.h,
+	  src/vsgprtree2@t@.c, src/vsgprtree2@t@.h,
+	  src/vsgprtree3-common.h, src/vsgprtree3@t@-extras.c,
+	  src/vsgprtree3@t@-extras.h, src/vsgprtree3@t@-private.h,
+	  src/vsgprtree3@t@.c, src/vsgprtree3@t@.h, src/vsgquaternion@t@.c,
+	  src/vsgquaternion@t@.h, src/vsgvector2@t@.c, src/vsgvector2@t@.h,
+	  src/vsgvector3@t@.c, src/vsgvector3@t@.h, tests,
+	  tests/Makefile.am, tests/atlocal.in, tests/mat3add.c,
+	  tests/mat3ops.at, tests/mat4add.c, tests/mat4ops.at,
+	  tests/testsuite.at, tests/vec2add.c, tests/vec2dotp.c,
+	  tests/vec2norm.c, tests/vec2ops.at, tests/vec2pred.c,
+	  tests/vec2scalp.c, tests/vec2sub.c, tests/vec2vecp.c,
+	  tests/vec3add.c, tests/vec3dotp.c, tests/vec3norm.c,
+	  tests/vec3ops.at, tests/vec3pred.c, tests/vec3scalp.c,
+	  tests/vec3sub.c, tests/vec3vecp.c, types.list, vsg-config.h.in,
+	  vsg.pc.in, vsgd.pc.in, vsgf.pc.in: Initial Berlios import.
 
