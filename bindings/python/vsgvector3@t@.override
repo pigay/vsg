@@ -56,6 +56,31 @@ _wrap_vsg_vector3@t@_tp_repr (PyGBoxed *self)
 }
 
 %%
+override-slot VsgVector3@t@.tp_compare
+
+static int
+_wrap_vsg_vector3@t@_tp_compare(PyGBoxed * self, PyGBoxed * other)
+{
+  VsgVector3@t@ tmp;
+  VsgVector3@t@ *v1, *v2;
+
+  if ((! pyg_boxed_check (self, VSG_TYPE_VECTOR3@T@)) &&
+      (! pyg_boxed_check (other, VSG_TYPE_VECTOR3@T@)))
+    return -1;
+
+  if (self == other) return 0;
+
+  v1 = pyg_boxed_get (self, VsgVector3@t@);
+  v2 = pyg_boxed_get (other, VsgVector3@t@);
+
+  vsg_vector3@t@_sub (v1, v2, &tmp);
+
+  if (vsg_vector3@t@_norm (&tmp) == 0.) return 0;
+
+  return 1;
+}
+
+%%
 override-attr VsgVector3@t@.x
 
 static int

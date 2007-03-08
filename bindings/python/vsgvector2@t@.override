@@ -38,6 +38,31 @@ override-slot VsgVector2@t@.tp_flags
 Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES
 
 %%
+override-slot VsgVector2@t@.tp_compare
+
+static int
+_wrap_vsg_vector2@t@_tp_compare(PyGBoxed * self, PyGBoxed * other)
+{
+  VsgVector2@t@ tmp;
+  VsgVector2@t@ *v1, *v2;
+
+  if ((! pyg_boxed_check (self, VSG_TYPE_VECTOR2@T@)) &&
+      (! pyg_boxed_check (other, VSG_TYPE_VECTOR2@T@)))
+    return -1;
+
+  if (self == other) return 0;
+
+  v1 = pyg_boxed_get (self, VsgVector2@t@);
+  v2 = pyg_boxed_get (other, VsgVector2@t@);
+
+  vsg_vector2@t@_sub (v1, v2, &tmp);
+
+  if (vsg_vector2@t@_norm (&tmp) == 0.) return 0;
+
+  return 1;
+}
+
+%%
 override-slot VsgVector2@t@.tp_repr
 
 static PyObject *
