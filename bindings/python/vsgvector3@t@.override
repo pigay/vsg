@@ -39,23 +39,6 @@ override-slot VsgVector3@t@.tp_flags
 Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES
 
 %%
-override-slot VsgVector3@t@.tp_repr
-
-static PyObject *
-_wrap_vsg_vector3@t@_tp_repr (PyGBoxed *self)
-{
-  gchar buffer[1024];
-
-  g_snprintf (buffer, 1024,
-              "Vector3@t@(%@tcode@,%@tcode@,%@tcode@)",
-              pyg_boxed_get (self, VsgVector3@t@)->x,
-              pyg_boxed_get (self, VsgVector3@t@)->y,
-              pyg_boxed_get (self, VsgVector3@t@)->z);
-
-  return PyString_FromString (buffer);
-}
-
-%%
 override-slot VsgVector3@t@.tp_compare
 
 static int
@@ -78,6 +61,61 @@ _wrap_vsg_vector3@t@_tp_compare(PyGBoxed * self, PyGBoxed * other)
   if (vsg_vector3@t@_norm (&tmp) == 0.) return 0;
 
   return 1;
+}
+
+%%
+override-slot VsgVector3@t@.tp_hash
+
+/* inspired from tuplehash of Python2.5 tupleobjet.c */
+static long
+_wrap_vsg_vector3@t@_tp_hash(PyGBoxed *self)
+{
+  long s, x, y, z;
+  VsgVector3@t@ *cself = pyg_boxed_get(self, VsgVector3@t@);
+  long mult = 1000003L;
+
+  s = 0x345678L;
+  x = _Py_HashDouble (cself->x);
+  if (x == -1) return -1;
+
+  s = (s ^ x) * mult;
+
+  mult += (long)(82520L + 3 + 3);
+
+  y = _Py_HashDouble (cself->y);
+  if (y == -1) return -1;
+
+  s = (s ^ y) * mult;
+
+  mult += (long)(82520L + 3 + 3);
+
+  z = _Py_HashDouble (cself->z);
+  if (z == -1) return -1;
+
+  s = (s ^ z) * mult;
+
+  s += 97531L;
+
+  if (s == -1) s = -2;
+
+  return s;
+}
+
+%%
+override-slot VsgVector3@t@.tp_repr
+
+static PyObject *
+_wrap_vsg_vector3@t@_tp_repr (PyGBoxed *self)
+{
+  gchar buffer[1024];
+
+  g_snprintf (buffer, 1024,
+              "Vector3@t@(%@tcode@,%@tcode@,%@tcode@)",
+              pyg_boxed_get (self, VsgVector3@t@)->x,
+              pyg_boxed_get (self, VsgVector3@t@)->y,
+              pyg_boxed_get (self, VsgVector3@t@)->z);
+
+  return PyString_FromString (buffer);
 }
 
 %%
