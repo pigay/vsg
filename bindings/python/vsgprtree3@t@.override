@@ -900,7 +900,7 @@ _wrap_vsg_prtree3@t@_find_deep_region (PyObject *self, PyObject *args)
 {
   PyObject *region, *point, *check, *user_data;
 
-  if (!PyArg_ParseTuple(args, "OOO:VsgPRTree3@t@.foreach_region",
+  if (!PyArg_ParseTuple(args, "OOO:VsgPRTree3@t@.find_deep_region",
                         &point, &check, &user_data))
     return NULL;
 
@@ -916,11 +916,8 @@ _wrap_vsg_prtree3@t@_find_deep_region (PyObject *self, PyObject *args)
       PyObject *test;
       VsgVector3@t@ testv = {0., 0., 0.};
 
-      if (!PyArg_ParseTuple(args, "O:VsgPRTree3@t@.find_point", &point))
-        return NULL;
-
       test = pyvsg_point3@t@_locfunc (point, &testv,
-                                        pyg_boxed_get (self, VsgPRTree3@t@)->config.point_loc_data);
+                                      pyg_boxed_get (self, VsgPRTree3@t@)->config.point_loc_data);
 
       if (test == NULL || !PyInt_Check (test))
         {
