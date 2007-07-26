@@ -28,22 +28,22 @@ html : html_files.stamp
 
 all : html
 
-htmldir = $(datadir)/doc/pyvsg
+pyhtmldir = $(datadir)/doc/pyvsg
 
 install-data-local : html
-	$(mkinstalldirs) $(htmldir)
+	$(mkinstalldirs) $(pyhtmldir)
 	(installfiles=`echo $(srcdir)/html/*.html`; \
 	if test "$$installfiles" = '$(srcdir)/html/*.html'; \
 	then echo '-- Nothing to install' ; \
 	else \
 	  for i in $$installfiles; do \
 	    echo '-- Installing '$$i ; \
-	    $(INSTALL_DATA) $$i $(htmldir); \
+	    $(INSTALL_DATA) $$i $(pyhtmldir); \
 	  done; \
 	  navfiles='$(srcdir)/html/*.png' ; \
 	  for i in $$navfiles; do \
            echo '-- Installing '$$i ; \
-	    $(INSTALL_DATA) $$i $(htmldir); \
+	    $(INSTALL_DATA) $$i $(pyhtmldir); \
 	  done; \
 	fi)
 
