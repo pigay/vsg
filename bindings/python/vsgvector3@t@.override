@@ -407,6 +407,126 @@ _wrap_vsg_vector3@t@_xor_operator (PyObject *self, PyObject *other)
   return pyg_boxed_new (VSG_TYPE_VECTOR3@T@, result, FALSE, TRUE);
 }
 
+/**
+ * vsg_vector3@t@___inplace_add__:
+ * @other: an other #VsgVector3@t@.
+ *
+ * Computes the vector addition between @self and @other.
+ *
+ * Returns: a newly created #VsgVector3@t@ represnting the result of the
+ * addition.
+ */
+static PyObject *
+_wrap_vsg_vector3@t@_inplace_add_operator (PyObject *self, PyObject *other)
+{
+  if ((! pyg_boxed_check (self, VSG_TYPE_VECTOR3@T@)) ||
+      (! pyg_boxed_check (other, VSG_TYPE_VECTOR3@T@)))
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgVector3@t@ "
+                       "operator +=."
+                       );
+      return NULL;
+    }
+
+  vsg_vector3@t@_add (pyg_boxed_get (self, VsgVector3@t@),
+                      pyg_boxed_get (other, VsgVector3@t@),
+                      pyg_boxed_get (self, VsgVector3@t@));
+
+  Py_INCREF(self);
+  return self;
+}
+
+/**
+ * vsg_vector3@t@___inplace_sub__:
+ * @other: an other #VsgVector3@t@.
+ *
+ * Computes the vector substraction between @self and @other.
+ *
+ * Returns: a newly created #VsgVector3@t@ represnting the result of the
+ * substraction.
+ */
+static PyObject *
+_wrap_vsg_vector3@t@_inplace_sub_operator (PyObject *self, PyObject *other)
+{
+  if ((! pyg_boxed_check (self, VSG_TYPE_VECTOR3@T@)) ||
+      (! pyg_boxed_check (other, VSG_TYPE_VECTOR3@T@)))
+    {
+      PyErr_SetString (PyExc_TypeError,
+                       "invalid operand type for VsgVector3@t@ "
+                       "operator -=."
+                       );
+      return NULL;
+    }
+
+  vsg_vector3@t@_sub (pyg_boxed_get (self, VsgVector3@t@),
+                      pyg_boxed_get (other, VsgVector3@t@),
+                      pyg_boxed_get (self, VsgVector3@t@));
+
+  Py_INCREF(self);
+  return self;
+}
+
+/**
+ * vsg_vector3@t@___inplace_mul__:
+ * @other: a #VsgVector3@t@ or a #VsgVector3@t@
+ *
+ * Computes the vector product between @self and @other.
+ * This special method is designed as to work the same @other being a
+ * #VsgVector3@t@ or a number.
+ *
+ * Returns: self.
+ */
+static PyObject *
+_wrap_vsg_vector3@t@_inplace_mul_operator (PyObject *self, PyObject *other)
+{
+  PyObject *fother;
+  gdouble cother;
+
+  /* arguments check: forst argument must be a VsgVector3@t@ */
+  if (pyg_boxed_check (self, VSG_TYPE_VECTOR3@T@))
+    {
+      if (pyg_boxed_check (other, VSG_TYPE_VECTOR3@T@))
+        {
+          vsg_vector3@t@_vecp (pyg_boxed_get (self, VsgVector3@t@),
+                               pyg_boxed_get (other, VsgVector3@t@),
+                               pyg_boxed_get (self, VsgVector3@t@));
+
+          Py_INCREF(self);
+          return self;
+        }
+
+      /* the other argument has to be converted to a PyFloat */
+      fother = PyNumber_Float (other);
+      if (fother == NULL)
+        {
+          PyErr_SetString (PyExc_TypeError,
+                           "invalid operand type for VsgVector3@t@ "
+                           "operator *=. Second operand must be a number."
+                           );
+          return NULL;
+ 
+        }
+
+      cother = PyFloat_AS_DOUBLE (other);
+      Py_XDECREF (other);
+
+      vsg_vector3@t@_scalp (pyg_boxed_get (self, VsgVector3@t@),
+                            cother,
+                            pyg_boxed_get (self, VsgVector3@t@));
+
+      Py_INCREF(self);
+      return self;
+    }
+
+  PyErr_SetString (PyExc_TypeError,
+                   "invalid operand type for VsgVector3@t@ "
+                   "operator *=. First argument must be a "
+                   "VsgVector3@t@."
+                   );
+  return NULL;
+}
+
 static PyNumberMethods _wrap_vsg_vector3@t@_tp_as_number = {
   (binaryfunc) _wrap_vsg_vector3@t@_add_operator, /* nb_add */
   (binaryfunc) _wrap_vsg_vector3@t@_sub_operator, /* nb_subtract */
@@ -425,6 +545,23 @@ static PyNumberMethods _wrap_vsg_vector3@t@_tp_as_number = {
   (binaryfunc) 0, /* nb_and */
   (binaryfunc) _wrap_vsg_vector3@t@_xor_operator, /* nb_xor */
   (binaryfunc) 0, /* nb_or */
+  (coercion) 0, /* nb_coerce */
+  (unaryfunc) 0, /* nb_int */
+  (unaryfunc) 0, /* nb_long */
+  (unaryfunc) 0, /* nb_float */
+  (unaryfunc) 0, /* nb_oct */
+  (unaryfunc) 0, /* nb_hex */
+  (binaryfunc) _wrap_vsg_vector3@t@_inplace_add_operator, /* nb_inplace_add */
+  (binaryfunc) _wrap_vsg_vector3@t@_inplace_sub_operator, /* nb_inplace_subtract */
+  (binaryfunc) _wrap_vsg_vector3@t@_inplace_mul_operator, /* nb_inplace_multiply */
+  (binaryfunc) 0, /* nb_inplace_divide */
+  (binaryfunc) 0, /* nb_inplace_remainder */
+  (ternaryfunc) 0, /* nb_inplace_power */
+  (binaryfunc) 0, /* nb_inplace_lshift */
+  (binaryfunc) 0, /* nb_inplace_rshift */
+  (binaryfunc) 0, /* nb_inplace_and */
+  (binaryfunc) 0, /* nb_inplace_xor */
+  (binaryfunc) 0, /* nb_inplace_or */
 };
 
 %%
