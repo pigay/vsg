@@ -47,7 +47,11 @@ gint main (gint argc, gchar ** argv)
   vsg_init_gdouble ();
 
   /* create the tree */
-  tree = vsg_prtree2d_new (&lb, &ub, NULL);
+  tree =
+    vsg_prtree2d_new_full (&lb, &ub,
+                           (VsgPoint2dLocFunc) vsg_vector2d_vector2d_locfunc,
+                           (VsgPoint2dDistFunc) vsg_vector2d_dist,
+                           NULL, 1);
 
   /* insert some points */
   for (i=0; i<n; i++)

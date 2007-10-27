@@ -47,7 +47,11 @@ gint main (gint argc, gchar ** argv)
   vsg_init_gdouble ();
 
   /* create the tree */
-  tree = vsg_prtree3d_new (&lb, &ub, NULL);
+  tree =
+    vsg_prtree3d_new_full (&lb, &ub,
+                           (VsgPoint3dLocFunc) vsg_vector3d_vector3d_locfunc,
+                           (VsgPoint3dDistFunc) vsg_vector3d_dist,
+                           NULL, 1);
 
   /* insert some points */
   for (i=0; i<n; i++)
