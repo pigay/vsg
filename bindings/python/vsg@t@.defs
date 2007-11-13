@@ -664,6 +664,27 @@
   )
 )
 
+(define-method set_children_order_with_data
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_set_children_order_with_data")
+  (return-type "none")
+  (parameters
+    '("VsgChildrenOrderDataFunc" "children_order")
+    '("gpointer" "root_key")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method set_children_order
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_set_children_order")
+  (return-type "none")
+  (parameters
+    '("VsgChildrenOrderFunc" "children_order")
+    '("gpointer" "root_key")
+  )
+)
+
 (define-method get_tolerance
   (of-object "VsgPRTree2@t@")
   (c-name "vsg_prtree2@t@_get_tolerance")
@@ -951,6 +972,27 @@
   (parameters
     '("VsgPoint3@t@DistMarshall" "marshall")
     '("gpointer" "distdata")
+  )
+)
+
+(define-method set_children_order_with_data
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_set_children_order_with_data")
+  (return-type "none")
+  (parameters
+    '("VsgChildrenOrderDataFunc" "children_order")
+    '("gpointer" "root_key")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method set_children_order
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_set_children_order")
+  (return-type "none")
+  (parameters
+    '("VsgChildrenOrderFunc" "children_order")
+    '("gpointer" "root_key")
   )
 )
 

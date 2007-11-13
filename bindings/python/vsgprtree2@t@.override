@@ -31,12 +31,13 @@ headers
 %%
 ignore
   vsg_prtree2@t@_new_full
-  
+  vsg_prtree2@t@_set_children_order_with_data
+
 /*****************************************************************************/
 %%
 ignore-glob
   vsg_prtree2@t@_*_marshall
-  
+
 /*****************************************************************************/
 %%
 override-slot VsgPRTree2@t@.tp_flags
@@ -241,6 +242,123 @@ _wrap_vsg_prtree2@t@_tp_init (PyGBoxed *self, PyObject *args,
 
 /*****************************************************************************/
 %%
+override vsg_prtree2@t@_set_children_order
+
+static void children_order_marshall2@t@ (gpointer node_key, gint *children,
+                                         gpointer *children_keys,
+                                         PyObject *func)
+{
+  PyObject *pynode_key = Py_BuildValue ("i", GPOINTER_TO_INT (node_key));
+  PyObject *children_list = Py_BuildValue ("[i, i, i, i]", 0, 0, 0, 0);
+  PyObject *children_keys_list = Py_BuildValue ("[i, i, i, i]", 0, 0, 0, 0);
+  PyObject *ret;
+  gint i;
+
+  ret = PyObject_CallFunctionObjArgs (func, pynode_key, children_list,
+                                      children_keys_list, NULL);
+
+  if (ret != NULL)
+    {
+      Py_DECREF (ret);
+
+      for (i=0; i<4; i++)
+        {
+          PyObject *pychildren = PyList_GetItem (children_list, i);
+          PyObject *pychildren_key = PyList_GetItem (children_keys_list, i);
+
+          children[i] = (gint) PyInt_AsLong (pychildren);
+          children_keys[i] =
+            GINT_TO_POINTER ((gint) PyInt_AsLong (pychildren_key));
+        }
+    }
+  else
+    {
+      PyErr_Print();
+
+      /* fallback to Z-order */
+      for (i=0; i<4; i++)
+        {
+          children[i] = i;
+          children_keys[i] = node_key;
+        }
+    }
+
+  Py_DECREF (pynode_key);
+  Py_DECREF (children_list);
+  Py_DECREF (children_keys_list);
+}
+
+/**
+ * vsg_prtree2@t@_set_children_order :
+ * @children_order: a function for defining children order in traversals.
+ * @root_key: the key to pass to @children_order for the first (root) node.
+ *
+ * Configures @self to use @children_order for determining children order
+ * in traversals. If @children_order is set to %None, children ordering returns
+ * to the default Z-order.
+ *
+ * Function @children_order must accept three arguments @node_key, @children and
+ * @children_keys that are respectively an integer and two lists of size 4.
+ * @root_key must also be an integer key.
+ *
+ */
+static PyObject *
+_wrap_vsg_prtree2@t@_set_children_order (PyObject *self, PyObject *args)
+{
+  PyObject *children_order;
+  PyObject *root_key;
+
+  if (!PyArg_ParseTuple(args, "OO:VsgPRTree2@t@.set_children_order",
+                        &children_order, &root_key))
+      return NULL;
+  if (children_order == Py_None)
+    {
+      if (pyg_boxed_get (self, VsgPRTree2@t@)->config.children_order != NULL)
+        {
+          PyObject *old_func =
+            pyg_boxed_get (self, VsgPRTree2@t@)->config.children_order_data;
+
+          Py_DECREF (old_func);
+        }
+
+      vsg_prtree2@t@_set_children_order_with_data (pyg_boxed_get (self, VsgPRTree2@t@),
+                                                   (VsgChildrenOrderDataFunc) NULL,
+                                                   NULL, NULL);
+
+    }
+  else
+    {
+      gint rk;
+
+      if (!PyCallable_Check(children_order))
+        {
+          PyErr_SetString(PyExc_TypeError,
+                          "children_order must be a callable object or None");
+          return NULL;
+        }
+      if (!PyNumber_Check(root_key))
+        {
+          PyErr_SetString(PyExc_TypeError,
+                          "root_key must be an integer");
+          return NULL;
+        }
+
+      rk = (gint) PyInt_AsLong (root_key);
+
+      Py_INCREF (children_order);
+
+      vsg_prtree2@t@_set_children_order_with_data (pyg_boxed_get (self, VsgPRTree2@t@),
+                                                   (VsgChildrenOrderDataFunc) children_order_marshall2@t@,
+                                                   GINT_TO_POINTER (rk),
+                                                   children_order);
+    }
+
+  Py_INCREF (Py_None);
+  return Py_None;
+}
+
+/*****************************************************************************/
+%%
 override vsg_prtree2@t@_insert_point
 
 static PyObject *pyvsg_point2@t@_locfunc (PyObject *candidate,
@@ -273,7 +391,7 @@ _wrap_vsg_prtree2@t@_insert_point (PyObject *self, PyObject *args)
 
   Py_INCREF (point);
   vsg_prtree2@t@_insert_point (pyg_boxed_get (self, VsgPRTree2@t@),
-                                  point);
+                               point);
 
   Py_INCREF (Py_None);
   return Py_None;
@@ -475,7 +593,7 @@ struct _ForeachPointData2@t@ {
 
 static void
 _prtree2@t@_foreach_point_marshall (PyObject *point,
-                                       ForeachPointData2@t@ *marshall_data)
+                                    ForeachPointData2@t@ *marshall_data)
 {
   PyObject *pyret;
   PyObject *args = PyTuple_New (2);
@@ -1011,6 +1129,11 @@ _wrap_vsg_prtree2@t@_tp_traverse(PyObject *self, visitproc visit, void *arg)
       if (visit (tree->config.user_data_model, arg) < 0) return -1;
     }
 
+  if (tree->config.children_order_data != NULL)
+    {
+      if (visit (tree->config.children_order_data, arg) < 0) return -1;
+    }
+
   vsg_prtree2@t@_foreach_point (tree, (GFunc) visitfunc2@t@, &v);
   if (v.ret < 0) return -1;
 
@@ -1043,6 +1166,13 @@ _wrap_vsg_prtree2@t@_tp_clear(PyObject *self)
 
   Py_XDECREF((PyObject *) tree->config.region_loc_data);
   tree->config.region_loc_data = NULL;
+
+  Py_XDECREF((PyObject *) tree->config.children_order_data);
+  tree->config.children_order_data = NULL;
+
+  tree->config.root_key = NULL;
+
+  vsg_prtree2@t@_set_children_order (tree, NULL, NULL);
 
   vsg_prtree2@t@_foreach_point (tree, (GFunc) clear_func2@t@, NULL);
   vsg_prtree2@t@_foreach_region (tree, (GFunc) clear_func2@t@, NULL);
@@ -1512,6 +1642,14 @@ _wrap_vsg_prtree2@t@_clone(PyObject *self)
   Py_INCREF ((PyObject *) ret->config.point_dist_data);
 
   Py_INCREF ((PyObject *) ret->config.region_loc_data);
+
+  if (pyg_boxed_get (self, VsgPRTree2@t@)->config.children_order != NULL)
+    {
+      PyObject *func =
+        pyg_boxed_get (self, VsgPRTree2@t@)->config.children_order_data;
+
+      Py_INCREF (func);
+    }
 
   pyret = PyObject_GC_New(PyGBoxed, &PyVsgPRTree2@t@_Type);
 
