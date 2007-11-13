@@ -913,13 +913,17 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
                                  VsgRegion3 selector,
                                  VsgPRTree3@t@Func func,
                                  gpointer user_data,
-                                 VsgPRTree3@t@Config *config)
+                                 VsgPRTree3@t@Config *config,
+                                 gpointer node_key)
 {
   VsgPRTree3@t@NodeInfo node_info;
   guint8 i;
   vsgrloc3 ipow;
   vsgrloc3 locmask = (selector == NULL) ? VSG_RLOC3_MASK :
     CALL_REGION3@T@_LOC (config, selector, &node->center);
+
+  gint children[8];
+  gpointer children_keys[8];
 
   _vsg_prtree3@t@node_get_info (node, &node_info, father_info);
 
@@ -928,15 +932,20 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
 
   if (PRTREE3@T@NODE_ISINT (node))
     {
+      config->children_order (node_key, children, children_keys,
+                              config->children_order_data);
+
       for (i=0; i<4; i++)
 	{
-          ipow = VSG_RLOC3_COMP (i);
+          gint ic = children[i];
+
+          ipow = VSG_RLOC3_COMP (ic);
 
           if (ipow & locmask)
-            _prtree3@t@node_traverse_custom (PRTREE3@T@NODE_CHILD(node, i),
+            _prtree3@t@node_traverse_custom (PRTREE3@T@NODE_CHILD(node, ic),
                                              &node_info,
                                              order, selector, func, user_data,
-                                             config);
+                                             config, children_keys[i]);
 	}
     }
 
@@ -947,13 +956,15 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
     {
       for (i=4; i<8; i++)
 	{
-          ipow = VSG_RLOC3_COMP (i);
+          gint ic = children[i];
+
+          ipow = VSG_RLOC3_COMP (ic);
 
           if (ipow & locmask)
-            _prtree3@t@node_traverse_custom (PRTREE3@T@NODE_CHILD(node, i),
+            _prtree3@t@node_traverse_custom (PRTREE3@T@NODE_CHILD(node, ic),
                                              &node_info,
                                              order, selector, func, user_data,
-                                             config);
+                                             config, children_keys[i]);
 	}
     }
 
@@ -1036,6 +1047,16 @@ static void _foreach_region (const VsgPRTree3@t@NodeInfo *node_info,
 
       region_list = g_slist_next (region_list);
     }
+}
+
+
+static void
+_z_order_data (gpointer key, gint *children, gpointer *children_keys,
+               gpointer user_data)
+{
+  static const gint zorder[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+
+  memcpy (children, zorder, 8 * sizeof (gint));
 }
 
 /*-------------------------------------------------------------------*/
@@ -1145,6 +1166,10 @@ vsg_prtree3@t@_new_full (const VsgVector3@t@ *lbound,
   prtree3@t@->config.region_loc_data = region_locfunc;
   prtree3@t@->config.tolerance = @epsilon@;
 
+  prtree3@t@->config.children_order = _z_order_data;
+  prtree3@t@->config.children_order_data = NULL;
+  prtree3@t@->config.root_key = NULL;
+
   if (max_point == 0)
     max_point = PRTREE3@T@LEAF_MAXSIZE;
   prtree3@t@->config.max_point = max_point;
@@ -1217,6 +1242,10 @@ VsgPRTree3@t@ *vsg_prtree3@t@_clone (VsgPRTree3@t@ *prtree3@t@)
   res->config.region_loc_marshall = prtree3@t@->config.region_loc_marshall;
   res->config.region_loc_data = prtree3@t@->config.region_loc_data;
   res->config.tolerance = prtree3@t@->config.tolerance;
+
+  res->config.children_order = prtree3@t@->config.children_order;
+  res->config.children_order_data = prtree3@t@->config.children_order_data;
+  res->config.root_key = prtree3@t@->config.root_key;
 
   res->config.max_point = prtree3@t@->config.max_point;
 
@@ -1301,6 +1330,66 @@ vsg_prtree3@t@_set_point_dist_marshall (VsgPRTree3@t@ *prtree3@t@,
   prtree3@t@->config.point_dist_marshall = marshall;
 
   prtree3@t@->config.point_dist_data = distdata;
+}
+
+/**
+ * vsg_prtree3@t@_set_children_order_with_data :
+ * @prtree3@t@: a #VsgPRTree3@t@.
+ * @children_order: a function for defining children order in traversals.
+ * @root_key: the key to pass to @children_order for the first (root) node.
+ * @user_data: user provided data that will be passed to @children_order at each call.
+ *
+ * Configures @prtree3@t@ to use @children_order for determining children order
+ * in traversals. If @children_order is set to %NULL, children ordering returns
+ * to the default Z-order.
+ *
+ * Applies only to single traversal operations (currently not to near/far
+ * traversals).
+ */
+void
+vsg_prtree3@t@_set_children_order_with_data (VsgPRTree3@t@ *prtree3@t@,
+                                             VsgChildrenOrderDataFunc children_order,
+                                             gpointer root_key,
+                                             gpointer user_data)
+{
+#ifdef VSG_CHECK_PARAMS
+  g_return_val_if_fail (prtree3@t@ != NULL, -1.);
+#endif
+
+  if (children_order == NULL)
+    {
+      children_order = _z_order_data;
+      root_key = NULL;
+      user_data = NULL;
+    }
+
+  prtree3@t@->config.children_order = children_order;
+
+  prtree3@t@->config.root_key = root_key;
+  prtree3@t@->config.children_order_data = user_data;
+}
+
+/**
+ * vsg_prtree3@t@_set_children_order :
+ * @prtree3@t@: a #VsgPRTree3@t@.
+ * @children_order: a function for defining children order in traversals.
+ * @root_key: the key to pass to @children_order for the first (root) node.
+ *
+ * Configures @prtree3@t@ to use @children_order for determining children order
+ * in traversals. If @children_order is set to %NULL, children ordering returns
+ * to the default Z-order.
+ *
+ * Applies only to single traversal operations (currently not to near/far
+ * traversals).
+ */
+void
+vsg_prtree3@t@_set_children_order (VsgPRTree3@t@ *prtree3@t@,
+                                   VsgChildrenOrderFunc children_order,
+                                   gpointer root_key)
+{
+  vsg_prtree3@t@_set_children_order_with_data (prtree3@t@,
+                                               (VsgChildrenOrderDataFunc) children_order,
+                                               root_key, NULL);
 }
 
 /**
@@ -1829,7 +1918,10 @@ void vsg_prtree3@t@_traverse (VsgPRTree3@t@ *prtree3@t@,
  *
  * Performs a traversal of @prtree3@t@, executing @func on each of its nodes
  * that intersects @selector (as defined by provided region_locfunc in
- * vsg_prtree3@t@_new_full()). Tree nodes are visited in @order order.
+ * vsg_prtree3@t@_new_full()). The @order parameter refers to the order between
+ * @func call and children traversal for each node. If you need to set a
+ * specific order between node's children, please refer to
+ * vsg_prtree3@t@_set_children_order() function.
  *
  * WARNING: Please note that %G_LEVEL_ORDER is not currenlty implemented.
  */
@@ -1847,7 +1939,8 @@ void vsg_prtree3@t@_traverse_custom (VsgPRTree3@t@ *prtree3@t@,
 
   _prtree3@t@node_traverse_custom (prtree3@t@->node, NULL,
                                    order, selector, func,
-                                   user_data, &prtree3@t@->config);
+                                   user_data, &prtree3@t@->config,
+                                   prtree3@t@->config.root_key);
 }
 
 GType vsg_prtree3@t@_node_info_get_type (void)

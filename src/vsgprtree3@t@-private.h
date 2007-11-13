@@ -145,6 +145,11 @@ struct _VsgPRTree3@t@Config {
   /* user node data */
   gpointer user_data_model;
   GType user_data_type;
+
+  /* children order in traversals */
+  VsgChildrenOrderDataFunc children_order;
+  gpointer children_order_data;
+  gpointer root_key;
 };
 
 struct _VsgPRTree3@t@ {

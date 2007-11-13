@@ -216,6 +216,27 @@ vsgprtree2d
 @distdata: 
 
 
+<!-- ##### FUNCTION vsg_prtree2d_set_children_order_with_data ##### -->
+<para>
+
+</para>
+
+@prtree2d: 
+@children_order: 
+@root_key: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree2d_set_children_order ##### -->
+<para>
+
+</para>
+
+@prtree2d: 
+@children_order: 
+@root_key: 
+
+
 <!-- ##### FUNCTION vsg_prtree2d_get_tolerance ##### -->
 <para>
 

@@ -170,6 +170,14 @@ vsg_vector3f_get_type
 </SECTION>
 
 <SECTION>
+<FILE>vsgprtree-common</FILE>
+VsgChildrenOrderDataFunc
+VsgChildrenOrderFunc
+
+<SUBSECTION Standard>
+</SECTION>
+
+<SECTION>
 <FILE>vsgprtree2-common</FILE>
 VSG_LOC2_SW
 VSG_LOC2_SE
@@ -222,6 +230,8 @@ vsg_prtree2d_clone
 vsg_prtree2d_set_point_loc_marshall
 vsg_prtree2d_set_region_loc_marshall
 vsg_prtree2d_set_point_dist_marshall
+vsg_prtree2d_set_children_order_with_data
+vsg_prtree2d_set_children_order
 vsg_prtree2d_get_tolerance
 vsg_prtree2d_set_tolerance
 vsg_prtree2d_set_node_data
@@ -282,6 +292,8 @@ vsg_prtree2f_clone
 vsg_prtree2f_set_point_loc_marshall
 vsg_prtree2f_set_region_loc_marshall
 vsg_prtree2f_set_point_dist_marshall
+vsg_prtree2f_set_children_order_with_data
+vsg_prtree2f_set_children_order
 vsg_prtree2f_get_tolerance
 vsg_prtree2f_set_tolerance
 vsg_prtree2f_set_node_data
@@ -370,6 +382,8 @@ vsg_prtree3d_clone
 vsg_prtree3d_set_point_loc_marshall
 vsg_prtree3d_set_region_loc_marshall
 vsg_prtree3d_set_point_dist_marshall
+vsg_prtree3d_set_children_order_with_data
+vsg_prtree3d_set_children_order
 vsg_prtree3d_get_tolerance
 vsg_prtree3d_set_tolerance
 vsg_prtree3d_set_node_data
@@ -429,6 +443,8 @@ vsg_prtree3f_clone
 vsg_prtree3f_set_point_loc_marshall
 vsg_prtree3f_set_region_loc_marshall
 vsg_prtree3f_set_point_dist_marshall
+vsg_prtree3f_set_children_order_with_data
+vsg_prtree3f_set_children_order
 vsg_prtree3f_get_tolerance
 vsg_prtree3f_set_tolerance
 vsg_prtree3f_set_node_data

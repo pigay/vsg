@@ -1,7 +1,8 @@
 # -*- makefile -*-
 
 # common files
-libvsg_common_headers = vsgprtree2-common.h vsgprtree3-common.h
+libvsg_common_headers = vsgprtree-common.h vsgprtree2-common.h \
+vsgprtree3-common.h
 
 # gdouble library
 

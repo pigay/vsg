@@ -25,6 +25,8 @@
 
 #include <vsg/vsgvector3@t@.h>
 
+#include <vsg/vsgprtree-common.h>
+
 #include <vsg/vsgprtree3-common.h>
 
 G_BEGIN_DECLS;
@@ -124,6 +126,16 @@ void
 vsg_prtree3@t@_set_point_dist_marshall (VsgPRTree3@t@ *prtree3@t@,
                                         VsgPoint3@t@DistMarshall marshall,
                                         gpointer distdata);
+
+void
+vsg_prtree3@t@_set_children_order_with_data (VsgPRTree3@t@ *prtree3@t@,
+                                             VsgChildrenOrderDataFunc children_order,
+                                             gpointer root_key,
+                                             gpointer user_data);
+void
+vsg_prtree3@t@_set_children_order (VsgPRTree3@t@ *prtree3@t@,
+                                   VsgChildrenOrderFunc children_order,
+                                   gpointer root_key);
 
 @type@ vsg_prtree3@t@_get_tolerance (VsgPRTree3@t@ *prtree3@t@);
 
