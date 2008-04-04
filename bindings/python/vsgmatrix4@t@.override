@@ -20,7 +20,7 @@
  */
 %%
 headers
-#include "vsg/vsgmatrix4@t@.h"
+#include "vsg/vsgmatrix4@t@-inline.h"
 
 %%
 override-slot VsgMatrix4@t@.tp_flags

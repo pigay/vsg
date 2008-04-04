@@ -1,5 +1,3 @@
-/* -*- C -*- */
-%%
 /* LIBVSG - Visaurin Geometric Library
  * Copyright (C) 2006-2007 Pierre Gay
  *
@@ -18,23 +16,21 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-%%
-headers
-#define NO_IMPORT_PYGOBJECT
-#include "pygobject.h"
 
-%%
-include
-  vsgvector2@t@.override
-  vsgvector3@t@.override
-  vsgquaternion@t@.override
-  vsgmatrix3@t@.override
-  vsgmatrix4@t@.override
-  vsgprtree2@t@.override
-  vsgprtree3@t@.override
 
-%%
-ignore-glob
-  _*
-  vsg_*_free
+#ifndef __VSG@T@_INLINE_H__ /* __VSG@T@_INLINE_H__ */
+#define __VSG@T@_INLINE_H__
 
+#include <glib.h>
+
+#include <vsg/vsg@t@.h>
+
+#include <vsg/vsgvector2@t@-inline.h>
+#include <vsg/vsgvector3@t@-inline.h>
+
+#include <vsg/vsgmatrix3@t@-inline.h>
+#include <vsg/vsgmatrix4@t@-inline.h>
+
+#include <vsg/vsgquaternion@t@-inline.h>
+
+#endif /* __VSG@T@_INLINE_H__ */

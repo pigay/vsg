@@ -22,6 +22,9 @@
 #include "vsgmatrix4@t@.h"
 #include "vsgquaternion@t@.h"
 
+#define VSG_NO_IMPLICIT_INLINE
+#include "vsgmatrix4@t@-inline.h"
+
 #include <math.h>
 
 #include <glib/gprintf.h>
@@ -135,11 +138,11 @@ vsg_matrix4@t@_new (@type@ a00, @type@ a01, @type@ a02, @type@ a03,
 {
   VsgMatrix4@t@ *result = _matrix4@t@_alloc ();
 
-  vsg_matrix4@t@_set (result,
-                      a00, a01, a02, a03,
-                      a10, a11, a12, a13,
-                      a20, a21, a22, a23,
-                      a30, a31, a32, a33);
+  vsg_matrix4@t@_set_inline (result,
+                             a00, a01, a02, a03,
+                             a10, a11, a12, a13,
+                             a20, a21, a22, a23,
+                             a30, a31, a32, a33);
 
   return result;
 }
@@ -176,7 +179,7 @@ VsgMatrix4@t@ *vsg_matrix4@t@_identity_new ()
 {
   VsgMatrix4@t@ *result = _matrix4@t@_alloc ();
 
-  vsg_matrix4@t@_identity (result);
+  vsg_matrix4@t@_identity_inline (result);
 
   return result;
 }
@@ -198,7 +201,7 @@ VsgMatrix4@t@ *vsg_matrix4@t@_rotate_cardan_new (@type@ ax,
 {
   VsgMatrix4@t@ *result = vsg_matrix4@t@_identity_new ();
 
-  vsg_matrix4@t@_rotate_cardan (result, ax, ay, az);
+  vsg_matrix4@t@_rotate_cardan_inline (result, ax, ay, az);
 
   return result;
 }
@@ -221,7 +224,7 @@ VsgMatrix4@t@ *vsg_matrix4@t@_rotate_euler_new (@type@ alpha,
 {
   VsgMatrix4@t@ *result = vsg_matrix4@t@_identity_new ();
 
-  vsg_matrix4@t@_rotate_euler (result, alpha, beta, gamma);
+  vsg_matrix4@t@_rotate_euler_inline (result, alpha, beta, gamma);
 
   return result;
 }
@@ -241,7 +244,7 @@ VsgMatrix4@t@ *vsg_matrix4@t@_translate_new (@type@ x, @type@ y, @type@ z)
 {
   VsgMatrix4@t@ *result = vsg_matrix4@t@_identity_new ();
 
-  vsg_matrix4@t@_translate (result, x, y, z);
+  vsg_matrix4@t@_translate_inline (result, x, y, z);
 
   return result;
 
@@ -262,7 +265,7 @@ VsgMatrix4@t@ *vsg_matrix4@t@_scale_new (@type@ x, @type@ y, @type@ z)
 {
   VsgMatrix4@t@ *result = vsg_matrix4@t@_identity_new ();
 
-  vsg_matrix4@t@_scale(result, x, y, z);
+  vsg_matrix4@t@_scale_inline (result, x, y, z);
 
   return result;
 }
@@ -286,7 +289,7 @@ VsgMatrix4@t@ *vsg_matrix4@t@_quaternion@t@_new (const VsgQuaternion@t@ *quat)
 
   result = vsg_matrix4@t@_identity_new ();
 
-  vsg_matrix4@t@_quaternion@t@ (result,quat);
+  vsg_matrix4@t@_quaternion@t@_inline (result,quat);
 
   return result;
 
@@ -324,26 +327,11 @@ void vsg_matrix4@t@_set (VsgMatrix4@t@ *mat,
   g_return_if_fail (mat != NULL);
 #endif
 
-  VSG_MATRIX4@T@_COMP (mat, 0, 0) = a00;
-  VSG_MATRIX4@T@_COMP (mat, 0, 1) = a01;
-  VSG_MATRIX4@T@_COMP (mat, 0, 2) = a02;
-  VSG_MATRIX4@T@_COMP (mat, 0, 3) = a03;
-
-  VSG_MATRIX4@T@_COMP (mat, 1, 0) = a10;
-  VSG_MATRIX4@T@_COMP (mat, 1, 1) = a11;
-  VSG_MATRIX4@T@_COMP (mat, 1, 2) = a12;
-  VSG_MATRIX4@T@_COMP (mat, 1, 3) = a13;
-
-  VSG_MATRIX4@T@_COMP (mat, 2, 0) = a20;
-  VSG_MATRIX4@T@_COMP (mat, 2, 1) = a21;
-  VSG_MATRIX4@T@_COMP (mat, 2, 2) = a22;
-  VSG_MATRIX4@T@_COMP (mat, 2, 3) = a23;
-
-  VSG_MATRIX4@T@_COMP (mat, 3, 0) = a30;
-  VSG_MATRIX4@T@_COMP (mat, 3, 1) = a31;
-  VSG_MATRIX4@T@_COMP (mat, 3, 2) = a32;
-  VSG_MATRIX4@T@_COMP (mat, 3, 3) = a33;
-
+  vsg_matrix4@t@_set_inline (mat,
+                             a00, a01, a02, a03,
+                             a10, a11, a12, a13,
+                             a20, a21, a22, a23,
+                             a30, a31, a32, a33);
 }
 
 /**
@@ -354,7 +342,11 @@ void vsg_matrix4@t@_set (VsgMatrix4@t@ *mat,
  */
 void vsg_matrix4@t@_identity (VsgMatrix4@t@ *mat)
 {
-  vsg_matrix4@t@_copy (&VSG_M4@T@_ID, mat);
+#ifdef VSG_CHECK_PARAMS
+  g_return_if_fail (mat != NULL);
+#endif
+
+  vsg_matrix4@t@_identity_inline (mat);
 }
 
 /**
@@ -366,16 +358,12 @@ void vsg_matrix4@t@_identity (VsgMatrix4@t@ *mat)
  */
 void vsg_matrix4@t@_copy (const VsgMatrix4@t@ *src, VsgMatrix4@t@ *dst)
 {
-  guint i, j;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (dst != NULL);
   g_return_if_fail (src != NULL);
 #endif
 
-  for (i=0; i<4; i++)
-    for (j=0; j<4; j++)
-      VSG_MATRIX4@T@_COMP (dst, i, j) = VSG_MATRIX4@T@_COMP (src, i, j) ;
+  vsg_matrix4@t@_copy_inline (src, dst);
 }
 
 /**
@@ -396,7 +384,7 @@ VsgMatrix4@t@ *vsg_matrix4@t@_clone (const VsgMatrix4@t@ *src)
 
   dst = _matrix4@t@_alloc ();
 
-  vsg_matrix4@t@_copy (src, dst);
+  vsg_matrix4@t@_copy_inline (src, dst);
 
   return dst;
 }
@@ -410,23 +398,11 @@ VsgMatrix4@t@ *vsg_matrix4@t@_clone (const VsgMatrix4@t@ *src)
  */
 void vsg_matrix4@t@_rotate_x (VsgMatrix4@t@ *mat, @type@ angle)
 {
-  VsgMatrix4@t@ rot;
-  @type@ ca, sa;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
 #endif
 
-  ca = cos (angle);
-  sa = sin (angle);
-
-  vsg_matrix4@t@_set (&rot,
-                      1., 0.,  0., 0.,
-                      0., ca, -sa, 0.,
-                      0., sa,  ca, 0.,
-                      0., 0.,  0., 1.);
-
-  vsg_matrix4@t@_matmult (mat, &rot, mat);
+  vsg_matrix4@t@_rotate_x_inline (mat, angle);
 }
 
 /**
@@ -438,23 +414,11 @@ void vsg_matrix4@t@_rotate_x (VsgMatrix4@t@ *mat, @type@ angle)
  */
 void vsg_matrix4@t@_rotate_y (VsgMatrix4@t@ *mat, @type@ angle)
 {
-  VsgMatrix4@t@ rot;
-  @type@ ca, sa;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
 #endif
 
-  ca = cos (angle);
-  sa = sin (angle);
-
-  vsg_matrix4@t@_set (&rot,
-                      ca, 0., -sa, 0.,
-                      0., 1.,  0., 0.,
-                      sa, 0.,  ca, 0.,
-                      0., 0.,  0., 1.);
-
-  vsg_matrix4@t@_matmult (mat, &rot, mat);
+  vsg_matrix4@t@_rotate_y_inline (mat, angle);
 }
 
 /**
@@ -466,24 +430,11 @@ void vsg_matrix4@t@_rotate_y (VsgMatrix4@t@ *mat, @type@ angle)
  */
 void vsg_matrix4@t@_rotate_z (VsgMatrix4@t@ *mat, @type@ angle)
 {
-  VsgMatrix4@t@ rot;
-  @type@ ca, sa;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
 #endif
 
-  ca = cos (angle);
-  sa = sin (angle);
-
-  vsg_matrix4@t@_set (&rot,
-                      ca, -sa, 0., 0.,
-                      sa,  ca, 0., 0.,
-                      0.,  0., 1., 0.,
-                      0.,  0., 0., 1.);
-
-  vsg_matrix4@t@_matmult (mat, &rot, mat);
-
+  vsg_matrix4@t@_rotate_z_inline (mat, angle);
 }
 
 /**
@@ -501,50 +452,11 @@ void vsg_matrix4@t@_rotate_cardan (VsgMatrix4@t@ *mat,
                                    @type@ ay,
                                    @type@ az)
 {
-  VsgMatrix4@t@ rotx, roty, rotz;
-  @type@ cax, sax;
-  @type@ cay, say;
-  @type@ caz, saz;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
 #endif
 
-  cax = cos (ax);
-  sax = sin (ax);
-
-  cay = cos (ay);
-  say = sin (ay);
-
-  caz = cos (az);
-  saz = sin (az);
-
-  /* insert rotxyz set */
-  vsg_matrix4@t@_set (&rotx,
-                      1., 0.,  0.,   0.,
-                      0., cax, -sax, 0.,
-                      0., sax, cax,  0.,
-                      0., 0.,  0.,   1.
-                      );
-
-  vsg_matrix4@t@_set (&roty,
-                      cay, 0., -say, 0.,
-                      0.,  1., 0.,   0.,
-                      say, 0., cay,  0.,
-                      0.,  0., 0.,   1.
-                      );
-
-  vsg_matrix4@t@_set (&rotz,
-                      caz, -saz, 0., 0.,
-                      saz, caz,  0., 0.,
-                      0.,  0.,   1., 0.,
-                      0.,  0.,   0., 1.
-                      );
-
-
-  vsg_matrix4@t@_matmult (mat, &rotz, mat);
-  vsg_matrix4@t@_matmult (mat, &roty, mat);
-  vsg_matrix4@t@_matmult (mat, &rotx, mat);
+  vsg_matrix4@t@_rotate_cardan_inline (mat, ax, ay, az);
 }
 
 /**
@@ -562,50 +474,11 @@ void vsg_matrix4@t@_rotate_euler (VsgMatrix4@t@ *mat,
                                   @type@ beta,
                                   @type@ gamma)
 {
-  VsgMatrix4@t@ rota, rotb, rotg;
-  @type@ ca, sa;
-  @type@ cb, sb;
-  @type@ cg, sg;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
 #endif
 
-  ca = cos (alpha);
-  sa = sin (alpha);
-
-  cb = cos (beta);
-  sb = sin (beta);
-
-  cg = cos (gamma);
-  sg = sin (gamma);
-
-  /* insert rotabg set */
-  vsg_matrix4@t@_set (&rota,
-                      ca, -sa, 0., 0.,
-                      sa, ca,  0., 0.,
-                      0.,  0.,   1., 0.,
-                      0.,  0.,   0., 1.
-                      );
-
-  vsg_matrix4@t@_set (&rotb,
-                      cb, 0., -sb, 0.,
-                      0.,  1., 0.,   0.,
-                      sb, 0., cb,  0.,
-                      0.,  0., 0.,   1.
-                      );
-
-  vsg_matrix4@t@_set (&rotg,
-                      cg, -sg, 0., 0.,
-                      sg, cg,  0., 0.,
-                      0.,  0.,   1., 0.,
-                      0.,  0.,   0., 1.
-                      );
-
-
-  vsg_matrix4@t@_matmult (mat, &rotg, mat);
-  vsg_matrix4@t@_matmult (mat, &rotb, mat);
-  vsg_matrix4@t@_matmult (mat, &rota, mat);
+  vsg_matrix4@t@_rotate_euler_inline (mat, alpha, beta, gamma);
 }
 
 /**
@@ -620,19 +493,11 @@ void vsg_matrix4@t@_rotate_euler (VsgMatrix4@t@ *mat,
 void vsg_matrix4@t@_translate (VsgMatrix4@t@ *mat,
                                @type@ x, @type@ y, @type@ z)
 {
-  VsgMatrix4@t@ trans;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
 #endif
 
-  vsg_matrix4@t@_set (&trans,
-                      1., 0., 0., x,
-                      0., 1., 0., y,
-                      0., 0., 1., z,
-                      0., 0., 0., 1.);
-
-  vsg_matrix4@t@_matmult (mat, &trans, mat);
+  vsg_matrix4@t@_translate_inline (mat, x, y, z);
 }
 
 /**
@@ -646,26 +511,14 @@ void vsg_matrix4@t@_translate (VsgMatrix4@t@ *mat,
  */
 void vsg_matrix4@t@_scale (VsgMatrix4@t@ *mat, @type@ x, @type@ y, @type@ z)
 {
-  VsgMatrix4@t@ scale;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
 #endif
 
-  vsg_matrix4@t@_set (&scale,
-                      x, 0., 0., 0.,
-                      0., y, 0., 0.,
-                      0., 0., z, 0.,
-                      0., 0., 0., 1.);
-
-  vsg_matrix4@t@_matmult (mat, &scale, mat);
-
+  vsg_matrix4@t@_scale_inline (mat, x, y, z);
 }
 
 
-/*
- * Source: http://www.j3d.org/matrix4_faq/matrfaq_latest.html
- */
 /**
  * vsg_matrix4@t@_quaternion@t@_set:
  * @mat: a #VsgMatrix4@t@
@@ -676,29 +529,12 @@ void vsg_matrix4@t@_scale (VsgMatrix4@t@ *mat, @type@ x, @type@ y, @type@ z)
 void vsg_matrix4@t@_quaternion@t@_set (VsgMatrix4@t@ *mat,
                                        const VsgQuaternion@t@ *quat)
 {
-  @type@ xx, xy, xz, xw, yy, yz, yw, zz, zw, ww;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (quat != NULL);
 #endif
 
-  xx = quat->x * quat->x; /* g_print("xx: %@tcode@\n", xx); */
-  xy = quat->x * quat->y; /* g_print("xy: %@tcode@\n", xy); */
-  xz = quat->x * quat->z; /* g_print("xz: %@tcode@\n", xz); */
-  xw = quat->x * quat->w; /* g_print("xw: %@tcode@\n", xw); */
-  yy = quat->y * quat->y; /* g_print("yy: %@tcode@\n", yy); */
-  yz = quat->y * quat->z; /* g_print("yz: %@tcode@\n", yz); */
-  yw = quat->y * quat->w; /* g_print("yw: %@tcode@\n", yw); */
-  zz = quat->z * quat->z; /* g_print("zz: %@tcode@\n", zz); */
-  zw = quat->z * quat->w; /* g_print("zw: %@tcode@\n", zw); */
-  ww = quat->w * quat->w; /* g_print("ww: %@tcode@\n", ww); */
-        
-  vsg_matrix4@t@_set (mat,
-                      1. - 2. * (yy+zz), 2. * (xy+zw), 2. * (xz-yw), 0.,
-                      2. * (xy-zw), 1. - 2. * (xx+zz), 2. * (yz+xw), 0.,
-                      2. * (xz+yw), 2. * (yz-xw), 1. - 2. * (xx+yy), 0.,
-                      0., 0., 0., 1.);
+  vsg_matrix4@t@_quaternion@t@_set_inline (mat, quat);
 }
 
 /**
@@ -711,15 +547,12 @@ void vsg_matrix4@t@_quaternion@t@_set (VsgMatrix4@t@ *mat,
 void vsg_matrix4@t@_quaternion@t@ (VsgMatrix4@t@ *mat,
                                    const VsgQuaternion@t@ *quat)
 {
-  VsgMatrix4@t@ qrot;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (quat != NULL);
 #endif
 
-  vsg_matrix4@t@_quaternion@t@_set (&qrot, quat);
-  vsg_matrix4@t@_matmult (mat, &qrot, mat);
+  vsg_matrix4@t@_quaternion@t@_inline (mat, quat);
 }
 
 /**
@@ -735,23 +568,13 @@ void vsg_matrix4@t@_add (const VsgMatrix4@t@ *mat,
                          const VsgMatrix4@t@ *other,
                          VsgMatrix4@t@ *result)
 {
-  guint i, j;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (other != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i = 0; i < 4; i++)
-    {
-      for (j = 0; j < 4; j++)
-        {
-          VSG_MATRIX4@T@_COMP (result, i, j) = 
-            VSG_MATRIX4@T@_COMP (mat, i, j) +
-            VSG_MATRIX4@T@_COMP (other, i, j);
-        }
-    }
+  vsg_matrix4@t@_add_inline (mat, other, result);
 }
 
 /**
@@ -767,23 +590,13 @@ void vsg_matrix4@t@_sub (const VsgMatrix4@t@ *mat,
                          const VsgMatrix4@t@ *other,
                          VsgMatrix4@t@ *result)
 {
-  guint i, j;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (other != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i = 0; i < 4; i++)
-    {
-      for (j = 0; j < 4; j++)
-        {
-          VSG_MATRIX4@T@_COMP (result, i, j) = 
-            VSG_MATRIX4@T@_COMP (mat, i, j) -
-            VSG_MATRIX4@T@_COMP (other, i, j);
-        }
-    }
+  vsg_matrix4@t@_sub_inline (mat, other, result);
 }
 
 /**
@@ -799,33 +612,13 @@ void vsg_matrix4@t@_matmult (const VsgMatrix4@t@ *mat,
                              const VsgMatrix4@t@ *other,
                              VsgMatrix4@t@ *result)
 {
-  VsgMatrix4@t@ tmp = VSG_M4@T@_ZERO;
-  guint i, j, k;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (other != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i=0; i<4; i++)
-    {
-      for (j=0; j<4; j++)
-        {
-          @type@ rtmp = 0.;
-
-          for (k=0; k<4; k++)
-            {
-              rtmp += VSG_MATRIX4@T@_COMP (mat, i, k) *
-                VSG_MATRIX4@T@_COMP (other, k, j);
-            }
-
-          VSG_MATRIX4@T@_COMP (&tmp, i, j) = rtmp;
-        }
-    }
-
-  vsg_matrix4@t@_copy (&tmp, result);
-
+  vsg_matrix4@t@_matmult_inline (mat, other, result);
 }
 
 /**
@@ -841,30 +634,13 @@ void vsg_matrix4@t@_vecmult (const VsgMatrix4@t@ *mat,
                              const VsgVector3@t@ *vec,
                              VsgVector3@t@ *result)
 {
-  guint i, j;
-  @type@ tmpvec[4] = {vec->x, vec->y, vec->z, 1.};
-  @type@ tmpres[4] = {0., 0., 0., 0.};
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (vec != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i=0; i<3; i++)
-    {
-      @type@ rtmp = 0;
-      for (j=0; j<4; j++)
-        {
-          rtmp += VSG_MATRIX4@T@_COMP (mat, i, j) * tmpvec[j];
-        }
-      tmpres[i] = rtmp;
-    }
-
-  vsg_vector3@t@_set (result,
-                      tmpres[0],
-                      tmpres[1],
-                      tmpres[2]);
+  vsg_matrix4@t@_vecmult_inline (mat, vec, result);
 }
 
 /**
@@ -880,31 +656,13 @@ void vsg_matrix4@t@_vec4mult (const VsgMatrix4@t@ *mat,
                               const VsgQuaternion@t@ *vec,
                               VsgQuaternion@t@ *result)
 {
-  guint i, j;
-
-  @type@ tmpvec[4] = {vec->x, vec->y, vec->z, vec->w};
-  @type@ tmpres[4] = {0., 0., 0., 0.}; /* avoid argument aliasing */
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (vec != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i=0; i<4; i++)
-    {
-      @type@ rtmp = 0;
-      for (j=0; j<4; j++)
-        {
-          rtmp += VSG_MATRIX4@T@_COMP (mat, i, j) * tmpvec[j];
-        }
-      tmpres[i] = rtmp;
-    }
-
-  result->x = tmpres[0];
-  result->y = tmpres[1];
-  result->z = tmpres[2];
-  result->w = tmpres[3];
+  vsg_matrix4@t@_vec4mult_inline (mat, vec, result);
 }
 
 /**
@@ -920,51 +678,14 @@ void vsg_matrix4@t@_vec4mult_T (const VsgMatrix4@t@ *mat,
                                 const VsgQuaternion@t@ *vec,
                                 VsgQuaternion@t@ *result)
 {
-  guint i, j;
-
-  @type@ tmpvec[4] = {vec->x, vec->y, vec->z, vec->w};
-  @type@ tmpres[4] = {0., 0., 0., 0.}; /* avoid argument aliasing */
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (vec != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i=0; i<4; i++)
-    {
-      @type@ rtmp = 0;
-      for (j=0; j<4; j++)
-        {
-          rtmp += VSG_MATRIX4@T@_COMP (mat, j, i) * tmpvec[j];
-        }
-      tmpres[i] = rtmp;
-    }
-
-  result->x = tmpres[0];
-  result->y = tmpres[1];
-  result->z = tmpres[2];
-  result->w = tmpres[3];
+  vsg_matrix4@t@_vec4mult_T_inline (mat, vec, result);
 }
-
-/* inspired from www.nebula.org */
-
-#define C00 VSG_MATRIX4@T@_COMP(mat,0,0)
-#define C01 VSG_MATRIX4@T@_COMP(mat,0,1)
-#define C02 VSG_MATRIX4@T@_COMP(mat,0,2)
-#define C03 VSG_MATRIX4@T@_COMP(mat,0,3)
-#define C10 VSG_MATRIX4@T@_COMP(mat,1,0)
-#define C11 VSG_MATRIX4@T@_COMP(mat,1,1)
-#define C12 VSG_MATRIX4@T@_COMP(mat,1,2)
-#define C13 VSG_MATRIX4@T@_COMP(mat,1,3)
-#define C20 VSG_MATRIX4@T@_COMP(mat,2,0)
-#define C21 VSG_MATRIX4@T@_COMP(mat,2,1)
-#define C22 VSG_MATRIX4@T@_COMP(mat,2,2)
-#define C23 VSG_MATRIX4@T@_COMP(mat,2,3)
-#define C30 VSG_MATRIX4@T@_COMP(mat,3,0)
-#define C31 VSG_MATRIX4@T@_COMP(mat,3,1)
-#define C32 VSG_MATRIX4@T@_COMP(mat,3,2)
-#define C33 VSG_MATRIX4@T@_COMP(mat,3,3)
 
 /**
  * vsg_matrix4@t@_det:
@@ -980,13 +701,7 @@ void vsg_matrix4@t@_vec4mult_T (const VsgMatrix4@t@ *mat,
   g_return_val_if_fail (mat != NULL, 0.);
 #endif
 
-  return
-    (C00*C11 - C01*C10)*(C22*C33 - C23*C32)
-    -(C00*C12 - C02*C10)*(C21*C33 - C23*C31)
-    +(C00*C13 - C03*C10)*(C21*C32 - C22*C31)
-    +(C01*C12 - C02*C11)*(C20*C33 - C23*C30)
-    -(C01*C13 - C03*C11)*(C20*C32 - C22*C30)
-    +(C02*C13 - C03*C12)*(C20*C31 - C21*C30);
+  return vsg_matrix4@t@_det_inline (mat);
 }
 
 /**
@@ -1002,41 +717,12 @@ void vsg_matrix4@t@_vec4mult_T (const VsgMatrix4@t@ *mat,
 gboolean vsg_matrix4@t@_invert (const VsgMatrix4@t@ *mat,
                                 VsgMatrix4@t@ *result)
 {
-  @type@ s;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (mat != NULL, 0.);
   g_return_val_if_fail (result != NULL, 0.);
 #endif
 
-  s = vsg_matrix4@t@_det (mat);
-
-  if (s == 0.0)
-    {
-      g_warning ("invalid VsgMatrix4@t@ for inversion. Skipping.\n");
-      return FALSE;
-    }
-
-  s = 1/s;
-  vsg_matrix4@t@_set ( result,
-                       s*(C11*(C22*C33 - C23*C32) + C12*(C23*C31 - C21*C33) + C13*(C21*C32 - C22*C31)),
-                       s*(C21*(C02*C33 - C03*C32) + C22*(C03*C31 - C01*C33) + C23*(C01*C32 - C02*C31)),
-                       s*(C31*(C02*C13 - C03*C12) + C32*(C03*C11 - C01*C13) + C33*(C01*C12 - C02*C11)),
-                       s*(C01*(C13*C22 - C12*C23) + C02*(C11*C23 - C13*C21) + C03*(C12*C21 - C11*C22)),
-                       s*(C12*(C20*C33 - C23*C30) + C13*(C22*C30 - C20*C32) + C10*(C23*C32 - C22*C33)),
-                       s*(C22*(C00*C33 - C03*C30) + C23*(C02*C30 - C00*C32) + C20*(C03*C32 - C02*C33)),
-                       s*(C32*(C00*C13 - C03*C10) + C33*(C02*C10 - C00*C12) + C30*(C03*C12 - C02*C13)),
-                       s*(C02*(C13*C20 - C10*C23) + C03*(C10*C22 - C12*C20) + C00*(C12*C23 - C13*C22)),
-                       s*(C13*(C20*C31 - C21*C30) + C10*(C21*C33 - C23*C31) + C11*(C23*C30 - C20*C33)),
-                       s*(C23*(C00*C31 - C01*C30) + C20*(C01*C33 - C03*C31) + C21*(C03*C30 - C00*C33)),
-                       s*(C33*(C00*C11 - C01*C10) + C30*(C01*C13 - C03*C11) + C31*(C03*C10 - C00*C13)),
-                       s*(C03*(C11*C20 - C10*C21) + C00*(C13*C21 - C11*C23) + C01*(C10*C23 - C13*C20)),
-                       s*(C10*(C22*C31 - C21*C32) + C11*(C20*C32 - C22*C30) + C12*(C21*C30 - C20*C31)),
-                       s*(C20*(C02*C31 - C01*C32) + C21*(C00*C32 - C02*C30) + C22*(C01*C30 - C00*C31)),
-                       s*(C30*(C02*C11 - C01*C12) + C31*(C00*C12 - C02*C10) + C32*(C01*C10 - C00*C11)),
-                       s*(C00*(C11*C22 - C12*C21) + C01*(C12*C20 - C10*C22) + C02*(C10*C21 - C11*C20)));
-
-  return TRUE;
+  return vsg_matrix4@t@_invert_inline (mat, result);
 }
 
 /**
@@ -1060,7 +746,7 @@ gboolean vsg_matrix4@t@_invert (const VsgMatrix4@t@ *mat,
   g_return_val_if_fail (j>=0, 0.);
 #endif
 
-  return VSG_MATRIX4@T@_COMP (mat, i, j);
+  return vsg_matrix4@t@_component_inline (mat, i, j);
 }
 
 /**
@@ -1073,24 +759,12 @@ gboolean vsg_matrix4@t@_invert (const VsgMatrix4@t@ *mat,
  */
 void vsg_matrix4@t@_transpose (const VsgMatrix4@t@ *mat, VsgMatrix4@t@ *result)
 {
-  @type@ tmp;
-  int i, j;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i=0; i<4; i++)
-    {
-      VSG_MATRIX4@T@_COMP (result, i, i) = VSG_MATRIX4@T@_COMP (mat, i, i);
-      for (j=0; j<i; j++)
-        {
-          tmp = VSG_MATRIX4@T@_COMP (mat, i, j);
-          VSG_MATRIX4@T@_COMP (result, i, j) = VSG_MATRIX4@T@_COMP (mat, j, i);
-          VSG_MATRIX4@T@_COMP (result, j, i) = tmp;
-        }
-    }
+  vsg_matrix4@t@_transpose_inline (mat, result);
 }
 
 /**
@@ -1141,4 +815,10 @@ void vsg_matrix4@t@_print(const VsgMatrix4@t@ *mat)
  * @components: matrix (4x4) components.
  *
  * A 4x4 matrix that may represent 3D affine transformations.
+ */
+
+/**
+ * VSG_MATRIX4@T@_COMP:
+ *
+ * Returns @mat component of coordinates (@i,@j).
  */

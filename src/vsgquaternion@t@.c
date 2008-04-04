@@ -21,6 +21,9 @@
 
 #include "vsgquaternion@t@.h"
 
+#define VSG_NO_IMPLICIT_INLINE
+#include "vsgquaternion@t@-inline.h"
+
 #include <math.h>
 #include <glib/gprintf.h>
 
@@ -110,7 +113,7 @@ VsgQuaternion@t@ *vsg_quaternion@t@_new (@type@ x,
 {
   VsgQuaternion@t@ *result = _quaternion@t@_alloc ();
 
-  vsg_quaternion@t@_set (result, x, y, z, w);
+  vsg_quaternion@t@_set_inline (result, x, y, z, w);
 
   return result;
 }
@@ -147,7 +150,7 @@ VsgQuaternion@t@ *vsg_quaternion@t@_identity_new ()
 {
   VsgQuaternion@t@ *result = _quaternion@t@_alloc ();
 
-  vsg_quaternion@t@_identity (result);
+  vsg_quaternion@t@_identity_inline (result);
 
   return result;
 }
@@ -161,7 +164,7 @@ VsgQuaternion@t@ *vsg_quaternion@t@_identity_new ()
  * Returns: new #VsgQuaternion@t@ instance
  */
 VsgQuaternion@t@ *
-vsg_quaternion@t@_vector3@t@_new (const VsgVector3@t@ * vector)
+vsg_quaternion@t@_vector3@t@_new (const VsgVector3@t@ *vector)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (vector != NULL, NULL);
@@ -182,7 +185,7 @@ vsg_quaternion@t@_vector3@t@_new (const VsgVector3@t@ * vector)
  * Returns: new #VsgQuaternion@t@ instance
  */
 VsgQuaternion@t@ *
-vsg_quaternion@t@_vector3@alt_t@_new (const VsgVector3@alt_t@ * vector)
+vsg_quaternion@t@_vector3@alt_t@_new (const VsgVector3@alt_t@ *vector)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (vector != NULL, NULL);
@@ -204,7 +207,7 @@ vsg_quaternion@t@_vector3@alt_t@_new (const VsgVector3@alt_t@ * vector)
  *
  * Sets @quat components to (@x, @y, @z, @w)
  */
-void vsg_quaternion@t@_set (VsgQuaternion@t@ * quat,
+void vsg_quaternion@t@_set (VsgQuaternion@t@ *quat,
                             @type@ x, @type@ y,
                             @type@ z, @type@ w)
 {
@@ -212,10 +215,7 @@ void vsg_quaternion@t@_set (VsgQuaternion@t@ * quat,
   g_return_if_fail (quat != NULL);
 #endif
 
-  quat->x = x;
-  quat->y = y;
-  quat->z = z;
-  quat->w = w;
+  vsg_quaternion@t@_set_inline (quat, x,  y, z, w);
 }
 
 /**
@@ -225,18 +225,15 @@ void vsg_quaternion@t@_set (VsgQuaternion@t@ * quat,
  *
  * Sets @quat to components to @vector.
  */
-void vsg_quaternion@t@_vector3@t@_set (VsgQuaternion@t@ * quat,
-                                       const VsgVector3@t@ * vector)
+void vsg_quaternion@t@_vector3@t@_set (VsgQuaternion@t@ *quat,
+                                       const VsgVector3@t@ *vector)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
   g_return_if_fail (vector != NULL);
 #endif
 
-  quat->x = vector->x;
-  quat->y = vector->y;
-  quat->z = vector->z;
-  quat->w = (@type@) 1.;
+  vsg_quaternion@t@_vector3@t@_set_inline (quat, vector);
 }
 
 /**
@@ -247,18 +244,15 @@ void vsg_quaternion@t@_vector3@t@_set (VsgQuaternion@t@ * quat,
  * Sets @quat to components to @vector.
  */
 void
-vsg_quaternion@t@_vector3@alt_t@_set (VsgQuaternion@t@ * quat,
-                                      const VsgVector3@alt_t@ * vector)
+vsg_quaternion@t@_vector3@alt_t@_set (VsgQuaternion@t@ *quat,
+                                      const VsgVector3@alt_t@ *vector)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
   g_return_if_fail (vector != NULL);
 #endif
 
-  quat->x = (@type@) vector->x;
-  quat->y = (@type@) vector->y;
-  quat->z = (@type@) vector->z;
-  quat->w = (@type@) 1.;
+  vsg_quaternion@t@_vector3@alt_t@_set_inline (quat, vector);
 }
 
 /**
@@ -270,27 +264,16 @@ vsg_quaternion@t@_vector3@alt_t@_set (VsgQuaternion@t@ * quat,
  * Sets @quat components so as to correspond to a 3D rotation of angle
  * @angle and axis @vec.
  */
-void vsg_quaternion@t@_make_rotate@t@ (VsgQuaternion@t@ * quat,
+void vsg_quaternion@t@_make_rotate@t@ (VsgQuaternion@t@ *quat,
                                        @type@ angle,
-                                       const VsgVector3@t@ * vec)
+                                       const VsgVector3@t@ *vec)
 {
-  @type@ ca = cos (angle * .5);
-  @type@ sa = sin (angle * .5);
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
   g_return_if_fail (vec!= NULL);
 #endif
 
-  VsgVector3@t@ axis = *vec;
-
-  vsg_vector3@t@_normalize (&axis);
-
-  vsg_quaternion@t@_set (quat,
-                         axis.x*sa,
-                         axis.y*sa,
-                         axis.z*sa,
-                         ca);
+  vsg_quaternion@t@_make_rotate@t@_inline (quat, angle, vec);
 }
 
 /**
@@ -302,55 +285,17 @@ void vsg_quaternion@t@_make_rotate@t@ (VsgQuaternion@t@ * quat,
  * Sets @quat components so as to correspond to a 3D rotation between vector
  * @from and vector @to.
  */
-void vsg_quaternion@t@_rotate@t@_set (VsgQuaternion@t@ * quat,
-                                      const VsgVector3@t@ * from,
-                                      const VsgVector3@t@ * to)
+void vsg_quaternion@t@_rotate@t@_set (VsgQuaternion@t@ *quat,
+                                      const VsgVector3@t@ *from,
+                                      const VsgVector3@t@ *to)
 {
-  /*
-   * code inspired from OpenSceneGraph Project:
-   * http://www.openscenegraph.org/
-   */
-  VsgVector3@t@ axis;
-  @type@ cosangle, angle;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
   g_return_if_fail (from != NULL);
   g_return_if_fail (to != NULL);
 #endif
 
-  cosangle = vsg_vector3@t@_dotp (from, to)
-    /(vsg_vector3@t@_norm (from) * vsg_vector3@t@_norm (to));
-
-  if (cosangle == 1.)
-    {
-      vsg_quaternion@t@_set (quat, 0., 0., 0., 1.);
-    }
-  else if (cosangle == -1.)
-    {
-      if (fabs (from->x) < fabs (from->y))
-        if (fabs(from->x) < fabs(from->z))
-          vsg_vector3@t@_set (&axis, 1., 0., 0.);
-        else vsg_vector3@t@_set (&axis, 0., 0., 1.);
-      else if (fabs (from->y) < fabs(from->z))
-        vsg_vector3@t@_set (&axis, 0., 1., 0.);
-      else vsg_vector3@t@_set (&axis, 0., 0., 1.);
-
-      vsg_vector3@t@_vecp (from,&axis,&axis);
-      vsg_vector3@t@_normalize (&axis);
-
-      vsg_quaternion@t@_set (quat, axis.x, axis.y, axis.z, 0.);
-    }
-  else
-    {
-      vsg_vector3@t@_vecp (from, to, &axis);
-
-      angle = acos (cosangle);
-
-      vsg_vector3@t@_normalize (&axis);
-
-      vsg_quaternion@t@_make_rotate@t@ (quat, angle, &axis);
-    }
+  vsg_quaternion@t@_rotate@t@_set_inline (quat, from, to);
 }
 
 /**
@@ -359,13 +304,13 @@ void vsg_quaternion@t@_rotate@t@_set (VsgQuaternion@t@ * quat,
  *
  * Sets @quat components to Identity.
  */
-void vsg_quaternion@t@_identity (VsgQuaternion@t@ * quat)
+void vsg_quaternion@t@_identity (VsgQuaternion@t@ *quat)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
 #endif
 
-  vsg_quaternion@t@_copy (&VSG_Q@T@_ID, quat);
+  vsg_quaternion@t@_identity_inline (quat);
 }
 
 /**
@@ -375,18 +320,13 @@ void vsg_quaternion@t@_identity (VsgQuaternion@t@ * quat)
  *
  * Sets @quat components to a 3D rotation of angle @angle and axis X.
  */
-void vsg_quaternion@t@_rotate_x (VsgQuaternion@t@ * quat, @type@ angle)
+void vsg_quaternion@t@_rotate_x (VsgQuaternion@t@ *quat, @type@ angle)
 {
-  VsgQuaternion@t@ tmp;
-  @type@ ca = cos (angle * .5);
-  @type@ sa = sin (angle * .5);
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
 #endif
 
-  vsg_quaternion@t@_set (&tmp, sa, 0., 0., ca);
-  vsg_quaternion@t@_mult (quat, &tmp, quat);
+  vsg_quaternion@t@_rotate_x_inline (quat, angle);
 }
 
 /**
@@ -396,18 +336,13 @@ void vsg_quaternion@t@_rotate_x (VsgQuaternion@t@ * quat, @type@ angle)
  *
  * Sets @quat components to a 3D rotation of angle @angle and axis Y.
  */
-void vsg_quaternion@t@_rotate_y (VsgQuaternion@t@ * quat, @type@ angle)
+void vsg_quaternion@t@_rotate_y (VsgQuaternion@t@ *quat, @type@ angle)
 {
-  VsgQuaternion@t@ tmp;
-  @type@ ca = cos (angle * .5);
-  @type@ sa = sin (angle * .5);
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
 #endif
 
-  vsg_quaternion@t@_set (&tmp, 0., sa, 0., ca);
-  vsg_quaternion@t@_mult (quat, &tmp, quat);
+  vsg_quaternion@t@_rotate_y_inline (quat, angle);
 }
 
 /**
@@ -417,18 +352,13 @@ void vsg_quaternion@t@_rotate_y (VsgQuaternion@t@ * quat, @type@ angle)
  *
  * Sets @quat components to a 3D rotation of angle @angle and axis Z.
  */
-void vsg_quaternion@t@_rotate_z (VsgQuaternion@t@ * quat, @type@ angle)
+void vsg_quaternion@t@_rotate_z (VsgQuaternion@t@ *quat, @type@ angle)
 {
-  VsgQuaternion@t@ tmp;
-  @type@ ca = cos (angle * .5);
-  @type@ sa = sin (angle * .5);
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
 #endif
 
-  vsg_quaternion@t@_set (&tmp, 0., 0., sa, ca);
-  vsg_quaternion@t@_mult (quat, &tmp, quat);
+  vsg_quaternion@t@_rotate_z_inline (quat, angle);
 }
 
 /**
@@ -441,7 +371,7 @@ void vsg_quaternion@t@_rotate_z (VsgQuaternion@t@ * quat, @type@ angle)
  * Sets @quat components to  a 3D rotation of cardan angles 
  * @ax, @ay, @az.
  */
-void vsg_quaternion@t@_rotate_cardan (VsgQuaternion@t@ * quat,
+void vsg_quaternion@t@_rotate_cardan (VsgQuaternion@t@ *quat,
                                       @type@ ax,
                                       @type@ ay,
                                       @type@ az)
@@ -450,11 +380,7 @@ void vsg_quaternion@t@_rotate_cardan (VsgQuaternion@t@ * quat,
   g_return_if_fail (quat != NULL);
 #endif
 
-  vsg_quaternion@t@_rotate_z (quat, az);
-
-  vsg_quaternion@t@_rotate_y (quat, ay);
-
-  vsg_quaternion@t@_rotate_x (quat, ax);
+  vsg_quaternion@t@_rotate_cardan_inline (quat, ax, ay, az);
 }
 
 /**
@@ -467,7 +393,7 @@ void vsg_quaternion@t@_rotate_cardan (VsgQuaternion@t@ * quat,
  * Sets @quat components to  a 3D rotation of euler angles 
  * @alpha, @beta, @gamma.
  */
-void vsg_quaternion@t@_rotate_euler (VsgQuaternion@t@ * quat,
+void vsg_quaternion@t@_rotate_euler (VsgQuaternion@t@ *quat,
                                      @type@ alpha,
                                      @type@ beta,
                                      @type@ gamma)
@@ -476,11 +402,7 @@ void vsg_quaternion@t@_rotate_euler (VsgQuaternion@t@ * quat,
   g_return_if_fail (quat != NULL);
 #endif
 
-  vsg_quaternion@t@_rotate_z (quat, gamma);
-
-  vsg_quaternion@t@_rotate_y (quat, beta);
-
-  vsg_quaternion@t@_rotate_z (quat, alpha);
+  vsg_quaternion@t@_rotate_euler_inline (quat, alpha, beta, gamma);
 }
 
 /**
@@ -490,18 +412,15 @@ void vsg_quaternion@t@_rotate_euler (VsgQuaternion@t@ * quat,
  *
  * Copies @src components to @dst.
  */
-void vsg_quaternion@t@_copy (const VsgQuaternion@t@ * src,
-                             VsgQuaternion@t@ * dst)
+void vsg_quaternion@t@_copy (const VsgQuaternion@t@ *src,
+                             VsgQuaternion@t@ *dst)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (dst != NULL);
   g_return_if_fail (src != NULL);
 #endif
 
-  dst->x = src->x;
-  dst->y = src->y;
-  dst->z = src->z;
-  dst->w = src->w;
+  vsg_quaternion@t@_copy_inline (src, dst);
 }
 
 /**
@@ -522,7 +441,7 @@ VsgQuaternion@t@ *vsg_quaternion@t@_clone (const VsgQuaternion@t@ *src)
 
   dst = _quaternion@t@_alloc ();
 
-  vsg_quaternion@t@_copy (src, dst);
+  vsg_quaternion@t@_copy_inline (src, dst);
 
   return dst;
 }
@@ -535,13 +454,14 @@ VsgQuaternion@t@ *vsg_quaternion@t@_clone (const VsgQuaternion@t@ *src)
  *
  * Returns: dot product of @quat by @quat.
  */
-@type@ vsg_quaternion@t@_square_norm (const VsgQuaternion@t@ * quat)
+@type@ vsg_quaternion@t@_square_norm (const VsgQuaternion@t@ *quat)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (quat != NULL, 0);
 #endif
 
-  return vsg_quaternion@t@_dotp (quat, quat);
+  return vsg_quaternion@t@_square_norm_inline (quat);
+
 }
 
 /**
@@ -552,13 +472,13 @@ VsgQuaternion@t@ *vsg_quaternion@t@_clone (const VsgQuaternion@t@ *src)
  *
  * Returns: @quat norm
  */
-@type@ vsg_quaternion@t@_norm (const VsgQuaternion@t@ * quat)
+@type@ vsg_quaternion@t@_norm (const VsgQuaternion@t@ *quat)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (quat != NULL, 0);
 #endif
 
-  return sqrt (vsg_quaternion@t@_square_norm (quat));
+  return vsg_quaternion@t@_norm_inline (quat);
 }
 
 /**
@@ -568,24 +488,13 @@ VsgQuaternion@t@ *vsg_quaternion@t@_clone (const VsgQuaternion@t@ *src)
  * Sets @quat components so its norm (vsg_quaternion@t@_norm) is %1 and its
  * "direction" is unchanged.
  */
-void vsg_quaternion@t@_normalize (VsgQuaternion@t@ * quat)
+void vsg_quaternion@t@_normalize (VsgQuaternion@t@ *quat)
 {
-  @type@ norm;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
 #endif
 
-  norm = vsg_quaternion@t@_norm (quat);
-
-  if (norm > 0.0)
-    {
-      vsg_quaternion@t@_scalp (quat, 1. / norm, quat);
-    }
-  else
-    {
-      vsg_quaternion@t@_set (quat, 0., 0., 0., 1.);
-    }
+  vsg_quaternion@t@_normalize_inline (quat);
 }
 
 /**
@@ -596,7 +505,7 @@ void vsg_quaternion@t@_normalize (VsgQuaternion@t@ * quat)
  *
  * Performs scalar product on @quat with @scal as a multiplier.
  */
-void vsg_quaternion@t@_scalp (const VsgQuaternion@t@ * quat,
+void vsg_quaternion@t@_scalp (const VsgQuaternion@t@ *quat,
                               @type@ scal,
                               VsgQuaternion@t@ *result)
 {
@@ -605,10 +514,7 @@ void vsg_quaternion@t@_scalp (const VsgQuaternion@t@ * quat,
   g_return_if_fail (result != NULL);
 #endif
 
-  result->x = quat->x * scal;
-  result->y = quat->y * scal;
-  result->z = quat->z * scal;
-  result->w = quat->w * scal;
+  vsg_quaternion@t@_scalp_inline (quat, scal, result);
 }
 
 /**
@@ -620,19 +526,16 @@ void vsg_quaternion@t@_scalp (const VsgQuaternion@t@ * quat,
  *
  * Returns: dot product of @quat by @other.
  */
-@type@ vsg_quaternion@t@_dotp (const VsgQuaternion@t@ * quat,
-                               const VsgQuaternion@t@ * other)
+@type@ vsg_quaternion@t@_dotp (const VsgQuaternion@t@ *quat,
+                               const VsgQuaternion@t@ *other)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (quat != NULL, 0);
   g_return_val_if_fail (other != NULL, 0);
 #endif
 
-  return
-    quat->x * other->x +
-    quat->y * other->y +
-    quat->z * other->z +
-    quat->w * other->w;
+  return vsg_quaternion@t@_dotp_inline (quat, other);
+
 }
 
 /**
@@ -644,31 +547,17 @@ void vsg_quaternion@t@_scalp (const VsgQuaternion@t@ * quat,
  * Performs #VsgQuaternion@t@ multiplication of @quat by @other and
  * stores the result in @result. Argument aliasing is allowed.
  */
-void vsg_quaternion@t@_mult (const VsgQuaternion@t@ * quat,
-                             const VsgQuaternion@t@ * other,
-                             VsgQuaternion@t@ * result)
+void vsg_quaternion@t@_mult (const VsgQuaternion@t@ *quat,
+                             const VsgQuaternion@t@ *other,
+                             VsgQuaternion@t@ *result)
 {
-  VsgQuaternion@t@ tmp;                /* avoid argument aliasing */
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
   g_return_if_fail (other != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  tmp.x = quat->w * other->x + quat->x * other->w +
-    quat->y * other->z - quat->z * other->y;
-
-  tmp.y = quat->w * other->y + quat->y * other->w +
-    quat->z * other->x - quat->x * other->z;
-
-  tmp.z = quat->w * other->z + quat->z * other->w +
-    quat->x * other->y - quat->y * other->x;
-
-  tmp.w = quat->w * other->w
-    - quat->x * other->x - quat->y * other->y - quat->z * other->z;
-
-  vsg_quaternion@t@_copy (&tmp, result);
+  vsg_quaternion@t@_mult_inline (quat, other, result);
 }
 
 /**
@@ -681,33 +570,15 @@ void vsg_quaternion@t@_mult (const VsgQuaternion@t@ * quat,
  *
  * Returns: a flag indicating success of the inversion.
  */
-gboolean vsg_quaternion@t@_invert (const VsgQuaternion@t@ * quat,
-                                   VsgQuaternion@t@ * result)
+gboolean vsg_quaternion@t@_invert (const VsgQuaternion@t@ *quat,
+                                   VsgQuaternion@t@ *result)
 {
-  @type@ n2;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (quat != NULL, 0);
   g_return_val_if_fail (result != NULL, 0);
 #endif
 
-  n2 = vsg_quaternion@t@_square_norm (quat);
-
-  vsg_quaternion@t@_conjugate (quat, result);
-
-  if (n2 > 0.)
-    {
-      vsg_quaternion@t@_scalp (result, 1. / n2, result);
-      return TRUE;
-    }
-  else
-    {
-      g_critical ("%s: inversion on null quaternion",
-                  __PRETTY_FUNCTION__);
-      vsg_quaternion@t@_set (result, 0., 0., 0., 1.);
-      return FALSE;
-    }
-  return TRUE;
+  return vsg_quaternion@t@_invert_inline (quat, result);
 }
 
 
@@ -722,47 +593,17 @@ gboolean vsg_quaternion@t@_invert (const VsgQuaternion@t@ * quat,
  * with parameter @t and stores the result in @result. Argument
  * aliasing is allowed.
  */
-void vsg_quaternion@t@_slerp (const VsgQuaternion@t@ * quat1,
-                              const VsgQuaternion@t@ * quat2,
-                              @type@ t, VsgQuaternion@t@ * result)
+void vsg_quaternion@t@_slerp (const VsgQuaternion@t@ *quat1,
+                              const VsgQuaternion@t@ *quat2,
+                              @type@ t, VsgQuaternion@t@ *result)
 {
-  /* code from ggt.sourceforge.net */
-
-  @type@ cosom;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat1 != NULL);
   g_return_if_fail (quat2 != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  // calc cosine theta
-  cosom = vsg_quaternion@t@_dotp (quat1, quat2);
-
-  // Calculate coefficients
-  @type@ sclp, sclq;
-
-  if ((1.0 - cosom) > 0.0001) // 0.0001 -> some epsillon
-    {
-      // Standard case (slerp)
-      @type@ omega, sinom;
-
-      omega = acos (cosom); // extract theta from dot product's cos theta
-      sinom = sin (omega);
-      sclp  = sin ((1.0 - t) * omega) / sinom;
-      sclq  = sin (t * omega) / sinom;
-    }
-  else
-    {
-      // Very close, do linear interp (because it's faster)
-      sclp = 1.0 - t;
-      sclq = t;
-    }
-
-   result->x = sclp * quat1->x + sclq * quat2->x;
-   result->y = sclp * quat1->y + sclq * quat2->y;
-   result->z = sclp * quat1->z + sclq * quat2->z;
-   result->w = sclp * quat1->w + sclq * quat2->w;
+  vsg_quaternion@t@_slerp_inline (quat1, quat2, t, result);
 }
 
 /**
@@ -773,18 +614,15 @@ void vsg_quaternion@t@_slerp (const VsgQuaternion@t@ * quat1,
  * Computes @quat conjugate and stores the result in @result. Argument
  * aliasing is allowed.
  */
-void vsg_quaternion@t@_conjugate (const VsgQuaternion@t@ * quat,
-                                  VsgQuaternion@t@ * result)
+void vsg_quaternion@t@_conjugate (const VsgQuaternion@t@ *quat,
+                                  VsgQuaternion@t@ *result)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (quat != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  result->x = -quat->x;
-  result->y = -quat->y;
-  result->z = -quat->z;
-  result->w = quat->w;
+  vsg_quaternion@t@_conjugate_inline (quat,result);
 }
 
 /**
@@ -794,7 +632,7 @@ void vsg_quaternion@t@_conjugate (const VsgQuaternion@t@ * quat,
  *
  * Writes @quat in @file. 
  */
-void vsg_quaternion@t@_write (const VsgQuaternion@t@ * quat,
+void vsg_quaternion@t@_write (const VsgQuaternion@t@ *quat,
                               FILE *file)
 {
   gchar bufx[G_ASCII_DTOSTR_BUF_SIZE];
@@ -829,7 +667,7 @@ void vsg_quaternion@t@_write (const VsgQuaternion@t@ * quat,
  *
  * Writes @quat in %stdout.
  */
-void vsg_quaternion@t@_print (const VsgQuaternion@t@ * quat)
+void vsg_quaternion@t@_print (const VsgQuaternion@t@ *quat)
 {
   vsg_quaternion@t@_write (quat, stdout);
 }

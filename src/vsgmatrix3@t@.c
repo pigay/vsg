@@ -21,18 +21,12 @@
 
 #include "vsgmatrix3@t@.h"
 
+#define VSG_NO_IMPLICIT_INLINE
+#include "vsgmatrix3@t@-inline.h"
+
 #include <math.h>
 
 #include <glib/gprintf.h>
-
-/* 
- * VSG_MATRIX3@T@_COMP(i,j)= components[i+3*j]
- * this is because we want to get OpenGL compliant matrices.
- */
-
-#define VSG_MATRIX3@T@_COMP(mat, i, j) ( \
-* ((mat) -> components + i + 3*j) \
-)
 
 #define VSG_MATRIX3@T@_PREALLOC 128
 
@@ -127,8 +121,8 @@ VsgMatrix3@t@ *vsg_matrix3@t@_new (@type@ a00, @type@ a01,
 {
   VsgMatrix3@t@ *result = _matrix3@t@_alloc ();
 
-  vsg_matrix3@t@_set (result,
-                      a00, a01, a02, a10, a11, a12, a20, a21, a22);
+  vsg_matrix3@t@_set_inline (result,
+                             a00, a01, a02, a10, a11, a12, a20, a21, a22);
 
   return result;
 }
@@ -165,7 +159,7 @@ VsgMatrix3@t@ *vsg_matrix3@t@_identity_new ()
 {
   VsgMatrix3@t@ *result = _matrix3@t@_alloc ();
 
-  vsg_matrix3@t@_identity (result);
+  vsg_matrix3@t@_identity_inline (result);
 
   return result;
 }
@@ -182,7 +176,7 @@ VsgMatrix3@t@ *vsg_matrix3@t@_rotate_new (@type@ a)
 {
   VsgMatrix3@t@ *result = vsg_matrix3@t@_identity_new ();
 
-  vsg_matrix3@t@_rotate (result, a);
+  vsg_matrix3@t@_rotate_inline (result, a);
 
   return result;
 }
@@ -201,7 +195,7 @@ VsgMatrix3@t@ *vsg_matrix3@t@_translate_new (@type@ x, @type@ y)
 {
   VsgMatrix3@t@ *result = vsg_matrix3@t@_identity_new ();
 
-  vsg_matrix3@t@_translate (result, x, y);
+  vsg_matrix3@t@_translate_inline (result, x, y);
 
   return result;
 
@@ -221,7 +215,7 @@ VsgMatrix3@t@ *vsg_matrix3@t@_scale_new (@type@ x, @type@ y)
 {
   VsgMatrix3@t@ *result = vsg_matrix3@t@_identity_new ();
 
-  vsg_matrix3@t@_scale (result, x, y);
+  vsg_matrix3@t@_scale_inline (result, x, y);
 
   return result;
 }
@@ -250,18 +244,10 @@ void vsg_matrix3@t@_set (VsgMatrix3@t@ *mat,
   g_return_if_fail (mat != NULL);
 #endif
 
-  VSG_MATRIX3@T@_COMP (mat, 0, 0) = a00;
-  VSG_MATRIX3@T@_COMP (mat, 0, 1) = a01;
-  VSG_MATRIX3@T@_COMP (mat, 0, 2) = a02;
-
-  VSG_MATRIX3@T@_COMP (mat, 1, 0) = a10;
-  VSG_MATRIX3@T@_COMP (mat, 1, 1) = a11;
-  VSG_MATRIX3@T@_COMP (mat, 1, 2) = a12;
-
-  VSG_MATRIX3@T@_COMP (mat, 2, 0) = a20;
-  VSG_MATRIX3@T@_COMP (mat, 2, 1) = a21;
-  VSG_MATRIX3@T@_COMP (mat, 2, 2) = a22;
-
+  vsg_matrix3@t@_set_inline (mat,
+                             a00,  a01, a02,
+                             a10, a11, a12,
+                             a20, a21, a22);
 }
 
 /**
@@ -276,7 +262,7 @@ void vsg_matrix3@t@_identity (VsgMatrix3@t@ *mat)
   g_return_if_fail (mat != NULL);
 #endif
 
-  vsg_matrix3@t@_copy (&VSG_M3@T@_ID, mat);
+  vsg_matrix3@t@_identity_inline (mat);
 }
 
 /**
@@ -288,17 +274,12 @@ void vsg_matrix3@t@_identity (VsgMatrix3@t@ *mat)
  */
 void vsg_matrix3@t@_copy (const VsgMatrix3@t@ *src, VsgMatrix3@t@ *dst)
 {
-  guint i, j;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (dst != NULL);
   g_return_if_fail (src != NULL);
 #endif
 
-  for (i = 0; i < 3; i++)
-    for (j = 0; j < 3; j++)
-      VSG_MATRIX3@T@_COMP (dst, i, j) =
-        VSG_MATRIX3@T@_COMP (src, i, j);
+  vsg_matrix3@t@_copy_inline (src, dst);
 }
 
 /**
@@ -319,7 +300,7 @@ VsgMatrix3@t@ *vsg_matrix3@t@_clone (const VsgMatrix3@t@ *src)
 
   dst = _matrix3@t@_alloc ();
 
-  vsg_matrix3@t@_copy (src, dst);
+  vsg_matrix3@t@_copy_inline (src, dst);
 
   return dst;
 }
@@ -333,21 +314,11 @@ VsgMatrix3@t@ *vsg_matrix3@t@_clone (const VsgMatrix3@t@ *src)
  */
 void vsg_matrix3@t@_rotate (VsgMatrix3@t@ *mat, @type@ a)
 {
-  VsgMatrix3@t@ rot;
-  @type@ ca, sa;
-
 #ifdef VSG_CHECK_PARAMS
-  g_return_if_fail (mat!=NULL);
+  g_return_if_fail (mat != NULL);
 #endif
 
-  ca = cos (a);
-  sa = sin (a);
-
-  vsg_matrix3@t@_set (&rot, ca, -sa, 0., sa, ca, 0., 0., 0., 1.);
-
-
-  vsg_matrix3@t@_matmult (mat, &rot, mat);
-
+  vsg_matrix3@t@_rotate_inline (mat, a);
 }
 
 /**
@@ -360,15 +331,11 @@ void vsg_matrix3@t@_rotate (VsgMatrix3@t@ *mat, @type@ a)
  */
 void vsg_matrix3@t@_translate (VsgMatrix3@t@ *mat, @type@ x, @type@ y)
 {
-  VsgMatrix3@t@ trans;
-
 #ifdef VSG_CHECK_PARAMS
-  g_return_if_fail (mat!=NULL);
+  g_return_if_fail (mat != NULL);
 #endif
 
-  vsg_matrix3@t@_set (&trans, 1., 0., x, 0., 1., y, 0., 0., 1.);
-
-  vsg_matrix3@t@_matmult (mat, &trans, mat);
+  vsg_matrix3@t@_translate_inline (mat, x, y);
 }
 
 /**
@@ -381,16 +348,11 @@ void vsg_matrix3@t@_translate (VsgMatrix3@t@ *mat, @type@ x, @type@ y)
  */
 void vsg_matrix3@t@_scale (VsgMatrix3@t@ *mat, @type@ x, @type@ y)
 {
-  VsgMatrix3@t@ scale;
-
 #ifdef VSG_CHECK_PARAMS
-  g_return_if_fail (mat!=NULL);
+  g_return_if_fail (mat != NULL);
 #endif
 
-  vsg_matrix3@t@_set (&scale, x, 0., 0., 0., y, 0., 0., 0., 1.);
-
-  vsg_matrix3@t@_matmult (mat, &scale, mat);
-
+  vsg_matrix3@t@_scale_inline (mat, x, y);
 }
 
 /**
@@ -406,23 +368,13 @@ void vsg_matrix3@t@_add (const VsgMatrix3@t@ *mat,
                          const VsgMatrix3@t@ *other,
                          VsgMatrix3@t@ *result)
 {
-  guint i, j;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (other != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i = 0; i < 3; i++)
-    {
-      for (j = 0; j < 3; j++)
-        {
-          VSG_MATRIX3@T@_COMP (result, i, j) = 
-            VSG_MATRIX3@T@_COMP (mat, i, j) +
-            VSG_MATRIX3@T@_COMP (other, i, j);
-        }
-    }
+  vsg_matrix3@t@_add_inline (mat, other, result);
 }
 
 /**
@@ -438,23 +390,13 @@ void vsg_matrix3@t@_sub (const VsgMatrix3@t@ *mat,
                          const VsgMatrix3@t@ *other,
                          VsgMatrix3@t@ *result)
 {
-  guint i, j;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (other != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i = 0; i < 3; i++)
-    {
-      for (j = 0; j < 3; j++)
-        {
-          VSG_MATRIX3@T@_COMP (result, i, j) = 
-            VSG_MATRIX3@T@_COMP (mat, i, j) -
-            VSG_MATRIX3@T@_COMP (other, i, j);
-        }
-    }
+  vsg_matrix3@t@_sub_inline (mat, other, result);
 }
 
 /**
@@ -470,33 +412,13 @@ void vsg_matrix3@t@_matmult (const VsgMatrix3@t@ *mat,
                              const VsgMatrix3@t@ *other,
                              VsgMatrix3@t@ *result)
 {
-  VsgMatrix3@t@ tmp = VSG_M3@T@_ZERO;
-  guint i, j, k;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (other != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i = 0; i < 3; i++)
-    {
-      for (j = 0; j < 3; j++)
-        {
-          @type@ rtmp = 0.;
-
-          for (k = 0; k < 3; k++)
-            {
-              rtmp += VSG_MATRIX3@T@_COMP (mat, i, k) *
-                VSG_MATRIX3@T@_COMP (other, k, j);
-            }
-
-          VSG_MATRIX3@T@_COMP (&tmp, i, j) = rtmp;
-        }
-    }
-
-  vsg_matrix3@t@_copy (&tmp, result);
-
+  vsg_matrix3@t@_matmult_inline (mat, other, result);
 }
 
 /**
@@ -512,27 +434,13 @@ void vsg_matrix3@t@_vecmult (const VsgMatrix3@t@ *mat,
                              const VsgVector2@t@ *vec,
                              VsgVector2@t@ *result)
 {
-  guint i, j;
-  @type@ tmpvec[3] = {vec->x, vec->y, 1.};
-  @type@ tmpres[3] = {0., 0., 0.};
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (vec != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i = 0; i < 2; i++)
-    {
-      @type@ rtmp = 0;
-      for (j = 0; j < 3; j++)
-        {
-          rtmp += VSG_MATRIX3@T@_COMP (mat, i, j) * tmpvec[j];
-        }
-      tmpres[i] = rtmp;
-    }
-
-  vsg_vector2@t@_set (result, tmpres[0], tmpres[1]);
+  vsg_matrix3@t@_vecmult_inline (mat, vec, result);
 }
 
 
@@ -549,30 +457,13 @@ void vsg_matrix3@t@_vec3mult (const VsgMatrix3@t@ *mat,
                               const VsgVector3@t@ *vec,
                               VsgVector3@t@ *result)
 {
-  guint i, j;
-
-  @type@ tmpvec[3] = {vec->x, vec->y, vec->z};
-  @type@ tmpres[3] = {0., 0., 0.};  /* avoid argument aliasing */
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (vec != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i = 0; i < 3; i++)
-    {
-      @type@ rtmp = 0;
-      for (j = 0; j < 3; j++)
-        {
-          rtmp += VSG_MATRIX3@T@_COMP (mat, i, j) * tmpvec[j];
-        }
-      tmpres[i] = rtmp;
-    }
-
-  result->x = tmpres[0];
-  result->y = tmpres[1];
-  result->z = tmpres[2];
+  vsg_matrix3@t@_vec3mult_inline (mat, vec, result);
 }
 
 /**
@@ -588,43 +479,14 @@ void vsg_matrix3@t@_vec3mult_T (const VsgMatrix3@t@ *mat,
                                 const VsgVector3@t@ *vec,
                                 VsgVector3@t@ *result)
 {
-  guint i, j;
-
-  @type@ tmpvec[3] = {vec->x, vec->y, vec->z};
-  @type@ tmpres[3] = {0., 0., 0.};  /* avoid argument aliasing */
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (mat != NULL);
   g_return_if_fail (vec != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  for (i = 0; i < 3; i++)
-    {
-      @type@ rtmp = 0;
-      for (j = 0; j < 3; j++)
-        {
-          rtmp += VSG_MATRIX3@T@_COMP (mat, j, i) * tmpvec[j];
-        }
-
-      tmpres[i] = rtmp;
-    }
-
-  result->x = tmpres[0];
-  result->y = tmpres[1];
-  result->z = tmpres[2];
+  vsg_matrix3@t@_vec3mult_T_inline (mat, vec, result);
 }
-
-/* inspired from www.nebula.org */
-#define C00 VSG_MATRIX3@T@_COMP(mat,0,0)
-#define C01 VSG_MATRIX3@T@_COMP(mat,0,1)
-#define C02 VSG_MATRIX3@T@_COMP(mat,0,2)
-#define C10 VSG_MATRIX3@T@_COMP(mat,1,0)
-#define C11 VSG_MATRIX3@T@_COMP(mat,1,1)
-#define C12 VSG_MATRIX3@T@_COMP(mat,1,2)
-#define C20 VSG_MATRIX3@T@_COMP(mat,2,0)
-#define C21 VSG_MATRIX3@T@_COMP(mat,2,1)
-#define C22 VSG_MATRIX3@T@_COMP(mat,2,2)
 
 /**
  * vsg_matrix3@t@_det:
@@ -640,10 +502,7 @@ void vsg_matrix3@t@_vec3mult_T (const VsgMatrix3@t@ *mat,
   g_return_val_if_fail (mat != NULL, 0);
 #endif
 
-  return
-    C00 * (C11 * C22 - C21 * C12)
-    - C01 * (C10 * C22 - C20 * C12)
-    + C02 * (C10 * C21 - C20 * C11);
+  return vsg_matrix3@t@_det_inline (mat);
 }
 
 /**
@@ -659,34 +518,12 @@ void vsg_matrix3@t@_vec3mult_T (const VsgMatrix3@t@ *mat,
 gboolean vsg_matrix3@t@_invert (const VsgMatrix3@t@ *mat,
                                 VsgMatrix3@t@ *result)
 {
-  @type@ s;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (mat != NULL, FALSE);
   g_return_val_if_fail (result != NULL, FALSE);
 #endif
 
-  s = vsg_matrix3@t@_det (mat);
-
-  if (s == 0.0)
-    {
-      g_critical ("invalid VsgMatrix3@t@ for inversion.\n");
-      return FALSE;
-    }
-
-  s = 1 / s;
-  vsg_matrix3@t@_set (result,
-                      s * (C11 * C22 - C12 * C21),
-                      s * (C21 * C02 - C22 * C01),
-                      s * (C01 * C12 - C02 * C11),
-                      s * (C12 * C20 - C10 * C22),
-                      s * (C22 * C00 - C20 * C02),
-                      s * (C02 * C10 - C00 * C12),
-                      s * (C10 * C21 - C11 * C20),
-                      s * (C20 * C01 - C21 * C00),
-                      s * (C00 * C11 - C01 * C10));
-
-  return TRUE;
+  return vsg_matrix3@t@_invert_inline (mat, result);
 }
 
 /**
@@ -703,7 +540,7 @@ gboolean vsg_matrix3@t@_invert (const VsgMatrix3@t@ *mat,
                                  guint i, guint j)
 {
 #ifdef VSG_CHECK_PARAMS
-  g_return_val_if_fail (mat!=NULL, 0.);
+  g_return_val_if_fail (mat != NULL, 0.);
 
   g_return_val_if_fail (i < 3, 0.);
   g_return_val_if_fail (i >= 0, 0.);
@@ -711,7 +548,7 @@ gboolean vsg_matrix3@t@_invert (const VsgMatrix3@t@ *mat,
   g_return_val_if_fail (j >= 0, 0.);
 #endif
 
-  return VSG_MATRIX3@T@_COMP (mat, i, j);
+  return vsg_matrix3@t@_component_inline (mat, i, j);
 }
 
 /**
@@ -724,24 +561,12 @@ gboolean vsg_matrix3@t@_invert (const VsgMatrix3@t@ *mat,
  */
 void vsg_matrix3@t@_transpose (const VsgMatrix3@t@ *mat, VsgMatrix3@t@ *result)
 {
-  @type@ tmp;
-  int i, j;
-
 #ifdef VSG_CHECK_PARAMS
-  g_return_if_fail (mat!=NULL);
-  g_return_if_fail (result!=NULL);
+  g_return_if_fail (mat != NULL);
+  g_return_if_fail (result != NULL);
 #endif
 
-  for (i = 0; i < 3; i++)
-    {
-      VSG_MATRIX3@T@_COMP (result, i, i) = VSG_MATRIX3@T@_COMP (mat, i, i);
-      for (j = 0; j < i; j++)
-        {
-          tmp = VSG_MATRIX3@T@_COMP (mat, i, j);  /* avoid argument aliasing */
-          VSG_MATRIX3@T@_COMP (result, i, j) = VSG_MATRIX3@T@_COMP (mat, j, i);
-          VSG_MATRIX3@T@_COMP (result, j, i) = tmp;
-        }
-    }
+  vsg_matrix3@t@_transpose_inline (mat, result);
 }
 
 /**
@@ -757,7 +582,7 @@ void vsg_matrix3@t@_write (const VsgMatrix3@t@ *mat, FILE * file)
   gchar bufx[G_ASCII_DTOSTR_BUF_SIZE];
   gchar *x;
 
-  g_return_if_fail (mat!=NULL);
+  g_return_if_fail (mat != NULL);
   g_return_if_fail (file != NULL);
 
   for (i = 0; i < 3; i++)
@@ -781,7 +606,7 @@ void vsg_matrix3@t@_write (const VsgMatrix3@t@ *mat, FILE * file)
  */
 void vsg_matrix3@t@_print (const VsgMatrix3@t@ *mat)
 {
-  g_return_if_fail (mat!=NULL);
+  g_return_if_fail (mat != NULL);
 
   vsg_matrix3@t@_write (mat, stdout);
 }
@@ -791,4 +616,10 @@ void vsg_matrix3@t@_print (const VsgMatrix3@t@ *mat)
  * @components: matrix (3x3) components.
  *
  * A 3x3 matrix that may represent 2D affine transformations.
+ */
+
+/**
+ * VSG_MATRIX3@T@_COMP:
+ *
+ * Returns @mat component of coordinates (@i,@j).
  */

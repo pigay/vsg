@@ -12,5 +12,11 @@
 
   <!-- long description -->
   <para>
+    Many of these functions have an inlined counterpart that one can reach in
+    the "vsgvector2@t@-inline.h" or "vsg@t@-inline.h" header file. Inlining of
+    vsg_vector2@t@_* functions will be automatically done when including this
+    header unless you define VSG_NO_IMPLICIT_INLINE before the corresponding
+    include directive. In such case, one can always use the inline functions
+    by appending "_inline" to the desired function name.
   </para>
 </book>

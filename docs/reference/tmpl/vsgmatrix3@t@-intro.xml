@@ -14,6 +14,12 @@
   <para>
     <para>
       3x3 matrices can be 2D affine transforms or 3D linear transforms.
+      Many of these functions have an inlined counterpart that one can reach in
+      the "vsgmatrix3@t@-inline.h" or "vsg@t@-inline.h" header file. Inlining of
+      vsg_matrix3@t@_* functions will be automatically done when including this
+      header unless you define VSG_NO_IMPLICIT_INLINE before the corresponding
+      include directive. In such case, one can always use the inline functions
+      by appending "_inline" to the desired function name.
     </para>
   </para>
 </book>

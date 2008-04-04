@@ -61,8 +61,13 @@ IGNORE_HFILES= \
 vsgprtree2d-private.h \
 vsgprtree3d-private.h \
 vsgprtree2f-private.h \
-vsgprtree3f-private.h
-
+vsgprtree3f-private.h \
+vsgvector2d-inline.h  \
+vsgvector2f-inline.h  \
+vsgvector3d-inline.h  \
+vsgvector3f-inline.h  \
+vsgquaterniond-inline.h \
+vsgquaternionf-inline.h
 
 # Images to copy into HTML directory.
 HTML_IMAGES =

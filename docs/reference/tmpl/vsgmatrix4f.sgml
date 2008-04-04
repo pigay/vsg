@@ -36,6 +36,17 @@ vsgmatrix4f
 
 
 
+<!-- ##### FUNCTION VSG_MATRIX4F_COMP ##### -->
+<para>
+
+</para>
+
+@Varargs: 
+@Param2: 
+@Param3: 
+@Returns: 
+
+
 <!-- ##### FUNCTION vsg_matrix4f_new ##### -->
 <para>
 

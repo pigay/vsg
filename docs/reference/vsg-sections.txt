@@ -483,6 +483,7 @@ vsg_prtree3f_node_info_clone
 VsgMatrix3d
 VSG_TYPE_MATRIX3D
 
+VSG_MATRIX3D_COMP
 
 vsg_matrix3d_new
 vsg_matrix3d_free
@@ -519,6 +520,7 @@ vsg_matrix3d_get_type
 VsgMatrix3f
 VSG_TYPE_MATRIX3F
 
+VSG_MATRIX3F_COMP
 
 vsg_matrix3f_new
 vsg_matrix3f_free
@@ -555,6 +557,7 @@ vsg_matrix3f_get_type
 VsgMatrix4d
 VSG_TYPE_MATRIX4D
 
+VSG_MATRIX4D_COMP
 
 vsg_matrix4d_new
 vsg_matrix4d_free
@@ -599,6 +602,7 @@ vsg_matrix4d_get_type
 VsgMatrix4f
 VSG_TYPE_MATRIX4F
 
+VSG_MATRIX4F_COMP
 
 vsg_matrix4f_new
 vsg_matrix4f_free

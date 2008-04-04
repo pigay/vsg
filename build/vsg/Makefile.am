@@ -70,6 +70,9 @@ tmpldir = $(top_srcdir)/src
 %d-extras.c %f-extras.c : $(tmpldir)/%@t@-extras.c $(typegen) $(types_list)
 	$(PYTHON) $(typegen) -f=$(types_list) $<
 
+%d-inline.h %f-inline.h : $(tmpldir)/%@t@-inline.h $(typegen) $(types_list)
+	$(PYTHON) $(typegen) -f=$(types_list) $<
+
 %.c : $(top_srcdir)/src/%.c
 	cp $< $@
 

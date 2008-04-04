@@ -20,7 +20,7 @@
  */
 %%
 headers
-#include "vsg/vsgmatrix3@t@.h"
+#include "vsg/vsgmatrix3@t@-inline.h"
 
 %%
 override-slot VsgMatrix3@t@.tp_repr

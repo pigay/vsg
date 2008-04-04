@@ -20,7 +20,7 @@
  */
 %%
 headers
-#include "vsg/vsgvector3@t@.h"
+#include "vsg/vsgvector3@t@-inline.h"
 
 /**
  * vsg_vector3@t@_new:

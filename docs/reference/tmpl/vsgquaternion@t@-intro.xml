@@ -14,7 +14,13 @@
   <para>
     <para>
       Quaternions are special 4D vectors. Unit quaternions can be used to
-      represent 3D rotations.
+      represent 3D rotations. Many of these functions have an inlined
+      counterpart that one can reach in the "vsgquaternion@t@-inline.h" or
+      "vsg@t@-inline.h" header file. Inlining of vsg_quaternion@t@_* functions
+      will be automatically done when including this header unless you define
+      VSG_NO_IMPLICIT_INLINE before the corresponding include directive.
+      In such case, one can always use the inline functions by appending
+      "_inline" to the desired function name.
     </para>
   </para>
 </book>

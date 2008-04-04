@@ -22,6 +22,10 @@
 #include "vsgvector2@t@.h"
 #include "vsgvector2@alt_t@.h"
 
+#define VSG_NO_IMPLICIT_INLINE
+#include "vsgvector2@t@-inline.h"
+#include "vsgvector2@alt_t@-inline.h"
+
 #include <math.h>
 
 #include <glib/gprintf.h>
@@ -104,11 +108,11 @@ GType vsg_vector2@t@_get_type (void)
  *
  * Returns: new #VsgVector2@t@ instance.
  */
-VsgVector2@t@ *vsg_vector2@t@_new(@type@ x, @type@ y)
+VsgVector2@t@ *vsg_vector2@t@_new (@type@ x, @type@ y)
 {
   VsgVector2@t@ *result = _vector2@t@_alloc ();
 
-  vsg_vector2@t@_set(result, x, y);
+  vsg_vector2@t@_set_inline (result, x, y);
 
   return result;
 }
@@ -149,8 +153,7 @@ void vsg_vector2@t@_set(VsgVector2@t@ *vec,
   g_return_if_fail (vec != NULL);
 #endif
 
-  vec->x = x;
-  vec->y = y;
+  vsg_vector2@t@_set_inline (vec, x, y);
 }
 
 
@@ -168,8 +171,7 @@ void vsg_vector2@t@_copy(const VsgVector2@t@ *src, VsgVector2@t@ *dst)
   g_return_if_fail (dst != NULL);
 #endif
 
-  dst->x = src->x;
-  dst->y = src->y;
+  vsg_vector2@t@_copy_inline (src, dst);
 }
 
 /**
@@ -189,7 +191,7 @@ VsgVector2@t@ *vsg_vector2@t@_clone (const VsgVector2@t@ *src)
 #endif
 
   dst = _vector2@t@_alloc ();
-  vsg_vector2@t@_copy (src, dst);
+  vsg_vector2@t@_copy_inline (src, dst);
 
   return dst;
 }
@@ -202,13 +204,13 @@ VsgVector2@t@ *vsg_vector2@t@_clone (const VsgVector2@t@ *src)
  *
  * Returns square of @vec norm.
  */
-@type@ vsg_vector2@t@_square_norm(const VsgVector2@t@ *vec)
+@type@ vsg_vector2@t@_square_norm (const VsgVector2@t@ *vec)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (vec != NULL, 0.);
 #endif
 
-  return vsg_vector2@t@_dotp(vec,vec);
+  return vsg_vector2@t@_square_norm_inline (vec);
 }
 
 /**
@@ -217,15 +219,15 @@ VsgVector2@t@ *vsg_vector2@t@_clone (const VsgVector2@t@ *src)
  *
  * Computes Euclidean norm of @vec sqrt(x*x+y*y).
  *
- * Returns square of @vec norm.
+ * Returns @vec norm.
  */
-@type@ vsg_vector2@t@_norm(const VsgVector2@t@ *vec)
+@type@ vsg_vector2@t@_norm (const VsgVector2@t@ *vec)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (vec != NULL, 0.);
 #endif
 
-  return sqrt(vsg_vector2@t@_dotp(vec,vec));
+  return vsg_vector2@t@_norm_inline (vec);
 }
 
 /**
@@ -240,16 +242,12 @@ VsgVector2@t@ *vsg_vector2@t@_clone (const VsgVector2@t@ *src)
 @type@ vsg_vector2@t@_dist (const VsgVector2@t@ *vec,
                             const VsgVector2@t@ *other)
 {
-  VsgVector2@t@ tmp;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (vec != NULL, 0.);
   g_return_val_if_fail (other != NULL, 0.);
 #endif
 
-  vsg_vector2@t@_sub (vec, other, &tmp);
-
-  return vsg_vector2@t@_norm (&tmp);
+  return vsg_vector2@t@_dist_inline (vec, other);
 }
 
 /**
@@ -259,19 +257,13 @@ VsgVector2@t@ *vsg_vector2@t@_clone (const VsgVector2@t@ *src)
  * Modifies @vec so that its Euclidean norm becomes %1. Former direction
  * of @vec is unchanged.
  */
-void vsg_vector2@t@_normalize(VsgVector2@t@ *vec)
+void vsg_vector2@t@_normalize (VsgVector2@t@ *vec)
 {
-  @type@ n;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (vec != NULL);
 #endif
 
-  n = vsg_vector2@t@_norm(vec);
-
-  if (n == 0.) return;
-
-  vsg_vector2@t@_scalp(vec, 1./n, vec);
+  vsg_vector2@t@_normalize_inline (vec);
 }
 
 /**
@@ -283,16 +275,15 @@ void vsg_vector2@t@_normalize(VsgVector2@t@ *vec)
  * Computes scalar product of @vec by @scal and stores the result in
  * @res. Argument aliasing is allowed.
  */
-void vsg_vector2@t@_scalp(const VsgVector2@t@ *vec, @type@ scal,
-                          VsgVector2@t@ *res)
+void vsg_vector2@t@_scalp (const VsgVector2@t@ *vec, @type@ scal,
+                           VsgVector2@t@ *res)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (vec != NULL);
   g_return_if_fail (res != NULL);
 #endif
 
-  res->x = vec->x * scal;
-  res->y = vec->y * scal;
+  vsg_vector2@t@_scalp_inline (vec,scal, res);
 }
 
 /**
@@ -304,20 +295,16 @@ void vsg_vector2@t@_scalp(const VsgVector2@t@ *vec, @type@ scal,
  *
  * Returns: result of the dot product.
  */
-@type@ vsg_vector2@t@_dotp(const VsgVector2@t@ *vec,
-                           const VsgVector2@t@ *other)
+@type@ vsg_vector2@t@_dotp (const VsgVector2@t@ *vec,
+                            const VsgVector2@t@ *other)
 {
-  @type@ result;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (vec != NULL, 0.);
   g_return_val_if_fail (other != NULL, 0.);
 #endif
 
-  result = vec->x * other->x;
-  result += vec->y * other->y;
-
-  return result;
+  return vsg_vector2@t@_dotp_inline (vec, other);
+;
 }
 
 /**
@@ -329,15 +316,15 @@ void vsg_vector2@t@_scalp(const VsgVector2@t@ *vec, @type@ scal,
  *
  * Returns: result of the cross product.
  */
-@type@ vsg_vector2@t@_vecp(const VsgVector2@t@ *vec,
-                           const VsgVector2@t@ *other)
+@type@ vsg_vector2@t@_vecp (const VsgVector2@t@ *vec,
+                            const VsgVector2@t@ *other)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (vec != NULL, 0.);
   g_return_val_if_fail (other != NULL, 0.);
 #endif
 
-  return vec->x * other->y - vec->y * other->x;
+  return vsg_vector2@t@_vecp_inline (vec, other);
 }
 
 /**
@@ -349,9 +336,9 @@ void vsg_vector2@t@_scalp(const VsgVector2@t@ *vec, @type@ scal,
  * Computes vectorial addition of @vec and @other in @result. Argument aliasing
  * is allowed.
  */
-void vsg_vector2@t@_add(const VsgVector2@t@ *vec,
-                        const VsgVector2@t@ *other,
-                        VsgVector2@t@ *result)
+void vsg_vector2@t@_add (const VsgVector2@t@ *vec,
+                         const VsgVector2@t@ *other,
+                         VsgVector2@t@ *result)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (vec != NULL);
@@ -359,8 +346,7 @@ void vsg_vector2@t@_add(const VsgVector2@t@ *vec,
   g_return_if_fail (result != NULL);
 #endif
 
-  result->x = vec->x + other->x;
-  result->y = vec->y + other->y;
+  vsg_vector2@t@_add_inline (vec, other, result);
 }
 
 /**
@@ -372,9 +358,9 @@ void vsg_vector2@t@_add(const VsgVector2@t@ *vec,
  * Computes vectorial substraction of @vec and @other in @result. Argument
  * aliasing is allowed.
  */
-void vsg_vector2@t@_sub(const VsgVector2@t@ *vec,
-                        const VsgVector2@t@ *other,
-                        VsgVector2@t@ *result)
+void vsg_vector2@t@_sub (const VsgVector2@t@ *vec,
+                         const VsgVector2@t@ *other,
+                         VsgVector2@t@ *result)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (vec != NULL);
@@ -382,8 +368,7 @@ void vsg_vector2@t@_sub(const VsgVector2@t@ *vec,
   g_return_if_fail (result != NULL);
 #endif
 
-  result->x = vec->x - other->x;
-  result->y = vec->y - other->y;
+  vsg_vector2@t@_sub_inline (vec, other, result);
 }
 
 
@@ -403,16 +388,13 @@ void vsg_vector2@t@_lerp (const VsgVector2@t@ *vec,
                           @type@ factor,
                           VsgVector2@t@ *result)
 {
-  @type@ one_minus_factor = (1.-factor);
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (vec != NULL);
   g_return_if_fail (other != NULL);
   g_return_if_fail (result != NULL);
 #endif
 
-  result->x = one_minus_factor * vec->x + factor * other->x;
-  result->y = one_minus_factor * vec->y + factor * other->y;
+  vsg_vector2@t@_lerp_inline (vec, other, factor, result);
 }
 
 /**
@@ -422,16 +404,15 @@ void vsg_vector2@t@_lerp (const VsgVector2@t@ *vec,
  *
  * Copies @src to @dst, taking care of type conversion.
  */
-void vsg_vector2@t@_copy@alt_t@(const VsgVector2@t@ *src,
-                                VsgVector2@alt_t@ *dst)
+void vsg_vector2@t@_copy@alt_t@ (const VsgVector2@t@ *src,
+                                 VsgVector2@alt_t@ *dst)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (dst != NULL);
   g_return_if_fail (src != NULL);
 #endif
 
-  dst->x = (@alt_type@) src->x;
-  dst->y = (@alt_type@) src->y;
+  vsg_vector2@t@_copy@alt_t@_inline (src, dst);
 }
 
 /**
@@ -442,13 +423,13 @@ void vsg_vector2@t@_copy@alt_t@(const VsgVector2@t@ *src,
  *
  * Returns %true if @vec is origin, %false otherwise
  */
-gboolean vsg_vector2@t@_is_zero(const VsgVector2@t@ *vec)
+gboolean vsg_vector2@t@_is_zero (const VsgVector2@t@ *vec)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (vec != NULL, FALSE);
 #endif
 
-  return vsg_vector2@t@_square_norm(vec) == 0.;
+  return vsg_vector2@t@_is_zero_inline (vec);
 }
 
 /**
@@ -484,8 +465,6 @@ void vsg_vector2@t@_write(const VsgVector2@t@ *vec, FILE *file)
  */
 void vsg_vector2@t@_print(const VsgVector2@t@ *vec)
 {
-  g_return_if_fail(vec != NULL);
-
   vsg_vector2@t@_write(vec, stdout);
 }
 
@@ -499,25 +478,13 @@ void vsg_vector2@t@_print(const VsgVector2@t@ *vec)
  * Computes @vec polar preliminary coordinates (sine and cosine).
  */
 void vsg_vector2@t@_to_polar_internal (const VsgVector2@t@ *vec,
-				       @type@ *r, @type@ *cost, @type@ *sint)
+                                       @type@ *r, @type@ *cost, @type@ *sint)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (vec != NULL);
 #endif
 
-  *r = vsg_vector2@t@_norm (vec);
-
-  if (*r > 0.)
-    {
-      *cost = vec->x / *r;
-      *sint = vec->y / *r;
-    }
-  else
-    {
-      *r = 0.;
-      *cost = 1.;
-      *sint = 0.;
-    }
+  vsg_vector2@t@_to_polar_internal_inline (vec, r, cost, sint);
 }
 
 /**
@@ -529,19 +496,13 @@ void vsg_vector2@t@_to_polar_internal (const VsgVector2@t@ *vec,
  * Computes @vec polar preliminary coordinates.
  */
 void vsg_vector2@t@_to_polar (const VsgVector2@t@ *vec,
-			      @type@ *r, @type@ *theta)
+                              @type@ *r, @type@ *theta)
 {
-  @type@ cost, sint;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (vec != NULL);
 #endif
 
-  vsg_vector2@t@_to_polar_internal (vec, r, &cost, &sint);
-
-  *theta = acos (cost);
-
-  if (sint < 0.) *theta = - *theta;
+  vsg_vector2@t@_to_polar_inline (vec, r, theta);
 }
 
 /**
@@ -555,14 +516,13 @@ void vsg_vector2@t@_to_polar (const VsgVector2@t@ *vec,
  * polar preliminary coordinates.
  */
 void vsg_vector2@t@_from_polar_internal (VsgVector2@t@ *vec,
-					 @type@ r, @type@ cost, @type@ sint)
+                                         @type@ r, @type@ cost, @type@ sint)
 {
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (vec != NULL);
 #endif
 
-  vec->x = r*cost;
-  vec->y = r*sint;
+  vsg_vector2@t@_from_polar_internal_inline (vec, r, cost, sint);
 }
 
 /**
@@ -575,18 +535,13 @@ void vsg_vector2@t@_from_polar_internal (VsgVector2@t@ *vec,
  * coordinates.
  */
 void vsg_vector2@t@_from_polar (VsgVector2@t@ *vec,
-				@type@ r, @type@ theta)
+                                @type@ r, @type@ theta)
 {
-  @type@ cost, sint;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (vec != NULL);
 #endif
 
-  cost = cos (theta);
-  sint = sin (theta);
-
-  vsg_vector2@t@_from_polar_internal (vec, r, cost, sint);
+  vsg_vector2@t@_from_polar_inline (vec, r,  theta);
 }
 
 /**
@@ -604,21 +559,13 @@ void vsg_vector2@t@_from_polar (VsgVector2@t@ *vec,
                               const VsgVector2@t@ *pb,
                               const VsgVector2@t@ *pc)
 {
-  @type@ a00, a01, a10, a11;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (pa != NULL, 0.);
   g_return_val_if_fail (pb != NULL, 0.);
   g_return_val_if_fail (pc != NULL, 0.);
 #endif
 
-  a00 = pa->x - pc->x;
-  a01 = pa->y - pc->y;
-
-  a10 = pb->x - pc->x;
-  a11 = pb->y - pc->y;
-
-  return a00*a11 - a10*a01;
+  return vsg_vector2@t@_orient_inline (pa, pb, pc);
 }
 
 /**
@@ -638,8 +585,6 @@ void vsg_vector2@t@_from_polar (VsgVector2@t@ *vec,
                                 const VsgVector2@t@ *pc,
                                 const VsgVector2@t@ *pd)
 {
-  @type@ a00, a01, a02, a10, a11, a12, a20, a21, a22;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (pa != NULL, 0.);
   g_return_val_if_fail (pb != NULL, 0.);
@@ -647,21 +592,7 @@ void vsg_vector2@t@_from_polar (VsgVector2@t@ *vec,
   g_return_val_if_fail (pd != NULL, 0.);
 #endif
 
-  a00 = pa->x - pd->x;
-  a01 = pa->y - pd->y;
-  a02 = a00*a00 + a01*a01;
-
-  a10 = pb->x - pd->x;
-  a11 = pb->y - pd->y;
-  a12 = a10*a10 + a11*a11;
-
-  a20 = pc->x - pd->x;
-  a21 = pc->y - pd->y;
-  a22 = a20*a20 + a21*a21;
-
-  return a00 * (a11*a22 - a21*a12)
-    - a01 * (a10*a22 - a20*a12)
-    + a02 * (a10*a21 - a20*a11);
+  return vsg_vector2@t@_incircle_inline (pa, pb, pc, pd);
 }
 
 /**
@@ -677,20 +608,12 @@ void vsg_vector2@t@_from_polar (VsgVector2@t@ *vec,
 vsgloc2 vsg_vector2@t@_vector2@t@_locfunc (const VsgVector2@t@ *candidate,
                                            const VsgVector2@t@ *center)
 {
-  vsgloc2 res = 0;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (candidate != NULL, 0);
   g_return_val_if_fail (center != NULL, 0);
 #endif
 
-  if (candidate->x >= center->x)
-    res |= VSG_LOC2_X;
-
-  if (candidate->y >= center->y)
-    res |= VSG_LOC2_Y;
-
-  return res;
+  return vsg_vector2@t@_vector2@t@_locfunc_inline (candidate, center);
 }
 
 /**
@@ -707,20 +630,12 @@ vsgloc2 vsg_vector2@t@_vector2@t@_locfunc (const VsgVector2@t@ *candidate,
 vsgloc2 vsg_vector2@t@_vector2@alt_t@_locfunc (const VsgVector2@t@ *candidate,
                                                const VsgVector2@alt_t@ *center)
 {
-  vsgloc2 res = 0;
-
 #ifdef VSG_CHECK_PARAMS
   g_return_val_if_fail (candidate != NULL, 0);
   g_return_val_if_fail (center != NULL, 0);
 #endif
 
-  if (candidate->x >= center->x)
-    res |= VSG_LOC2_X;
-
-  if (candidate->y >= center->y)
-    res |= VSG_LOC2_Y;
-
-  return res;
+  return vsg_vector2@t@_vector2@alt_t@_locfunc_inline (candidate, center);
 }
 
 /**
