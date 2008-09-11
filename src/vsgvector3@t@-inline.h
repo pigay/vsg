@@ -201,8 +201,8 @@ static inline gboolean vsg_vector3@t@_is_zero_inline (const VsgVector3@t@ *vec)
 }
 
 #ifndef VSG_NO_IMPLICIT_INLINE
-#define vsg_vector3@t@_spherical_internal \
-vsg_vector3@t@_spherical_internal_inline
+#define vsg_vector3@t@_to_spherical_internal \
+vsg_vector3@t@_to_spherical_internal_inline
 #endif
 static inline void
 vsg_vector3@t@_to_spherical_internal_inline (const VsgVector3@t@ *vec,
@@ -244,7 +244,7 @@ vsg_vector3@t@_to_spherical_internal_inline (const VsgVector3@t@ *vec,
 }
 
 #ifndef VSG_NO_IMPLICIT_INLINE
-#define vsg_vector3@t@_to_spherica vsg_vector3@t@_to_spherica_inline
+#define vsg_vector3@t@_to_spherical vsg_vector3@t@_to_spherical_inline
 #endif
 static inline void vsg_vector3@t@_to_spherical_inline (const VsgVector3@t@ *vec,
                                                        @type@ *r,
@@ -375,7 +375,8 @@ static inline @type@ vsg_vector3@t@_insphere_inline (const VsgVector3@t@ *pa,
 }
 
 #ifndef VSG_NO_IMPLICIT_INLINE
-#define vsg_vector3@t@_locfunc vsg_vector3@t@_locfunc_inline
+#define vsg_vector3@t@_vector3@t@_locfunc \
+vsg_vector3@t@_vector3@t@_locfunc_inline
 #endif
 static inline vsgloc3
 vsg_vector3@t@_vector3@t@_locfunc_inline (const VsgVector3@t@ *candidate,
