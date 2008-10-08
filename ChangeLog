@@ -1,3 +1,220 @@
+2008-09-11 15:44  Pierre Gay <peyo@libvsg.org>
+
+	* [r110] src/vsgvector3@t@-inline.h: Fixed typos in some inline
+	  replacements.
+
+2008-04-04 11:31  Pierre Gay <peyo@libvsg.org>
+
+	* [r80] bindings/python/pyvsg_boxed_pyobject.c,
+	  bindings/python/pyvsg_boxed_pyobject.h,
+	  bindings/python/vsg@t@.override, bindings/python/vsgconstants.c,
+	  bindings/python/vsgconstants.h,
+	  bindings/python/vsgconstants@t@.c,
+	  bindings/python/vsgconstants@t@.h,
+	  bindings/python/vsgmatrix3@t@.override,
+	  bindings/python/vsgmatrix4@t@.override,
+	  bindings/python/vsgprtree2@t@.override,
+	  bindings/python/vsgprtree3@t@.override,
+	  bindings/python/vsgquaternion@t@.override,
+	  bindings/python/vsgvector2@t@.override,
+	  bindings/python/vsgvector3@t@.override, src/prtreetest.c,
+	  src/vsg.c, src/vsg.h, src/vsg@t@-inline.h, src/vsg@t@.c,
+	  src/vsg@t@.h, src/vsgmatrix3@t@-inline.h, src/vsgmatrix3@t@.c,
+	  src/vsgmatrix3@t@.h, src/vsgmatrix4@t@-inline.h,
+	  src/vsgmatrix4@t@.c, src/vsgmatrix4@t@.h, src/vsgprtree-common.h,
+	  src/vsgprtree2-common.h, src/vsgprtree2@t@-extras.c,
+	  src/vsgprtree2@t@-extras.h, src/vsgprtree2@t@-private.h,
+	  src/vsgprtree2@t@.c, src/vsgprtree2@t@.h,
+	  src/vsgprtree3-common.h, src/vsgprtree3@t@-extras.c,
+	  src/vsgprtree3@t@-extras.h, src/vsgprtree3@t@-private.h,
+	  src/vsgprtree3@t@.c, src/vsgprtree3@t@.h,
+	  src/vsgquaternion@t@-inline.h, src/vsgquaternion@t@.c,
+	  src/vsgquaternion@t@.h, src/vsgvector2@t@-inline.h,
+	  src/vsgvector2@t@.c, src/vsgvector2@t@.h,
+	  src/vsgvector3@t@-inline.h, src/vsgvector3@t@.c,
+	  src/vsgvector3@t@.h, tests/mat3ops.at, tests/mat4ops.at,
+	  tests/prtree2.at, tests/prtree3.at, tests/testsuite.at,
+	  tests/vec2ops.at, tests/vec3ops.at: Extended copyright notice to
+	  2008.
+
+2008-04-04 10:47  Pierre Gay <peyo@libvsg.org>
+
+	* [r79] bindings/python/vsg@t@.override,
+	  bindings/python/vsgmatrix3@t@.override,
+	  bindings/python/vsgmatrix4@t@.override,
+	  bindings/python/vsgquaternion@t@.override,
+	  bindings/python/vsgvector2@t@.override,
+	  bindings/python/vsgvector3@t@.override, build/vsg/Makefile.am,
+	  docs/reference/Makefile.am,
+	  docs/reference/tmpl/vsgmatrix3@t@-intro.xml,
+	  docs/reference/tmpl/vsgmatrix3d.sgml,
+	  docs/reference/tmpl/vsgmatrix3f.sgml,
+	  docs/reference/tmpl/vsgmatrix4@t@-intro.xml,
+	  docs/reference/tmpl/vsgmatrix4d.sgml,
+	  docs/reference/tmpl/vsgmatrix4f.sgml,
+	  docs/reference/tmpl/vsgquaternion@t@-intro.xml,
+	  docs/reference/tmpl/vsgvector2@t@-intro.xml,
+	  docs/reference/tmpl/vsgvector3@t@-intro.xml,
+	  docs/reference/vsg-sections.txt, src/sources.list,
+	  src/vsg@t@-inline.h, src/vsgmatrix3@t@-inline.h,
+	  src/vsgmatrix3@t@.c, src/vsgmatrix4@t@-inline.h,
+	  src/vsgmatrix4@t@.c, src/vsgquaternion@t@-inline.h,
+	  src/vsgquaternion@t@.c, src/vsgvector2@t@-inline.h,
+	  src/vsgvector2@t@.c, src/vsgvector3@t@-inline.h,
+	  src/vsgvector3@t@.c: Added inlined counterparts for most
+	  transparent type functions that do not imply memory management.
+	  The *_inline functions are automatically used instead of the
+	  normal function when using the *-inline.h headers unless the
+	  macro VSG_NO_IMPLICIT_INLINE is defined before their inclusion.
+
+2007-11-14 16:03  Pierre Gay <peyo@libvsg.org>
+
+	* [r44] src/vsgprtree-common.h: Fixed a merge problem (duplicate
+	  code).
+
+2007-11-13 21:40  Pierre Gay <peyo@libvsg.org>
+
+	* [r40] bindings/python/examples/prtree2d_hilbert.py,
+	  bindings/python/examples/prtree3d_hilbert.py,
+	  bindings/python/vsg@t@.defs,
+	  bindings/python/vsgprtree2@t@.override,
+	  bindings/python/vsgprtree3@t@.override: Added Python wrapper for
+	  children oerder in traversals.
+
+2007-11-13 21:07  Pierre Gay <peyo@libvsg.org>
+
+	* [r39] docs/reference/Makefile.am,
+	  docs/reference/tmpl/vsgprtree2d.sgml,
+	  docs/reference/tmpl/vsgprtree2f.sgml,
+	  docs/reference/tmpl/vsgprtree3d.sgml,
+	  docs/reference/tmpl/vsgprtree3f.sgml,
+	  docs/reference/vsg-docs.xml, docs/reference/vsg-sections.txt,
+	  src/sources.list, src/vsgprtree-common.h,
+	  src/vsgprtree2@t@-private.h, src/vsgprtree2@t@.c,
+	  src/vsgprtree2@t@.h, src/vsgprtree3@t@-private.h,
+	  src/vsgprtree3@t@.c, src/vsgprtree3@t@.h, tests/Makefile.am,
+	  tests/hilbert2-lvl1.ref, tests/hilbert2-lvl2.ref,
+	  tests/hilbert2-lvl3.ref, tests/hilbert2-lvl4.ref,
+	  tests/hilbert2-lvl5.ref, tests/hilbert3-lvl1.ref,
+	  tests/hilbert3-lvl2.ref, tests/hilbert3-lvl3.ref,
+	  tests/hilbert3-lvl4.ref, tests/prtree2.at, tests/prtree2hilb.c,
+	  tests/prtree3.at, tests/prtree3hilb.c: Added support to alternate
+	  children order in traversals.
+
+2007-10-27 22:20  Pierre Gay <peyo@libvsg.org>
+
+	* [r38] tests/prtree2pt.c, tests/prtree3pt.c: Fixed som test that
+	  were not very useful.
+
+2007-10-24 20:24  Pierre Gay <peyo@libvsg.org>
+
+	* [r37] bindings/python/vsgmatrix3@t@.override,
+	  bindings/python/vsgmatrix4@t@.override,
+	  bindings/python/vsgquaternion@t@.override,
+	  bindings/python/vsgvector2@t@.override,
+	  bindings/python/vsgvector3@t@.override: Added some fancy inplace
+	  operators for vectirs and matrices Python wrappers.
+
+2007-07-26 15:14  Pierre Gay <peyo@libvsg.org>
+
+	* [r36] bindings/python/docs/Makefile.am: Removed a automake
+	  warning.
+
+2007-07-12 21:30  Pierre Gay <peyo@libvsg.org>
+
+	* [r35] bindings/python/vsgprtree2@t@.override,
+	  bindings/python/vsgprtree3@t@.override,
+	  docs/reference/tmpl/vsg-unused.sgml,
+	  docs/reference/tmpl/vsgprtree2d.sgml,
+	  docs/reference/tmpl/vsgprtree2f.sgml,
+	  docs/reference/tmpl/vsgprtree3d.sgml,
+	  docs/reference/tmpl/vsgprtree3f.sgml, vsg-config.h.in: Small
+	  argument check bug fix in vsg_prtree?@t@_find_deep_region Python
+	  wrappers.
+
+2007-03-08 21:43  Pierre Gay <peyo@libvsg.org>
+
+	* [r34] bindings/python/vsgvector2@t@.override,
+	  bindings/python/vsgvector3@t@.override,
+	  docs/reference/tmpl/vsg-unused.sgml,
+	  docs/reference/tmpl/vsgprtree2d.sgml,
+	  docs/reference/tmpl/vsgprtree2f.sgml,
+	  docs/reference/tmpl/vsgprtree3d.sgml,
+	  docs/reference/tmpl/vsgprtree3f.sgml: Added a hash function for
+	  Vector2/3 in Python wrappers in order to enable the use of these
+	  objects in dictionaries keys.
+
+2007-03-08 15:49  Pierre Gay <peyo@libvsg.org>
+
+	* [r33] bindings/python/vsgvector2@t@.override,
+	  bindings/python/vsgvector3@t@.override: Added comparison operator
+	  for Python wrappers of Vector2 and Vector3. This makes objects of
+	  this types unhashable and therefore not usable in dictionaries.
+
+2007-02-14 10:20  Pierre Gay <peyo@libvsg.org>
+
+	* [r32] tests/prtree2nftrave.c, tests/prtree3nftrave.c: Added
+	  omitted new tests files.
+
+2007-01-26 16:50  Pierre Gay <peyo@libvsg.org>
+
+	* [r31] bindings/python/vsg@t@.defs,
+	  bindings/python/vsgprtree2@t@.override,
+	  bindings/python/vsgprtree3@t@.override,
+	  docs/reference/tmpl/vsgprtree2d.sgml,
+	  docs/reference/tmpl/vsgprtree2f.sgml,
+	  docs/reference/tmpl/vsgprtree3d.sgml,
+	  docs/reference/tmpl/vsgprtree3f.sgml,
+	  docs/reference/vsg-sections.txt, src/vsgprtree2@t@-extras.c,
+	  src/vsgprtree2@t@-extras.h, src/vsgprtree2@t@.h,
+	  src/vsgprtree3@t@-extras.c, src/vsgprtree3@t@-extras.h,
+	  src/vsgprtree3@t@.h, tests/Makefile.am, tests/prtree2.at,
+	  tests/prtree2nftrav.c, tests/prtree3.at, tests/prtree3nftrav.c:
+	  Introduces a new prototype for far interaction functions in
+	  VsgPRTree23@t@.
+	  This API break allows user to reject far interaction and the
+	  algorithm to fall
+	  back to recursive near interaction.
+
+2007-01-26 13:42  Pierre Gay <peyo@libvsg.org>
+
+	* [r30] AUTHORS: Changed my email.
+
+2007-01-26 13:42  Pierre Gay <peyo@libvsg.org>
+
+	* [r29] ChangeLog, svn2cl-authors.xml: Updated ChangeLog. Modified
+	  svn2cl authors file.
+
+2007-01-26 10:30  Pierre Gay <peyo@libvsg.org>
+
+	* [r28] bindings/python/pyvsg_boxed_pyobject.c,
+	  bindings/python/pyvsg_boxed_pyobject.h,
+	  bindings/python/vsg@t@.override, bindings/python/vsgconstants.c,
+	  bindings/python/vsgconstants.h,
+	  bindings/python/vsgconstants@t@.c,
+	  bindings/python/vsgconstants@t@.h,
+	  bindings/python/vsgmatrix3@t@.override,
+	  bindings/python/vsgmatrix4@t@.override,
+	  bindings/python/vsgprtree2@t@.override,
+	  bindings/python/vsgprtree3@t@.override,
+	  bindings/python/vsgquaternion@t@.override,
+	  bindings/python/vsgvector2@t@.override,
+	  bindings/python/vsgvector3@t@.override, src/prtreetest.c,
+	  src/vsg.c, src/vsg.h, src/vsg@t@.c, src/vsg@t@.h,
+	  src/vsgmatrix3@t@.c, src/vsgmatrix3@t@.h, src/vsgmatrix4@t@.c,
+	  src/vsgmatrix4@t@.h, src/vsgprtree2-common.h,
+	  src/vsgprtree2@t@-extras.c, src/vsgprtree2@t@-extras.h,
+	  src/vsgprtree2@t@-private.h, src/vsgprtree2@t@.c,
+	  src/vsgprtree2@t@.h, src/vsgprtree3-common.h,
+	  src/vsgprtree3@t@-extras.c, src/vsgprtree3@t@-extras.h,
+	  src/vsgprtree3@t@-private.h, src/vsgprtree3@t@.c,
+	  src/vsgprtree3@t@.h, src/vsgquaternion@t@.c,
+	  src/vsgquaternion@t@.h, src/vsgvector2@t@.c, src/vsgvector2@t@.h,
+	  src/vsgvector3@t@.c, src/vsgvector3@t@.h, tests/mat3ops.at,
+	  tests/mat4ops.at, tests/prtree2.at, tests/prtree3.at,
+	  tests/testsuite.at, tests/vec2ops.at, tests/vec3ops.at: Added
+	  year 2007 to copyright notice.
+
 2007-01-26 09:14  Pierre Gay <peyo@libvsg.org>
 
 	* [r27] svn2cl-authors.xml: Added svn2cl authors file.
