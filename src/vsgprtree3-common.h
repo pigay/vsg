@@ -187,7 +187,7 @@ typedef gboolean (*VsgRegion3CheckFunc) (const VsgRegion3 region,
  * Function type related to VsgRegion3*LocFunc but that takes a #VsgPoint3
  * instead of a #VsgVector3* for second argument.
  *
- * Returns localization bitmask.
+ * Returns: localization bitmask.
  */
 typedef vsgrloc3 (*VsgRegion3Point3LocFunc) (const VsgRegion3 region,
                                              const VsgPoint3 point);

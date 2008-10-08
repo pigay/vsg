@@ -146,7 +146,7 @@ typedef gboolean (*VsgRegion2CheckFunc) (const VsgRegion2 region,
  * Function type related to VsgRegion2*LocFunc but that takes a #VsgPoint2
  * instead of a #VsgVector2* for second argument.
  *
- * Returns localization bitmask.
+ * Returns: localization bitmask.
  */
 typedef vsgrloc2 (*VsgRegion2Point2LocFunc) (const VsgRegion2 region,
                                              const VsgPoint2 point);

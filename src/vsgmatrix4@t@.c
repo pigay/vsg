@@ -820,5 +820,5 @@ void vsg_matrix4@t@_print(const VsgMatrix4@t@ *mat)
 /**
  * VSG_MATRIX4@T@_COMP:
  *
- * Returns @mat component of coordinates (@i,@j).
+ * Returns: @mat component of coordinates (@i,@j).
  */

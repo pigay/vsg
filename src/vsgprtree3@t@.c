@@ -1398,7 +1398,7 @@ vsg_prtree3@t@_set_children_order (VsgPRTree3@t@ *prtree3@t@,
  *
  * Read access to current @prtree3@t@ spatial tolerance.
  *
- * Returns @prtree3@t@ spatial tolerance.
+ * Returns: @prtree3@t@ spatial tolerance.
  */
 @type@ vsg_prtree3@t@_get_tolerance (VsgPRTree3@t@ *prtree3@t@)
 {
@@ -1672,7 +1672,7 @@ void vsg_prtree3@t@_print (const VsgPRTree3@t@ *prtree3@t@)
  * Search @prtree3@t@ for a #VsgPoint3 which distance from @selector
  * is zero.
  *
- * Returns the first #VsgPoint3 found or NULL.
+ * Returns: the first #VsgPoint3 found or NULL.
  */
 VsgPoint3 vsg_prtree3@t@_find_point (VsgPRTree3@t@ *prtree3@t@,
                                      VsgPoint3 selector)
@@ -1783,7 +1783,7 @@ void vsg_prtree3@t@_insert_region (VsgPRTree3@t@ *prtree3@t@,
  *
  * Removes specified @region from @prtree3@t@ lists.
  *
- * Returns %TRUE if @region was in @prtree3@t@, %FALSE if not.
+ * Returns: %TRUE if @region was in @prtree3@t@, %FALSE if not.
  */
 gboolean vsg_prtree3@t@_remove_region (VsgPRTree3@t@ *prtree3@t@,
                                        VsgRegion3 region)
