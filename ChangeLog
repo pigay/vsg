@@ -1,3 +1,16 @@
+2008-11-18 10:54  Pierre Gay <peyo@libvsg.org>
+
+	* [r121] configure.ac: Merged rev 115:116 from trunk (Added
+	  configuration to generate dynamic libraries on cygwin).
+
+2008-11-18 10:46  Pierre Gay <peyo@libvsg.org>
+
+	* [r120] configure.ac: Bump version number (0.2.1)
+
+2008-10-08 09:24  Pierre Gay <peyo@libvsg.org>
+
+	* [r112] .: Vsg branching for version 0.2
+
 2008-09-11 15:44  Pierre Gay <peyo@libvsg.org>
 
 	* [r110] src/vsgvector3@t@-inline.h: Fixed typos in some inline
