@@ -149,7 +149,7 @@ gint main (gint argc, gchar ** argv)
   const guint m = 100;
   const guint n = 1000;
 
-  Pt points[m*n];
+  Pt *points;
 
   VsgPRTree3d *tree;
   gint i;
@@ -161,6 +161,8 @@ gint main (gint argc, gchar ** argv)
     }
 
   vsg_init_gdouble ();
+
+  points = g_malloc (m*n*sizeof (Pt));
 
   /* create the tree */
   tree = vsg_prtree3d_new (&lb, &ub, NULL);
@@ -210,6 +212,8 @@ gint main (gint argc, gchar ** argv)
 
   /* destroy the tree */
   vsg_prtree3d_free (tree);
+
+  g_free (points);
 
   return ret;
 }

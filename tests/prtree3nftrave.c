@@ -158,7 +158,7 @@ gint main (gint argc, gchar ** argv)
   gint maxpoint = 5;
   gint maxcount = 2*maxpoint;
 
-  Pt points[m*n];
+  Pt *points;
 
   VsgPRTree3d *tree;
   gint i;
@@ -170,6 +170,8 @@ gint main (gint argc, gchar ** argv)
     }
 
   vsg_init_gdouble ();
+
+  points = g_malloc (m*n*sizeof (Pt));
 
   /* create the tree */
   tree = vsg_prtree3d_new_full (&lb, &ub,
@@ -228,6 +230,8 @@ gint main (gint argc, gchar ** argv)
 
   /* destroy the tree */
   vsg_prtree3d_free (tree);
+
+  g_free (points);
 
   return ret;
 }
