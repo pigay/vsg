@@ -21,7 +21,10 @@ $(srcdir)/package.m4: $(top_srcdir)/configure.ac
 testscripts = vec2ops.at vec3ops.at mat3ops.at mat4ops.at prtree2.at \
 prtree3.at
 
-EXTRA_DIST = testsuite.at $(testscripts) testsuite
+EXTRA_DIST = testsuite.at $(testscripts) testsuite hilbert2-lvl1.ref \
+hilbert2-lvl2.ref hilbert2-lvl3.ref hilbert2-lvl4.ref hilbert2-lvl5.ref \
+hilbert3-lvl1.ref hilbert3-lvl2.ref hilbert3-lvl3.ref hilbert3-lvl4.ref
+
 
 TESTSUITE = $(srcdir)/testsuite
 check-local: atconfig atlocal $(TESTSUITE)
