@@ -49,17 +49,23 @@
       <para>Vsg depends on the following software:</para>
       <itemizedlist>
         <listitem>
-          <ulink url="http://www.gtk.org" >glib-2.0</ulink>.
+          <para>
+            <ulink url="http://www.gtk.org" >glib-2.0</ulink>.
+          </para>
         </listitem>
 
         <listitem>
+          <para>
           <ulink url="http://www.freedesktop.org/software/pkgconfig" >
             pkg-config</ulink>.
+          </para>
         </listitem>
 
         <listitem>
+          <para>
           <ulink url="http://www.python.org" >Python</ulink> for source
           generation.
+          </para>
         </listitem>
       </itemizedlist>
 
@@ -67,13 +73,17 @@
       <itemizedlist>
 
         <listitem>
+          <para>
           <ulink url="http://www.gtk.org/gtk-doc" >gtk-doc</ulink> for
           reference documentation. 
+          </para>
         </listitem>
 
         <listitem>
+          <para>
           <ulink url="http://www.pygtk.org" >pygtk</ulink> for building Python
           wrapper. 
+          </para>
         </listitem>
       </itemizedlist>
     </simplesect>
@@ -139,6 +149,52 @@
         (g_boxed_copy() and g_boxed_free).
       </para>
     </simplesect>
+
+    <simplesect>
+      <title>Parallel Programming with MPI</title>
+      <para>
+        LibVsg can be compiled with MPI support.
+      </para>
+        <cmdsynopsis>
+          <command>configure</command>
+          <arg choice="plain">--with-mpi=MPIPREFIX | yes | no</arg>
+          </cmdsynopsis>
+      <para>
+        In this case, LibVsg API is extended with several facilities:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            A preprocessor macro <link linkend="VSG-HAVE-MPI:CAPS">VSG_HAVE_MPI
+          </link> that informs you wether your particular build of LibVsg
+          have parallel support.
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            MPI derived datatypes for transparent types (see <link
+            linkend="VSG-MPI-TYPE-VECTOR2D:CAPS">VSG_MPI_TYPE_VECTOR2D</link>,
+            for example).
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            MPI Communication utilities (<link linkend="vsg-vsgpackedmsg">
+            VsgPackedMsg</link> or <link linkend="vsg-vsgcommbuffer">
+            VsgCommBuffer</link>).
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            Some parallel-aware functions in the <link linkend="spatial-filters" endterm="spatial-filters.title" /> APIs.
+          </para>
+        </listitem>
+      </itemizedlist>
+
+    </simplesect>
   </chapter>
 
   <chapter>
@@ -166,15 +222,24 @@
       <xi:include href="xml/vsgquaternionf.xml"/>
   </chapter>
 
-  <chapter>
-    <title>Spatial filters</title>
+  <chapter id="spatial-filters">
+    <title id="spatial-filters.title">Spatial filters</title>
       <xi:include href="xml/vsgprtree-common.xml"/>
+      <xi:include href="xml/vsgprtree-parallel.xml"/>
       <xi:include href="xml/vsgprtree2-common.xml"/>
+      <xi:include href="xml/vsgprtreekey2d.xml"/>
       <xi:include href="xml/vsgprtree2d.xml"/>
+      <xi:include href="xml/vsgprtreekey2f.xml"/>
       <xi:include href="xml/vsgprtree2f.xml"/>
       <xi:include href="xml/vsgprtree3-common.xml"/>
       <xi:include href="xml/vsgprtree3d.xml"/>
       <xi:include href="xml/vsgprtree3f.xml"/>
   </chapter>
 
+  <chapter>
+    <title>Parallel utilities</title>
+      <xi:include href="xml/vsgmpi.xml"/>
+      <xi:include href="xml/vsgpackedmsg.xml"/>
+      <xi:include href="xml/vsgcommbuffer.xml"/>
+  </chapter>
 </book>

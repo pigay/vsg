@@ -1,0 +1,148 @@
+<!-- ##### SECTION Title ##### -->
+vsgcommbuffer
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT VsgCommBuffer ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_new ##### -->
+<para>
+
+</para>
+
+@comm: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_send_append ##### -->
+<para>
+
+</para>
+
+@cb: 
+@dst: 
+@buf: 
+@count: 
+@type: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_recv_read ##### -->
+<para>
+
+</para>
+
+@cb: 
+@src: 
+@buf: 
+@count: 
+@type: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_share ##### -->
+<para>
+
+</para>
+
+@cb: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_get_recv_buffer ##### -->
+<para>
+
+</para>
+
+@cb: 
+@src: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_get_send_buffer ##### -->
+<para>
+
+</para>
+
+@cb: 
+@dst: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_set_bcast ##### -->
+<para>
+
+</para>
+
+@cb: 
+@model: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_drop_buffers ##### -->
+<para>
+
+</para>
+
+@cb: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_drop_recv_buffer ##### -->
+<para>
+
+</para>
+
+@cb: 
+@src: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_drop_recv_buffers ##### -->
+<para>
+
+</para>
+
+@cb: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_drop_send_buffer ##### -->
+<para>
+
+</para>
+
+@cb: 
+@dst: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_drop_send_buffers ##### -->
+<para>
+
+</para>
+
+@cb: 
+
+
+<!-- ##### FUNCTION vsg_comm_buffer_free ##### -->
+<para>
+
+</para>
+
+@cb: 
+
+

@@ -40,6 +40,9 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
                                    VsgPRTree3@t@InteractionFunc near_func,
                                    gpointer user_data);
 
+void vsg_prtree3@t@_set_children_order_hilbert (VsgPRTree3@t@ *prtree3@t@);
+void vsg_prtree3@t@_set_children_order_default (VsgPRTree3@t@ *prtree3@t@);
+
 G_END_DECLS;
 
 #endif /* __VSGPRTREE3@T@_EXTRAS_H__ */

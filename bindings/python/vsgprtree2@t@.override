@@ -36,8 +36,11 @@ ignore
 /*****************************************************************************/
 %%
 ignore-glob
-  vsg_prtree2@t@_*_marshall
-
+  vsg_prtree2@t@_set_*_loc*
+/*****************************************************************************/
+%%
+ignore-glob
+  vsg_prtree2@t@_set_*_dist*
 /*****************************************************************************/
 %%
 override-slot VsgPRTree2@t@.tp_flags
@@ -216,23 +219,23 @@ _wrap_vsg_prtree2@t@_tp_init (PyGBoxed *self, PyObject *args,
       }
 
     Py_INCREF (point_locfunc);
-    vsg_prtree2@t@_set_point_loc_marshall
+    vsg_prtree2@t@_set_point_loc_with_data
       (self->boxed,
-       (VsgPoint2@t@LocMarshall) marshall_point_locfunc_2@t@,
+       (VsgPoint2@t@LocDataFunc) marshall_point_locfunc_2@t@,
        point_locfunc);
 
     Py_INCREF (point_distfunc);
-    vsg_prtree2@t@_set_point_dist_marshall
+    vsg_prtree2@t@_set_point_dist_with_data
       (self->boxed,
-       (VsgPoint2@t@DistMarshall) marshall_point_distfunc_2@t@,
+       (VsgPoint2@t@DistDataFunc) marshall_point_distfunc_2@t@,
        point_distfunc);
 
     if (region_locfunc != Py_None)
       {
         Py_INCREF (region_locfunc);
-        vsg_prtree2@t@_set_region_loc_marshall
+        vsg_prtree2@t@_set_region_loc_with_data
           (self->boxed,
-           (VsgRegion2@t@LocMarshall) marshall_region_locfunc_2@t@,
+           (VsgRegion2@t@LocDataFunc) marshall_region_locfunc_2@t@,
            region_locfunc);
       }
 
@@ -1103,6 +1106,9 @@ void visitfunc2@t@ (PyObject *obj,
   /* else do nothing */
 }
 
+/* keep in sync with vsgprtree2@t@.c */
+gboolean _vsg_prtree2@t@_check_user_data_model (VsgPRTree2@t@ *tree);
+
 static int
 _wrap_vsg_prtree2@t@_tp_traverse(PyObject *self, visitproc visit, void *arg)
 {
@@ -1123,10 +1129,10 @@ _wrap_vsg_prtree2@t@_tp_traverse(PyObject *self, visitproc visit, void *arg)
     {
       if (visit (tree->config.region_loc_data, arg) < 0) return -1;
     }
-
-  if (tree->config.user_data_model != NULL)
+  if (_vsg_prtree2@t@_check_user_data_model (tree))
     {
-      if (visit (tree->config.user_data_model, arg) < 0) return -1;
+      if (visit (tree->config.parallel_config.node_data.alloc_data,
+		 arg) < 0) return -1;
     }
 
   if (tree->config.children_order_data != NULL)

@@ -1,0 +1,51 @@
+/* LIBVSG - Visaurin Geometric Library
+ * Copyright (C) 2006-2007 Pierre Gay
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+#ifndef __VSG_MPI_H__ /* __VSG_MPI_H__ */
+#define __VSG_MPI_H__
+
+@VSG_DEFINE_HAVE_MPI@
+
+#ifdef VSG_HAVE_MPI
+
+#include <glib.h>
+
+#include <mpi.h>
+
+G_BEGIN_DECLS;
+
+#define vsg_mpi_error_output(errcode) \
+vsg_mpi_error_output_prefix (__PRETTY_FUNCTION__, errcode)
+
+static inline void vsg_mpi_error_output_prefix (const gchar *prefix,
+						gint errcode)
+{
+  gchar errstring[MPI_MAX_ERROR_STRING];
+  gint errlen;
+
+  MPI_Error_string (errcode, errstring, &errlen);
+
+  g_warning ("%s: %s", prefix, errstring);
+}
+
+G_END_DECLS;
+
+#endif /* VSG_HAVE_MPI */
+
+#endif /* __VSG_MPI_H__ */

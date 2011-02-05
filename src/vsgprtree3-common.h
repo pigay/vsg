@@ -145,6 +145,174 @@ G_BEGIN_DECLS;
 #define VSG_RLOC3_MASK ((vsgrloc3) 0xFF)
 
 /**
+ * VSG_RLOC3_BSW:
+ *
+ * #vsgrloc3 associated with VSG_LOC3_BSW.
+ */
+#define VSG_RLOC3_BSW VSG_RLOC3_COMP (VSG_LOC3_BSW)
+
+/**
+ * VSG_RLOC3_BSE:
+ *
+ * #vsgrloc3 associated with VSG_LOC3_BSE.
+ */
+#define VSG_RLOC3_BSE VSG_RLOC3_COMP (VSG_LOC3_BSE)
+
+/**
+ * VSG_RLOC3_BNW:
+ *
+ * #vsgrloc3 associated with VSG_LOC3_BNW.
+ */
+#define VSG_RLOC3_BNW VSG_RLOC3_COMP (VSG_LOC3_BNW)
+
+/**
+ * VSG_RLOC3_BNE:
+ *
+ * #vsgrloc3 associated with VSG_LOC3_BNE.
+ */
+#define VSG_RLOC3_BNE VSG_RLOC3_COMP (VSG_LOC3_BNE)
+
+/**
+ * VSG_RLOC3_USW:
+ *
+ * #vsgrloc3 associated with VSG_LOC3_USW.
+ */
+#define VSG_RLOC3_USW VSG_RLOC3_COMP (VSG_LOC3_USW)
+
+/**
+ * VSG_RLOC3_USE:
+ *
+ * #vsgrloc3 associated with VSG_LOC3_USE.
+ */
+#define VSG_RLOC3_USE VSG_RLOC3_COMP (VSG_LOC3_USE)
+
+/**
+ * VSG_RLOC3_UNW:
+ *
+ * #vsgrloc3 associated with VSG_LOC3_UNW.
+ */
+#define VSG_RLOC3_UNW VSG_RLOC3_COMP (VSG_LOC3_UNW)
+
+/**
+ * VSG_RLOC3_UNE:
+ *
+ * #vsgrloc3 associated with VSG_LOC3_UNE.
+ */
+#define VSG_RLOC3_UNE VSG_RLOC3_COMP (VSG_LOC3_UNE)
+
+/**
+ * VSG_RLOC3_BS:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_BSW |OR VSG_RLOC3_BSE
+ */
+#define VSG_RLOC3_BS (VSG_RLOC3_BSW | VSG_RLOC3_BSE)
+
+/**
+ * VSG_RLOC3_US:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_USW |OR VSG_RLOC3_USE
+ */
+#define VSG_RLOC3_ (VSG_RLOC3_USE | VSG_RLOC3_USE)
+
+/**
+ * VSG_RLOC3_BN:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_BNW |OR VSG_RLOC3_BNE
+ */
+#define VSG_RLOC3_BN (VSG_RLOC3_BNW | VSG_RLOC3_BNE)
+
+/**
+ * VSG_RLOC3_UN:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_UNW |OR VSG_RLOC3_UNE
+ */
+#define VSG_RLOC3_UN (VSG_RLOC3_UNW | VSG_RLOC3_UNE)
+
+/**
+ * VSG_RLOC3_SW:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_BSW |OR VSG_RLOC3_USW
+ */
+#define VSG_RLOC3_SW (VSG_RLOC3_BSW | VSG_RLOC3_USW)
+
+/**
+ * VSG_RLOC3_SE:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_BSE OR VSG_RLOC3_USE
+ */
+#define VSG_RLOC3_SE (VSG_RLOC3_BSE | VSG_RLOC3_USE)
+
+/**
+ * VSG_RLOC3_NW:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_BNW OR VSG_RLOC3_UNW
+ */
+#define VSG_RLOC3_NW (VSG_RLOC3_BNW | VSG_RLOC3_UNW)
+
+/**
+ * VSG_RLOC3_NE:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_BNE OR VSG_RLOC3_UNE
+ */
+#define VSG_RLOC3_NE (VSG_RLOC3_BNE | VSG_RLOC3_UNE)
+
+/**
+ * VSG_RLOC3_BW:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_BSW OR VSG_RLOC3_BNW
+ */
+#define VSG_RLOC3_BW (VSG_RLOC3_BSW | VSG_RLOC3_BNW)
+
+/**
+ * VSG_RLOC3_UW:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_USW OR VSG_RLOC3_UNW
+ */
+#define VSG_RLOC3_UW (VSG_RLOC3_USW | VSG_RLOC3_UNW)
+
+/**
+ * VSG_RLOC3_BE:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_BSE OR VSG_RLOC3_BNE
+ */
+#define VSG_RLOC3_BE (VSG_RLOC3_BSE | VSG_RLOC3_BNE)
+
+/**
+ * VSG_RLOC3_UE:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_USE OR VSG_RLOC3_UNE
+ */
+#define VSG_RLOC3_UE (VSG_RLOC3_USE | VSG_RLOC3_UNE)
+
+/**
+ * VSG_RLOC3_S:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_SW OR VSG_RLOC3_SE.
+ */
+#define VSG_RLOC3_S (VSG_RLOC3_SW | VSG_RLOC3_SE)
+
+/**
+ * VSG_RLOC3_E:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_SE OR VSG_RLOC3_NE.
+ */
+#define VSG_RLOC3_E (VSG_RLOC3_SE | VSG_RLOC3_NE)
+
+/**
+ * VSG_RLOC3_W:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_SW OR VSG_RLOC3_NW.
+ */
+#define VSG_RLOC3_W (VSG_RLOC3_SW | VSG_RLOC3_NW)
+
+/**
+ * VSG_RLOC3_N:
+ *
+ * #vsgrloc3 composed with VSG_RLOC3_NW OR VSG_RLOC3_NE.
+ */
+#define VSG_RLOC3_N (VSG_RLOC3_NW | VSG_RLOC3_NE)
+
+/**
  * VsgPoint3:
  *
  * Pointer type of vertices stored by VsgPRTree3?. They serve as localization

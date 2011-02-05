@@ -27,13 +27,33 @@
 
 #include <vsg/vsgprtree-common.h>
 
+#include <vsg/vsgprtree-parallel.h>
+
 #include <vsg/vsgprtree2-common.h>
+
+#include <vsg/vsgprtreekey2@t@.h>
 
 G_BEGIN_DECLS;
 
 /* macros */
 #define VSG_TYPE_PRTREE2@T@ (vsg_prtree2@t@_get_type ())
 #define VSG_TYPE_PRTREE2@T@_NODE_INFO (vsg_prtree2@t@_node_info_get_type ())
+
+#define VSG_PRTREE2@T@_NODE_INFO_IS_REMOTE(node_info) ( \
+VSG_PARALLEL_STATUS_IS_REMOTE ((node_info)->parallel_status) \
+)
+
+#define VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL(node_info) ( \
+VSG_PARALLEL_STATUS_IS_LOCAL ((node_info)->parallel_status) \
+)
+
+#define VSG_PRTREE2@T@_NODE_INFO_IS_SHARED(node_info) ( \
+VSG_PARALLEL_STATUS_IS_SHARED ((node_info)->parallel_status) \
+)
+
+#define VSG_PRTREE2@T@_NODE_INFO_PROC(node_info) ( \
+VSG_PARALLEL_STATUS_PROC ((node_info)->parallel_status) \
+)
 
 /* typedefs */
 typedef struct _VsgPRTree2@t@ VsgPRTree2@t@;
@@ -51,15 +71,15 @@ typedef vsgrloc2 (*VsgRegion2@t@LocFunc) (const VsgRegion2 region,
 typedef @type@ (*VsgPoint2@t@DistFunc) (const VsgPoint2 one,
                                         const VsgPoint2 other);
 
-typedef vsgloc2 (*VsgPoint2@t@LocMarshall) (const VsgPoint2 candidate,
+typedef vsgloc2 (*VsgPoint2@t@LocDataFunc) (const VsgPoint2 candidate,
                                             const VsgVector2@t@ *center,
                                             gpointer data);
 
-typedef vsgrloc2 (*VsgRegion2@t@LocMarshall) (const VsgRegion2 region,
+typedef vsgrloc2 (*VsgRegion2@t@LocDataFunc) (const VsgRegion2 region,
                                               const VsgVector2@t@ *center,
                                               gpointer data);
 
-typedef @type@ (*VsgPoint2@t@DistMarshall) (const VsgPoint2 one,
+typedef @type@ (*VsgPoint2@t@DistDataFunc) (const VsgPoint2 one,
                                             const VsgPoint2 other,
                                             gpointer data);
 
@@ -86,6 +106,10 @@ struct _VsgPRTree2@t@NodeInfo {
   gpointer user_data;
 
   gboolean isleaf;
+
+  VsgPRTreeKey2@t@ id;
+
+  VsgParallelStatus parallel_status;
 };
 
 /* functions */
@@ -105,34 +129,48 @@ vsg_prtree2@t@_new_full (const VsgVector2@t@ *lbound,
                          const VsgRegion2@t@LocFunc region_locfunc,
                          guint max_point);
 
-#define vsg_prtree2@t@_new(lbound, ubound, region_locfunc) \
+#define vsg_prtree2@t@_new(lbound, ubound, region_locfunc, maxpoint) \
 vsg_prtree2@t@_new_full (lbound, ubound, \
 (VsgPoint2@t@LocFunc) vsg_vector2@t@_vector2@t@_locfunc, \
-(VsgPoint2@t@DistFunc) vsg_vector2@t@_dist, region_locfunc, 0)
+(VsgPoint2@t@DistFunc) vsg_vector2@t@_dist, region_locfunc, (maxpoint))
 
 void vsg_prtree2@t@_free (VsgPRTree2@t@ *prtree2@t@);
 
 VsgPRTree2@t@ *vsg_prtree2@t@_clone (VsgPRTree2@t@ *prtree2@t@);
 
 void
-vsg_prtree2@t@_set_point_loc_marshall (VsgPRTree2@t@ *prtree2@t@,
-                                       VsgPoint2@t@LocMarshall marshall,
-                                       gpointer locdata);
-
-void vsg_prtree2@t@_set_region_loc_marshall (VsgPRTree2@t@ *prtree2@t@,
-					     VsgRegion2@t@LocMarshall marshall,
-					     gpointer locdata);
+vsg_prtree2@t@_set_point_loc (VsgPRTree2@t@ *prtree2@t@,
+                              VsgPoint2@t@LocFunc locfunc);
 
 void
-vsg_prtree2@t@_set_point_dist_marshall (VsgPRTree2@t@ *prtree2@t@,
-                                        VsgPoint2@t@DistMarshall marshall,
-                                        gpointer distdata);
+vsg_prtree2@t@_set_point_loc_with_data (VsgPRTree2@t@ *prtree2@t@,
+                                        VsgPoint2@t@LocDataFunc locfunc,
+                                        gpointer locdata);
+
+void
+vsg_prtree2@t@_set_region_loc (VsgPRTree2@t@ *prtree2@t@,
+                               VsgRegion2@t@LocFunc locfunc);
+
+void
+vsg_prtree2@t@_set_region_loc_with_data (VsgPRTree2@t@ *prtree2@t@,
+                                         VsgRegion2@t@LocDataFunc locfunc,
+                                         gpointer locdata);
+
+void
+vsg_prtree2@t@_set_point_dist (VsgPRTree2@t@ *prtree2@t@,
+                               VsgPoint2@t@DistFunc distfunc);
+
+void
+vsg_prtree2@t@_set_point_dist_with_data (VsgPRTree2@t@ *prtree2@t@,
+                                         VsgPoint2@t@DistDataFunc distfunc,
+                                         gpointer distdata);
 
 void
 vsg_prtree2@t@_set_children_order_with_data (VsgPRTree2@t@ *prtree2@t@,
                                              VsgChildrenOrderDataFunc children_order,
                                              gpointer root_key,
                                              gpointer user_data);
+
 void
 vsg_prtree2@t@_set_children_order (VsgPRTree2@t@ *prtree2@t@,
                                    VsgChildrenOrderFunc children_order,
@@ -147,6 +185,9 @@ void vsg_prtree2@t@_set_node_data (VsgPRTree2@t@ *prtree2@t@,
                                    GType user_data_type,
                                    gpointer user_data_model);
 
+void vsg_prtree2@t@_set_node_data_vtable (VsgPRTree2@t@ *prtree2@t@,
+                                          VsgParallelVTable *vtable);
+
 void vsg_prtree2@t@_get_bounds (VsgPRTree2@t@ *prtree2@t@,
                                 VsgVector2@t@ *lbound,
                                 VsgVector2@t@ *ubound);
@@ -160,6 +201,9 @@ guint vsg_prtree2@t@_region_count (const VsgPRTree2@t@ *prtree2@t@);
 void vsg_prtree2@t@_insert_point (VsgPRTree2@t@ *prtree2@t@,
                                   VsgPoint2 point);
 
+gboolean vsg_prtree2@t@_insert_point_local (VsgPRTree2@t@ *prtree2@t@,
+                                            VsgPoint2 point);
+
 gboolean vsg_prtree2@t@_remove_point (VsgPRTree2@t@ *prtree2@t@,
                                       VsgPoint2 point);
 
@@ -169,9 +213,9 @@ void vsg_prtree2@t@_insert_region (VsgPRTree2@t@ *prtree2@t@,
 gboolean vsg_prtree2@t@_remove_region (VsgPRTree2@t@ *prtree2@t@,
 				       VsgRegion2 region);
 
-void vsg_prtree2@t@_write (const VsgPRTree2@t@ *prtree2@t@,
+void vsg_prtree2@t@_write (VsgPRTree2@t@ *prtree2@t@,
                            FILE *file);
-void vsg_prtree2@t@_print (const VsgPRTree2@t@ *prtree2@t@);
+void vsg_prtree2@t@_print (VsgPRTree2@t@ *prtree2@t@);
 
 VsgPoint2 vsg_prtree2@t@_find_point (VsgPRTree2@t@ *prtree2@t@,
                                      VsgPoint2 selector);

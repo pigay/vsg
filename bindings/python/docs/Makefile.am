@@ -13,6 +13,8 @@ vsgsupmatrix3d.defs vsgsupmatrix3f.defs vsgsupmatrix4d.defs vsgsupmatrix4f.defs
 
 EXTRA_DIST += $(supdefs)
 
+if ENABLE_GTK_DOC
+
 xml_files.stamp : $(supdefs)
 	test -d $(srcdir)/xml || mkdir $(srcdir)/xml
 	env PYTHONPATH=$(codegen_dir) $(PYTHON) vsgdocgen.py 
@@ -52,6 +54,8 @@ types_list = $(top_srcdir)/types.list
 
 %d.defs %f.defs : %@t@.defs $(types_list)
 	$(PYTHON) $(top_srcdir)/gencode/typegens.py -f=$(types_list) $<
+
+endif # ENABLE_GTK_DOC
 
 endif # ENABLE_PYGTK
 

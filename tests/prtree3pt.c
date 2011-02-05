@@ -31,6 +31,8 @@ gint main (gint argc, gchar ** argv)
     {0.25, 0.25, .5},
     {0.75, 0.75, .5},
     {1.75, 1.75, 1.}, /* exterior point */
+    {1.75, 100.75, 1.}, /* another exterior point */
+    {1.75, -100.75, 1.}, /* another exterior point */
   };
 
   const guint n = sizeof (points) / sizeof (VsgVector3d);

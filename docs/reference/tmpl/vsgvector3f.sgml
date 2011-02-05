@@ -22,6 +22,9 @@ vsgvector3f
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### SECTION Image ##### -->
+
+
 <!-- ##### STRUCT VsgVector3f ##### -->
 <para>
 
@@ -32,6 +35,13 @@ vsgvector3f
 @z: 
 
 <!-- ##### MACRO VSG_TYPE_VECTOR3F ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_MPI_TYPE_VECTOR3F ##### -->
 <para>
 
 </para>

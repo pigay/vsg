@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: LibVsgFloat
 Description: Signle Precision Visaurin Geometric Library
 Version: @VERSION@
-Libs: -L${libdir} -lvsgf
-Cflags: -I${includedir}
+Libs: -L${libdir} -lvsgf @MPI_LIBS@
+Cflags: -I${includedir} @MPI_CFLAGS@
 

@@ -1,0 +1,196 @@
+<!-- ##### SECTION Title ##### -->
+vsgpackedmsg
+
+<!-- ##### SECTION Short_Description ##### -->
+Packed MPI message buffers.
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+Packed message buffers provide a convenient way to store MPI messages of
+arbitrary length and types. They can store any combination of data types.
+</para>
+
+<para>
+Once a VsgPackedMsg has been attached with some MPI communicator, one can
+append various data to the buffer. By calling the vsg_packed_msg_send()
+end vsg_packed_msg_recv() functions, the data is transferred to the destination
+MPI task. Correct sequence of calls to vsg_packed_msg_recv() will allow to
+unpack message contents.
+</para>
+<example>
+<title>Using the packed message buffer.</title>
+<programlisting>
+VsgPackedMsg *msg = vsg_packed_msg_new (MPI_COMM_WORLD);
+int mytid;
+
+MPI_Comm_rank (MPI_COMM_WORLD, &amp;mytid);
+
+if (mytid == 0)
+  {
+    int i = 123;
+    gchar *a="a";
+
+    vsg_packed_msg_send_append (msg, &amp;i, 1, MPI_INT);
+    vsg_packed_msg_send_append (msg, a, 1, MPI_CHAR);
+
+    vsg_packed_msg_send (msg, 1, 1);
+  }
+
+
+
+if (mytid == 1)
+  {
+    gchar ra[2] = "\0";
+    gint ri = 0;
+
+    vsg_packed_msg_recv (msg, 0, MPI_ANY_TAG);
+
+    vsg_packed_msg_recv_read (msg, &amp;ri, 1, MPI_INT);
+    vsg_packed_msg_recv_read (msg, ra, 1, MPI_CHAR);
+  }
+
+vsg_packed_msg_free (msg);
+</programlisting></example>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT VsgPackedMsg ##### -->
+<para>
+
+</para>
+
+@communicator: 
+
+<!-- ##### MACRO VSG_PACKED_MSG_STATIC_INIT ##### -->
+<para>
+
+</para>
+
+@comm: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_init ##### -->
+<para>
+
+</para>
+
+@pm: 
+@comm: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_new ##### -->
+<para>
+
+</para>
+
+@comm: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_recv_new ##### -->
+<para>
+
+</para>
+
+@comm: 
+@src: 
+@tag: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_send ##### -->
+<para>
+
+</para>
+
+@pm: 
+@dst: 
+@tag: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_isend ##### -->
+<para>
+
+</para>
+
+@pm: 
+@dst: 
+@tag: 
+@request: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_wait ##### -->
+<para>
+
+</para>
+
+@pm: 
+@request: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_recv ##### -->
+<para>
+
+</para>
+
+@pm: 
+@src: 
+@tag: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_send_append ##### -->
+<para>
+
+</para>
+
+@pm: 
+@buf: 
+@count: 
+@type: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_recv_read ##### -->
+<para>
+
+</para>
+
+@pm: 
+@buf: 
+@count: 
+@type: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_drop_buffer ##### -->
+<para>
+
+</para>
+
+@pm: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_set_reference ##### -->
+<para>
+
+</para>
+
+@pm: 
+@model: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_free ##### -->
+<para>
+
+</para>
+
+@pm: 
+
+

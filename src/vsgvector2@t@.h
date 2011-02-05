@@ -27,10 +27,16 @@
 
 #include <vsg/vsgprtree2-common.h>
 
+#include <vsg/vsgmpi.h>
+
 G_BEGIN_DECLS;
 
 /* macros */
 #define VSG_TYPE_VECTOR2@T@ (vsg_vector2@t@_get_type ())
+
+#ifdef VSG_HAVE_MPI
+#define VSG_MPI_TYPE_VECTOR2@T@ (vsg_vector2@t@_get_mpi_type ())
+#endif
 
 #define VSG_VECTOR2@T@_COMP(vec,i) ( \
 ((@type@ *) (vec)) + (i) \
@@ -63,6 +69,10 @@ static const VsgVector2@t@ VSG_V2@T@_J = {0., 1.};
 
 /* functions */
 GType vsg_vector2@t@_get_type (void) G_GNUC_CONST;
+
+#ifdef VSG_HAVE_MPI
+MPI_Datatype vsg_vector2@t@_get_mpi_type (void) G_GNUC_CONST;
+#endif
 
 VsgVector2@t@ *vsg_vector2@t@_new (@type@ x, @type@ y);
 

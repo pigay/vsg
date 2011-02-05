@@ -1,0 +1,63 @@
+# -*- autoconf -*-
+# Process this file with autom4te to create testsuite.
+
+# Test suite for LIBVSG - Visaurin Geometric Library
+# Copyright (C) 2006-2007 Pierre Gay
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
+AT_TESTED([commbuffer prtree2parallel prtree2paradist prtree2paranftrav])
+
+AT_SETUP(Vsg basic parallel features)
+AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
+AT_CHECK([mpiexec -n 2 commbuffer], 0)
+AT_CHECK([mpiexec -n 3 commbuffer], 0)
+AT_CHECK([mpiexec -n 4 commbuffer], 0)
+AT_CLEANUP
+
+AT_SETUP(2D Parallel tree creation)
+AT_KEYWORDS (parallel)
+AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
+AT_CHECK([mpiexec -n 1 prtree2parallel], 0)
+AT_CHECK([mpiexec -n 2 prtree2parallel], 0)
+AT_CHECK([mpiexec -n 3 prtree2parallel], 0)
+AT_CHECK([mpiexec -n 4 prtree2parallel], 0)
+AT_CLEANUP
+
+AT_SETUP(2D Parallel tree contiguous distribution)
+AT_KEYWORDS (parallel)
+AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
+AT_CHECK([mpiexec -n 1 prtree2paradist], 0)
+AT_CHECK([mpiexec -n 2 prtree2paradist], 0)
+AT_CHECK([mpiexec -n 2 prtree2paradist --np 20], 0)
+AT_CHECK([mpiexec -n 2 prtree2paradist --hilbert --np 100], 0)
+AT_CHECK([mpiexec -n 3 prtree2paradist --hilbert --np 100], 0)
+AT_CHECK([mpiexec -n 7 prtree2paradist --hilbert --np 100], 0)
+AT_CHECK([mpiexec -n 4 prtree2paradist --hilbert --scatter --np 40], 0)
+AT_CHECK([mpiexec -n 4 prtree2paradist --hilbert --np 400], 0)
+AT_CLEANUP
+
+AT_SETUP(2D Parallel tree near/far traversal)
+AT_KEYWORDS (parallel)
+AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
+AT_CHECK([mpiexec -n 1 prtree2paranftrav], 0)
+AT_CHECK([mpiexec -n 2 prtree2paranftrav], 0)
+AT_CHECK([mpiexec -n 2 prtree2paranftrav --hilbert --np 20], 0)
+AT_CHECK([mpiexec -n 3 prtree2paranftrav --hilbert --np 20], 0)
+AT_CHECK([mpiexec -n 4 prtree2paranftrav --hilbert --np 20], 0)
+AT_CHECK([mpiexec -n 5 prtree2paranftrav --hilbert --np 20], 0)
+AT_CHECK([mpiexec -n 8 prtree2paranftrav --hilbert --np 100], 0)
+AT_CLEANUP

@@ -22,6 +22,9 @@ vsgprtree3f
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### SECTION Image ##### -->
+
+
 <!-- ##### STRUCT VsgPRTree3f ##### -->
 <para>
 
@@ -44,6 +47,8 @@ vsgprtree3f
 @depth: 
 @user_data: 
 @isleaf: 
+@id: 
+@parallel_status: 
 
 <!-- ##### USER_FUNCTION VsgPoint3fLocFunc ##### -->
 <para>
@@ -75,7 +80,7 @@ vsgprtree3f
 @Returns: 
 
 
-<!-- ##### USER_FUNCTION VsgPoint3fLocMarshall ##### -->
+<!-- ##### USER_FUNCTION VsgPoint3fLocDataFunc ##### -->
 <para>
 
 </para>
@@ -86,7 +91,7 @@ vsgprtree3f
 @Returns: 
 
 
-<!-- ##### USER_FUNCTION VsgRegion3fLocMarshall ##### -->
+<!-- ##### USER_FUNCTION VsgRegion3fLocDataFunc ##### -->
 <para>
 
 </para>
@@ -97,7 +102,7 @@ vsgprtree3f
 @Returns: 
 
 
-<!-- ##### USER_FUNCTION VsgPoint3fDistMarshall ##### -->
+<!-- ##### USER_FUNCTION VsgPoint3fDistDataFunc ##### -->
 <para>
 
 </para>
@@ -160,6 +165,7 @@ vsgprtree3f
 @lbound: 
 @ubound: 
 @region_locfunc: 
+@maxpoint: 
 
 
 <!-- ##### FUNCTION vsg_prtree3f_free ##### -->
@@ -179,33 +185,60 @@ vsgprtree3f
 @Returns: 
 
 
-<!-- ##### FUNCTION vsg_prtree3f_set_point_loc_marshall ##### -->
+<!-- ##### FUNCTION vsg_prtree3f_set_point_loc ##### -->
 <para>
 
 </para>
 
 @prtree3f: 
-@marshall: 
+@locfunc: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_set_point_loc_with_data ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@locfunc: 
 @locdata: 
 
 
-<!-- ##### FUNCTION vsg_prtree3f_set_region_loc_marshall ##### -->
+<!-- ##### FUNCTION vsg_prtree3f_set_region_loc ##### -->
 <para>
 
 </para>
 
 @prtree3f: 
-@marshall: 
+@locfunc: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_set_region_loc_with_data ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@locfunc: 
 @locdata: 
 
 
-<!-- ##### FUNCTION vsg_prtree3f_set_point_dist_marshall ##### -->
+<!-- ##### FUNCTION vsg_prtree3f_set_point_dist ##### -->
 <para>
 
 </para>
 
 @prtree3f: 
-@marshall: 
+@distfunc: 
+
+
+<!-- ##### FUNCTION vsg_prtree3f_set_point_dist_with_data ##### -->
+<para>
+
+</para>
+
+@prtree3f: 
+@distfunc: 
 @distdata: 
 
 

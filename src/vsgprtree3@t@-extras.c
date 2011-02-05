@@ -19,6 +19,8 @@
 
 #include "vsg-config.h"
 
+#include "vsgvector3@t@-inline.h"
+
 #include "vsgprtree3@t@-extras.h"
 
 #include "vsgprtree3@t@-private.h"
@@ -158,8 +160,11 @@ static guint8 n111[8][8] = {
 
 void _vsg_prtree3@t@node_get_info (VsgPRTree3@t@Node *node,
                                    VsgPRTree3@t@NodeInfo *node_info,
-                                   VsgPRTree3@t@NodeInfo *father_info)
+                                   VsgPRTree3@t@NodeInfo *father_info,
+                                   guint8 child_number)
 {
+  VsgPRTreeKey3@t@ *father_id;
+
   vsg_vector3@t@_copy (&node->lbound, &node_info->lbound);
   vsg_vector3@t@_copy (&node->ubound, &node_info->ubound);
   vsg_vector3@t@_copy (&node->center, &node_info->center);
@@ -186,6 +191,46 @@ void _vsg_prtree3@t@node_get_info (VsgPRTree3@t@Node *node,
   else node_info->depth = father_info->depth + 1;
 
   node_info->user_data = node->user_data;
+
+  if (father_info == NULL) father_id = NULL;
+  else father_id = &father_info->id;
+
+  vsg_prtree_key3@t@_build_child (father_id, child_number, &node_info->id);
+
+  node_info->parallel_status = node->parallel_status;
+}
+
+VsgPRTree3@t@Node *_vsg_prtree3@t@node_get_child_at (VsgPRTree3@t@Node *node,
+                                                     const VsgVector3@t@ *pos,
+                                                     gint depth)
+{
+  vsgloc3 i;
+  VsgPRTree3@t@Node *child = NULL;
+
+  if (depth == 0 || PRTREE3@T@NODE_ISLEAF(node)) return node;
+
+  i = vsg_vector3@t@_vector3@t@_locfunc (&node->center, pos);
+
+  child = PRTREE3@T@NODE_CHILD(node, i);
+
+  return _vsg_prtree3@t@node_get_child_at (child, pos, depth - 1);
+}
+
+VsgPRTree3@t@Node *vsg_prtree3@t@node_key_lookup (VsgPRTree3@t@Node *node,
+                                                  VsgPRTreeKey3@t@ key)
+{
+  vsgloc3 i;
+  VsgPRTree3@t@Node *child = NULL;
+
+  if (key.depth == 0 || PRTREE3@T@NODE_ISLEAF(node)) return node;
+
+  i = vsg_prtree_key3@t@_child (&key);
+
+  child = PRTREE3@T@NODE_CHILD(node, i);
+
+  key.depth --;
+
+  return vsg_prtree3@t@node_key_lookup (child, key);
 }
 
 static void recursive_near_func (VsgPRTree3@t@Node *one,
@@ -203,8 +248,13 @@ static void recursive_near_func (VsgPRTree3@t@Node *one,
         {
           VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(one, i);
           VsgPRTree3@t@NodeInfo one_child_info;
-          _vsg_prtree3@t@node_get_info (one_child, &one_child_info,
-                                        one_info);
+
+#ifdef VSG_HAVE_MPI
+          if (PRTREE3@T@NODE_IS_REMOTE (one_child)) continue;
+#endif
+
+          _vsg_prtree3@t@node_get_info (one_child, &one_child_info, one_info,
+                                        i);
 
           recursive_near_func (one_child, &one_child_info, other, other_info,
                                near_func, user_data);
@@ -216,8 +266,13 @@ static void recursive_near_func (VsgPRTree3@t@Node *one,
         {
           VsgPRTree3@t@Node *other_child = PRTREE3@T@NODE_CHILD(other, i);
           VsgPRTree3@t@NodeInfo other_child_info;
+
+#ifdef VSG_HAVE_MPI
+          if (PRTREE3@T@NODE_IS_REMOTE (other_child)) continue;
+#endif
+
           _vsg_prtree3@t@node_get_info (other_child, &other_child_info,
-                                        other_info);
+                                        other_info, i);
 
           recursive_near_func (one, one_info, other_child, &other_child_info,
                                near_func, user_data);
@@ -226,21 +281,41 @@ static void recursive_near_func (VsgPRTree3@t@Node *one,
   else
     {
       /* near interaction between one and other */
-      near_func (one_info, other_info, user_data);
+      if (one->point_count != 0 && other->point_count != 0)
+        near_func (one_info, other_info, user_data);
     }
 
 
 }
 
+void vsg_prtree3@t@node_recursive_near_func (VsgPRTree3@t@Node *one,
+                                             VsgPRTree3@t@NodeInfo *one_info,
+                                             VsgPRTree3@t@Node *other,
+                                             VsgPRTree3@t@NodeInfo *other_info,
+                                             VsgPRTree3@t@InteractionFunc near_func,
+                                             gpointer user_data)
+{
+  recursive_near_func (one, one_info, other, other_info, near_func, user_data);
+}
+
+#ifdef VSG_HAVE_MPI
+#define _NODE_IS_EMPTY(node) ( \
+ (node)->point_count == 0 && PRTREE3@T@NODE_IS_LOCAL (node) \
+)
+#else
+#define _NODE_IS_EMPTY(node) ( \
+ (node)->point_count == 0 \
+)
+#endif
+
 static void
-_sub_neighborhood_near_far_traversal (VsgPRTree3@t@Node *one,
+_sub_neighborhood_near_far_traversal (VsgPRTree3@t@ *tree,
+                                      VsgNFConfig3@t@ *nfc,
+                                      VsgPRTree3@t@Node *one,
                                       VsgPRTree3@t@NodeInfo *one_info,
-				      VsgPRTree3@t@Node *other,
+                                      VsgPRTree3@t@Node *other,
                                       VsgPRTree3@t@NodeInfo *other_info,
-				      gint8 x, gint8 y, gint8 z,
-				      VsgPRTree3@t@FarInteractionFunc far_func,
-				      VsgPRTree3@t@InteractionFunc near_func,
-				      gpointer user_data)
+                                      gint8 x, gint8 y, gint8 z)
 {
   vsgloc3 i, j, si, sj;
   vsgloc3 sym[8] = {
@@ -254,8 +329,13 @@ _sub_neighborhood_near_far_traversal (VsgPRTree3@t@Node *one,
     _SYMMETRY (7, x, y, z),
   };
 
-  if (one->point_count==0 || other->point_count==0)
+  if (_NODE_IS_EMPTY(one) || _NODE_IS_EMPTY(other))
     return;
+
+#ifdef VSG_HAVE_MPI
+  if (nfc->sz > 1)
+    vsg_prtree3@t@_nf_check_receive (tree, nfc, MPI_ANY_TAG, FALSE);
+#endif
 
   if (PRTREE3@T@NODE_ISINT (one) && PRTREE3@T@NODE_ISINT (other))
     {
@@ -265,8 +345,13 @@ _sub_neighborhood_near_far_traversal (VsgPRTree3@t@Node *one,
         {
           VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(one, i);
           VsgPRTree3@t@NodeInfo one_child_info;
+
+#ifdef VSG_HAVE_MPI
+          if (PRTREE3@T@NODE_IS_REMOTE (one_child)) continue;
+#endif
+
           _vsg_prtree3@t@node_get_info (one_child, &one_child_info,
-                                        one_info);
+                                        one_info, i);
 
           si = sym[i];
 
@@ -276,86 +361,119 @@ _sub_neighborhood_near_far_traversal (VsgPRTree3@t@Node *one,
               VsgPRTree3@t@Node *other_child =
                 PRTREE3@T@NODE_CHILD(other, j);
               VsgPRTree3@t@NodeInfo other_child_info;
+              gboolean far_done = TRUE;
+
+#ifdef VSG_HAVE_MPI
+              if (PRTREE3@T@NODE_IS_REMOTE (other_child)) continue;
+#endif
 
               _vsg_prtree3@t@node_get_info (other_child,
                                             &other_child_info,
-                                            other_info);
+                                            other_info, j);
 
               sj = sym[j];
 
               far = NEAR_FAR (x, y, z, si, sj);
 
-	      if (far)
+              if (far)
                 {
                   /* far interaction between one and other */
-                  if (far_func &&
-                      one_child_info.point_count != 0 &&
-                      other_child_info.point_count != 0)
+                  if (nfc->far_func &&
+                      ! (_NODE_IS_EMPTY (one_child) ||
+                         _NODE_IS_EMPTY (other_child)))
                     {
-                      gboolean far_done;
-                      far_done = far_func (&one_child_info, &other_child_info,
-					   user_data);
-		      if (!far_done)
-			{
-			  /* near interaction between one and other */
-			  recursive_near_func (one_child, &one_child_info,
-					       other_child, &other_child_info,
-					       near_func,
-					       user_data);
-			}
+#ifdef VSG_HAVE_MPI
+                      /* in parallel, only one of the processors has to do a
+                         shared/shared far interaction */
+                      if (PRTREE3@T@NODE_IS_SHARED (one_child) &&
+                          PRTREE3@T@NODE_IS_SHARED (other_child) &&
+                          PRTREE3@T@NODE_PROC (one_child) != nfc->rk)
+                        continue;
+#endif
+
+                      far_done = nfc->far_func (&one_child_info, &other_child_info,
+                                                nfc->user_data);
+                      if (!far_done)
+                        {
+#ifdef VSG_HAVE_MPI
+                          if (PRTREE3@T@NODE_IS_SHARED (one_child) ||
+                              PRTREE3@T@NODE_IS_SHARED (other_child))
+                            {
+                              g_critical ("far_func() -> FALSE not handled " \
+                                          "for shared nodes in \"%s\"",
+                                          __PRETTY_FUNCTION__);
+
+                            }
+#endif
+
+                          /* near interaction between one and other */
+                          recursive_near_func (one_child, &one_child_info,
+                                               other_child, &other_child_info,
+                                               nfc->near_func,
+                                               nfc->user_data);
+                        }
                     }
                 }
-	      else
-		{
-		  gint8 newx = _SUB_INTERACTION (i, j, x, _X);
-		  gint8 newy = _SUB_INTERACTION (i, j, y, _Y);
-		  gint8 newz = _SUB_INTERACTION (i, j, z, _Z);
+              else
+                {
+                  gint8 newx = _SUB_INTERACTION (i, j, x, _X);
+                  gint8 newy = _SUB_INTERACTION (i, j, y, _Y);
+                  gint8 newz = _SUB_INTERACTION (i, j, z, _Z);
 
-		  _sub_neighborhood_near_far_traversal (one_child,
-							&one_child_info,
-							other_child,
-							&other_child_info,
-							newx, newy, newz,
-							far_func,
-							near_func,
-							user_data);
-		}
-	    }
+                  _sub_neighborhood_near_far_traversal (tree, nfc, one_child,
+                                                        &one_child_info,
+                                                        other_child,
+                                                        &other_child_info,
+                                                        newx, newy, newz);
+                }
+            }
         }
 
     }
   else
     {
-      if (near_func)
+      if (nfc->near_func)
         {
           /* near interaction between one and other */
-          recursive_near_func (one, one_info, other, other_info, near_func,
-                               user_data);
+          recursive_near_func (one, one_info, other, other_info, nfc->near_func,
+                               nfc->user_data);
         }
     }
 }
 
 static void
-vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@Node *node,
+vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@ *tree,
+                                       VsgNFConfig3@t@ *nfc,
+                                       VsgPRTree3@t@Node *node,
                                        VsgPRTree3@t@NodeInfo *father_info,
-                                       VsgPRTree3@t@FarInteractionFunc far_func,
-                                       VsgPRTree3@t@InteractionFunc near_func,
-                                       gpointer user_data)
+                                       vsgloc3 child_number,
+                                       gboolean parallel_check)
 {
   vsgloc3 i,j;
   VsgPRTree3@t@NodeInfo node_info;
 
-  _vsg_prtree3@t@node_get_info (node, &node_info, father_info);
+#ifdef VSG_HAVE_MPI
+  if (PRTREE3@T@NODE_IS_REMOTE (node)) return;
+#endif
+  if (_NODE_IS_EMPTY (node)) return;
 
-  if (node->point_count==0) return;
+  _vsg_prtree3@t@node_get_info (node, &node_info, father_info, child_number);
+
+#ifdef VSG_HAVE_MPI
+  /* check for remote processors to send this node, if needed */
+  parallel_check = vsg_prtree3@t@_node_check_parallel_near_far (tree, nfc,
+                                                                node,
+                                                                &node_info,
+                                                                parallel_check);
+#endif
 
   if (PRTREE3@T@NODE_ISLEAF (node))
     {
-      if (near_func)
-	{
-	  /* reflexive near interaction on node */
-	  near_func (&node_info, &node_info, user_data);
-	}
+      if (nfc->near_func)
+        {
+          /* reflexive near interaction on node */
+          nfc->near_func (&node_info, &node_info, nfc->user_data);
+        }
     }
   else
     {
@@ -364,41 +482,166 @@ vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@Node *node,
         {
           VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(node, i);
           VsgPRTree3@t@NodeInfo one_child_info;
+
+#ifdef VSG_HAVE_MPI
+          if (PRTREE3@T@NODE_IS_REMOTE (one_child)) continue;
+#endif
+
           _vsg_prtree3@t@node_get_info (one_child, &one_child_info,
-                                        &node_info);
+                                        &node_info, i);
           for (j=i+1; j<8; j++)
             {
               VsgPRTree3@t@Node *other_child =
                 PRTREE3@T@NODE_CHILD(node, j);
               VsgPRTree3@t@NodeInfo other_child_info;
-	      gint8 x, y, z;
-	      x = _AXIS_DIFF (i, j, _X);
-	      y = _AXIS_DIFF (i, j, _Y);
-	      z = _AXIS_DIFF (i, j, _Z);
+              gint8 x, y, z;
 
+#ifdef VSG_HAVE_MPI
+              if (PRTREE3@T@NODE_IS_REMOTE (other_child)) continue;
+#endif
+
+              x = _AXIS_DIFF (i, j, _X);
+              y = _AXIS_DIFF (i, j, _Y);
+              z = _AXIS_DIFF (i, j, _Z);
 
               _vsg_prtree3@t@node_get_info (other_child,
                                             &other_child_info,
-                                            &node_info);
+                                            &node_info, j);
 
-	      _sub_neighborhood_near_far_traversal (one_child,
-						    &one_child_info,
-						    other_child,
-						    &other_child_info,
-						    x, y, z,
-						    far_func, near_func,
-						    user_data); 
+              _sub_neighborhood_near_far_traversal (tree, nfc, one_child,
+                                                    &one_child_info,
+                                                    other_child,
+                                                    &other_child_info,
+                                                    x, y, z); 
             }
         }
 
       /* interactions in node's children descendants */
       for (i=0; i<8; i++)
-        vsg_prtree3@t@node_near_far_traversal (PRTREE3@T@NODE_CHILD(node, i),
-                                               &node_info,
-                                               far_func, near_func,
-                                               user_data);
+        vsg_prtree3@t@node_near_far_traversal (tree, nfc,
+                                               PRTREE3@T@NODE_CHILD(node, i),
+                                               &node_info, i, parallel_check);
     }
 }
+typedef enum _Hilbert3Key Hilbert3Key;
+enum _Hilbert3Key {
+  HK3_0_1_2,
+  HK3_6_2_7,
+  HK3_6_7_2,
+  HK3_0_1_4,
+  HK3_6_4_7,
+  HK3_5_1_4,
+  HK3_0_2_1,
+  HK3_3_1_7,
+  HK3_5_1_7,
+  HK3_6_2_4,
+  HK3_3_2_1,
+  HK3_3_7_1,
+  HK3_5_7_4,
+  HK3_6_4_2,
+  HK3_0_2_4,
+  HK3_3_7_2,
+  HK3_5_7_1,
+  HK3_5_4_1,
+  HK3_3_2_7,
+  HK3_0_4_2,
+  HK3_0_4_1,
+  HK3_6_7_4,
+  HK3_3_1_2,
+  HK3_5_4_7,
+};
+
+static gint hilbert3_coords[][8] = {
+  {0, 1, 5, 4, 6, 7, 3, 2, },
+  {6, 2, 0, 4, 5, 1, 3, 7, },
+  {6, 7, 5, 4, 0, 1, 3, 2, },
+  {0, 1, 3, 2, 6, 7, 5, 4, },
+  {6, 4, 0, 2, 3, 1, 5, 7, },
+  {5, 1, 3, 7, 6, 2, 0, 4, },
+  {0, 2, 6, 4, 5, 7, 3, 1, },
+  {3, 1, 0, 2, 6, 4, 5, 7, },
+  {5, 1, 0, 4, 6, 2, 3, 7, },
+  {6, 2, 3, 7, 5, 1, 0, 4, },
+  {3, 2, 6, 7, 5, 4, 0, 1, },
+  {3, 7, 6, 2, 0, 4, 5, 1, },
+  {5, 7, 3, 1, 0, 2, 6, 4, },
+  {6, 4, 5, 7, 3, 1, 0, 2, },
+  {0, 2, 3, 1, 5, 7, 6, 4, },
+  {3, 7, 5, 1, 0, 4, 6, 2, },
+  {5, 7, 6, 4, 0, 2, 3, 1, },
+  {5, 4, 6, 7, 3, 2, 0, 1, },
+  {3, 2, 0, 1, 5, 4, 6, 7, },
+  {0, 4, 5, 1, 3, 7, 6, 2, },
+  {0, 4, 6, 2, 3, 7, 5, 1, },
+  {6, 7, 3, 2, 0, 1, 5, 4, },
+  {3, 1, 5, 7, 6, 4, 0, 2, },
+  {5, 4, 0, 1, 3, 2, 6, 7, },
+};
+
+static Hilbert3Key hilbert3_decompositions[][8] = {
+  {HK3_0_2_1, HK3_0_2_4, HK3_0_1_2, HK3_3_2_7, HK3_5_4_1, HK3_0_1_2, HK3_6_4_2,
+   HK3_3_1_2, },
+  {HK3_6_7_2, HK3_6_7_4, HK3_6_2_7, HK3_3_7_1, HK3_0_4_2, HK3_6_2_7, HK3_5_4_7,
+   HK3_3_2_7, },
+  {HK3_6_2_7, HK3_6_2_4, HK3_6_7_2, HK3_3_2_1, HK3_5_4_7, HK3_6_7_2, HK3_0_4_2,
+   HK3_3_7_2, },
+  {HK3_0_4_1, HK3_0_4_2, HK3_0_1_4, HK3_5_4_7, HK3_3_2_1, HK3_0_1_4, HK3_6_2_4,
+   HK3_5_1_4, },
+  {HK3_6_7_4, HK3_6_7_2, HK3_6_4_7, HK3_5_7_1, HK3_0_2_4, HK3_6_4_7, HK3_3_2_7,
+   HK3_5_4_7, },
+  {HK3_5_4_1, HK3_5_4_7, HK3_5_1_4, HK3_0_4_2, HK3_3_7_1, HK3_5_1_4, HK3_6_7_4,
+   HK3_0_1_4, },
+  {HK3_0_1_2, HK3_0_1_4, HK3_0_2_1, HK3_3_1_7, HK3_6_4_2, HK3_0_2_1, HK3_5_4_1,
+   HK3_3_2_1, },
+  {HK3_3_7_1, HK3_3_7_2, HK3_3_1_7, HK3_5_7_4, HK3_0_2_1, HK3_3_1_7, HK3_6_2_7,
+   HK3_5_1_7, },
+  {HK3_5_7_1, HK3_5_7_4, HK3_5_1_7, HK3_3_7_2, HK3_0_4_1, HK3_5_1_7, HK3_6_4_7,
+   HK3_3_1_7, },
+  {HK3_6_4_2, HK3_6_4_7, HK3_6_2_4, HK3_0_4_1, HK3_3_7_2, HK3_6_2_4, HK3_5_7_4,
+   HK3_0_2_4, },
+  {HK3_3_1_2, HK3_3_1_7, HK3_3_2_1, HK3_0_1_4, HK3_6_7_2, HK3_3_2_1, HK3_5_7_1,
+   HK3_0_2_1, },
+  {HK3_3_1_7, HK3_3_1_2, HK3_3_7_1, HK3_5_1_4, HK3_6_2_7, HK3_3_7_1, HK3_0_2_1,
+   HK3_5_7_1, },
+  {HK3_5_4_7, HK3_5_4_1, HK3_5_7_4, HK3_6_4_2, HK3_3_1_7, HK3_5_7_4, HK3_0_1_4,
+   HK3_6_7_4, },
+  {HK3_6_2_4, HK3_6_2_7, HK3_6_4_2, HK3_0_2_1, HK3_5_7_4, HK3_6_4_2, HK3_3_7_2,
+   HK3_0_4_2, },
+  {HK3_0_4_2, HK3_0_4_1, HK3_0_2_4, HK3_6_4_7, HK3_3_1_2, HK3_0_2_4, HK3_5_1_4,
+   HK3_6_2_4, },
+  {HK3_3_2_7, HK3_3_2_1, HK3_3_7_2, HK3_6_2_4, HK3_5_1_7, HK3_3_7_2, HK3_0_1_2,
+   HK3_6_7_2, },
+  {HK3_5_1_7, HK3_5_1_4, HK3_5_7_1, HK3_3_1_2, HK3_6_4_7, HK3_5_7_1, HK3_0_4_1,
+   HK3_3_7_1, },
+  {HK3_5_1_4, HK3_5_1_7, HK3_5_4_1, HK3_0_1_2, HK3_6_7_4, HK3_5_4_1, HK3_3_7_1,
+   HK3_0_4_1, },
+  {HK3_3_7_2, HK3_3_7_1, HK3_3_2_7, HK3_6_7_4, HK3_0_1_2, HK3_3_2_7, HK3_5_1_7,
+   HK3_6_2_7, },
+  {HK3_0_2_4, HK3_0_2_1, HK3_0_4_2, HK3_6_2_7, HK3_5_1_4, HK3_0_4_2, HK3_3_1_2,
+   HK3_6_4_2, },
+  {HK3_0_1_4, HK3_0_1_2, HK3_0_4_1, HK3_5_1_7, HK3_6_2_4, HK3_0_4_1, HK3_3_2_1,
+   HK3_5_4_1, },
+  {HK3_6_4_7, HK3_6_4_2, HK3_6_7_4, HK3_5_4_1, HK3_3_2_7, HK3_6_7_4, HK3_0_2_4,
+   HK3_5_7_4, },
+  {HK3_3_2_1, HK3_3_2_7, HK3_3_1_2, HK3_0_2_4, HK3_5_7_1, HK3_3_1_2, HK3_6_7_2,
+   HK3_0_1_2, },
+  {HK3_5_7_4, HK3_5_7_1, HK3_5_4_7, HK3_6_7_2, HK3_0_1_4, HK3_5_4_7, HK3_3_1_7,
+   HK3_6_4_7, },
+};
+
+static void hilbert3_order (gpointer node_key, gint *children,
+                            gpointer *children_keys)
+{
+  gint i;
+  Hilbert3Key hkey = GPOINTER_TO_INT (node_key);
+
+  for (i=0; i<8; i++)
+    {
+      children[i] = hilbert3_coords[hkey][i];
+      children_keys[i] = GINT_TO_POINTER (hilbert3_decompositions[hkey][i]);
+    }
+}
+
 
 /*-------------------------------------------------------------------*/
 /* typedefs and structure doc */
@@ -416,6 +659,8 @@ vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@Node *node,
  * @user_data: the data eventually attached to this node.
  * @father_info: link to this node's father's #VsgPRTree3@t@NodeInfo. NULL if root node.
  * @isleaf: a #gboolean set if the node is a leaf.
+ * @id: the key representing this node in the tree hierarchy.
+ * @parallel_status: parallel status of this node.
  *
  * A structure provided to expose a #VsgPrtree3@t@ node during a traversal
  * process. Since @user_data and @children_user_data are a user controlled
@@ -490,13 +735,76 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
                                    VsgPRTree3@t@InteractionFunc near_func,
                                    gpointer user_data)
 {
+#ifdef VSG_HAVE_MPI
+  VsgPRTreeParallelConfig *pconfig = &prtree3@t@->config.parallel_config;
+  MPI_Comm comm = pconfig->communicator;
+#endif
+  VsgNFConfig3@t@ nfc;
+
 #ifdef VSG_CHECK_PARAMS
   g_return_if_fail (prtree3@t@ != NULL);
 #endif
 
-  vsg_prtree3@t@node_near_far_traversal (prtree3@t@->node,
-                                         NULL,
-                                         far_func, near_func,
-                                         user_data);
- 
+#ifdef VSG_HAVE_MPI
+  vsg_nf_config3@t@_init (&nfc, comm, far_func, near_func, user_data);
+
+  vsg_nf_config3@t@_tmp_alloc (&nfc, &prtree3@t@->config);
+
+  if (nfc.sz > 1 && prtree3@t@->config.remote_depth_dirty)
+    {
+      vsg_prtree3@t@_update_remote_depths (prtree3@t@);
+    }
+#else
+
+  nfc.far_func = far_func;
+  nfc.near_func = near_func;
+  nfc.user_data = user_data;
+
+#endif
+
+  vsg_prtree3@t@node_near_far_traversal (prtree3@t@, &nfc,
+                                         prtree3@t@->node,
+                                         NULL, 0, TRUE);
+
+#ifdef VSG_HAVE_MPI
+  if (nfc.sz > 1)
+    {
+      vsg_prtree3@t@_nf_check_parallel_end (prtree3@t@, &nfc);
+    }
+
+  vsg_nf_config3@t@_tmp_free (&nfc, &prtree3@t@->config);
+
+  vsg_nf_config3@t@_clean (&nfc);
+#endif
+}
+
+/**
+ * vsg_prtree3@t@_set_children_order_hilbert:
+ * @prtree3@t@: a #VsgPRTree3@t@.
+ *
+ * Configures @prtree3@t@ for Hilbert curve order traversal.
+ */
+void vsg_prtree3@t@_set_children_order_hilbert (VsgPRTree3@t@ *prtree3@t@)
+{
+#ifdef VSG_CHECK_PARAMS
+  g_return_if_fail (prtree3@t@ != NULL);
+#endif
+
+  vsg_prtree3@t@_set_children_order (prtree3@t@, hilbert3_order,
+                                     GINT_TO_POINTER (HK3_0_2_1));
+
+}
+/**
+ * vsg_prtree3@t@_set_children_order_default:
+ * @prtree3@t@: a #VsgPRTree3@t@.
+ *
+ * Configures @prtree3@t@ for default (Z order) order traversal.
+ */
+void vsg_prtree3@t@_set_children_order_default (VsgPRTree3@t@ *prtree3@t@)
+{
+#ifdef VSG_CHECK_PARAMS
+  g_return_if_fail (prtree3@t@ != NULL);
+#endif
+
+  vsg_prtree3@t@_set_children_order (prtree3@t@, NULL, NULL);
 }

@@ -23,6 +23,8 @@
 
 #include <glib.h>
 
+#include <vsg/vsgmpi.h>
+
 #include <vsg/vsgvector2@t@.h>
 #include <vsg/vsgvector3@t@.h>
 
@@ -38,6 +40,11 @@
 #include <vsg/vsgprtree3-common.h>
 #include <vsg/vsgprtree3@t@.h>
 #include <vsg/vsgprtree3@t@-extras.h>
+
+#ifdef VSG_HAVE_MPI
+#include <vsg/vsgprtree2@t@-parallel.h>
+#include <vsg/vsgprtree3@t@-parallel.h>
+#endif
 
 G_BEGIN_DECLS;
 

@@ -30,6 +30,10 @@
 
 #include <glib/gprintf.h>
 
+#define _USE_G_SLICES GLIB_CHECK_VERSION (2, 10, 0)
+
+#if ! _USE_G_SLICES
+
 #define VSG_VECTOR3@T@_PREALLOC 8192
 
 static GMemChunk *vsg_vector3@t@_mem_chunk = 0;
@@ -61,10 +65,12 @@ static VsgVector3@t@ *_vector3@t@_alloc ()
 
   return g_chunk_new (VsgVector3@t@, vsg_vector3@t@_mem_chunk);
 }
+#endif /* ! _USE_G_SLICES */
 
 /* private function */
 void vsg_vector3@t@_init ()
 {
+#if ! _USE_G_SLICES
   static gboolean wasinit = FALSE;
 
   if (! wasinit)
@@ -72,6 +78,7 @@ void vsg_vector3@t@_init ()
       wasinit = TRUE;
       g_atexit (vsg_vector3@t@_finalize);
     }
+#endif /* ! _USE_G_SLICES */
 }
 
 /* public functions */
@@ -99,6 +106,27 @@ GType vsg_vector3@t@_get_type (void)
 }
 
 
+#ifdef VSG_HAVE_MPI
+/**
+ * VSG_MPI_TYPE_VECTOR3@T@:
+ *
+ * The #MPI_Datatype associated to #VsgVector3@t@.
+ */
+
+MPI_Datatype vsg_vector3@t@_get_mpi_type (void)
+{
+  static MPI_Datatype vector3@t@_mpi_type = MPI_DATATYPE_NULL;
+
+  if (vector3@t@_mpi_type == MPI_DATATYPE_NULL)
+    {
+      MPI_Type_contiguous (3, @MPI_DATATYPE@, &vector3@t@_mpi_type);
+      MPI_Type_commit (&vector3@t@_mpi_type);
+    }
+
+  return vector3@t@_mpi_type;
+}
+#endif
+
 /**
  * vsg_vector3@t@_new:
  * @x: abscissa
@@ -113,7 +141,11 @@ GType vsg_vector3@t@_get_type (void)
 VsgVector3@t@ *vsg_vector3@t@_new (@type@ x, @type@ y,
                                   @type@ z)
 {
+#if _USE_G_SLICES
+  VsgVector3@t@ *result = g_slice_new (VsgVector3@t@);
+#else
   VsgVector3@t@ *result = _vector3@t@_alloc ();
+#endif
 
   vsg_vector3@t@_set_inline (result, x, y, z);
 
@@ -133,12 +165,16 @@ void vsg_vector3@t@_free (VsgVector3@t@ *vec)
   g_return_if_fail (vec != NULL);
 #endif
 
+#if _USE_G_SLICES
+  g_slice_free (VsgVector3@t@, vec);
+#else
   g_chunk_free (vec, vsg_vector3@t@_mem_chunk);
 
   vsg_vector3@t@_instances_count --;
 
   if (vsg_vector3@t@_instances_count == 0)
     vsg_vector3@t@_finalize ();
+#endif /* _USE_G_SLICES */
 }
 
 /**
@@ -180,7 +216,7 @@ void vsg_vector3@t@_copy (const VsgVector3@t@ *src, VsgVector3@t@ *dst)
 
 /**
  * vsg_vector3@t@_clone:
- * @src: a #VsgVector2@t@
+ * @src: a #VsgVector3@t@
  *
  * Duplicates @src.
  *
@@ -194,7 +230,11 @@ VsgVector3@t@ *vsg_vector3@t@_clone (const VsgVector3@t@ *src)
   g_return_val_if_fail (src != NULL, NULL);
 #endif
 
+#if _USE_G_SLICES
+  dst = g_slice_new (VsgVector3@t@);
+#else
   dst = _vector3@t@_alloc ();
+#endif
 
   vsg_vector3@t@_copy_inline (src, dst);
 

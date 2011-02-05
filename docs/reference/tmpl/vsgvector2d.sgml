@@ -22,6 +22,9 @@ vsgvector2d
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### SECTION Image ##### -->
+
+
 <!-- ##### STRUCT VsgVector2d ##### -->
 <para>
 
@@ -31,6 +34,13 @@ vsgvector2d
 @y: 
 
 <!-- ##### MACRO VSG_TYPE_VECTOR2D ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_MPI_TYPE_VECTOR2D ##### -->
 <para>
 
 </para>

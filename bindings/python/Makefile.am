@@ -19,8 +19,8 @@ if ENABLE_PYGTK
 defsdir = $(pkgdatadir)/$(VSG_MAJOR_VERSION).$(VSG_MINOR_VERSION)/defs
 defs_DATA = vsgtypedefs.py
 
-VSG_CFLAGS = -I$(top_srcdir)/build
-VSG_LIBS = $(top_builddir)/build/vsg/libvsg.la
+VSG_CFLAGS = -I$(top_srcdir)/build $(MPI_CFLAGS)
+VSG_LIBS = $(top_builddir)/build/vsg/libvsg.la $(MPI_LIBS)
 
 INCLUDES = $(PYTHON_INCLUDES) $(GLIB_CFLAGS) @PYGTK_CFLAGS@ $(VSG_CFLAGS)
 

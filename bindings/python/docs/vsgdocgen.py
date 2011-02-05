@@ -9,25 +9,27 @@ import docgen
 
 
 class VsgDocbookDocWriter(docgen.DocbookDocWriter):
-    def write_class_header(self, obj_name, fp):
-        if self.use_xml:
-            fp.write('<?xml version="1.0" standalone="no"?>\n')
-            fp.write('<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"\n')
-            fp.write('    "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">\n')
-        fp.write('<refentry id="' + self.make_class_ref(obj_name) + '">\n')
-        fp.write('  <refmeta>\n')
-        fp.write('    <refentrytitle>%s</refentrytitle>\n'
+    def write_class_header(self, obj_name):
+        self._fp.write('<?xml version="1.0" standalone="no"?>\n')
+        self._fp.write('<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"\n')
+        self._fp.write('    "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">\n')
+        self._fp.write('<refentry id="' + self.make_class_ref(obj_name) + '">\n')
+        self._fp.write('  <refmeta>\n')
+        self._fp.write('    <refentrytitle>%s</refentrytitle>\n'
                  % self.pyname(obj_name))
-        fp.write('    <manvolnum>3</manvolnum>\n')
-        fp.write('    <refmiscinfo>PyVsg Docs</refmiscinfo>\n')
-        fp.write('  </refmeta>\n\n')
-        fp.write('  <refnamediv>\n')
-        fp.write('    <refname>%s</refname><refpurpose></refpurpose>\n'
+        self._fp.write('    <manvolnum>3</manvolnum>\n')
+        self._fp.write('    <refmiscinfo>PyVsg Docs</refmiscinfo>\n')
+        self._fp.write('  </refmeta>\n\n')
+        self._fp.write('  <refnamediv>\n')
+        self._fp.write('    <refname>%s</refname><refpurpose></refpurpose>\n'
                  % self.pyname(obj_name))
-        fp.write('  </refnamediv>\n\n')
+        self._fp.write('  </refnamediv>\n\n')
+
+    def _format_param(self, match):
+        return '<parameter>%s</parameter>' % (match.group(1), )
 
 if __name__ == '__main__':
-    d = VsgDocbookDocWriter(use_xml=1)
+    d = VsgDocbookDocWriter()
 
     # we parse ".." directory in order to get overriden comments.
     sys.stderr.write ("parsing source docs.\n")

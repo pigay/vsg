@@ -14,9 +14,69 @@ vsg_init_gfloat
 </SECTION>
 
 <SECTION>
+<FILE>vsgmpi</FILE>
+
+vsg_mpi_error_output
+
+<SUBSECTION Standard>
+VSG_HAVE_MPI
+</SECTION>
+
+<SECTION>
+<FILE>vsgpackedmsg</FILE>
+VsgPackedMsg
+
+VSG_PACKED_MSG_STATIC_INIT
+
+vsg_packed_msg_init
+vsg_packed_msg_new
+vsg_packed_msg_recv_new
+
+vsg_packed_msg_send
+vsg_packed_msg_isend
+vsg_packed_msg_wait
+vsg_packed_msg_recv
+vsg_packed_msg_send_append
+vsg_packed_msg_recv_read
+vsg_packed_msg_drop_buffer
+
+vsg_packed_msg_set_reference
+
+vsg_packed_msg_free
+
+<SUBSECTION Standard>
+</SECTION>
+
+<SECTION>
+<FILE>vsgcommbuffer</FILE>
+VsgCommBuffer
+
+vsg_comm_buffer_new
+
+vsg_comm_buffer_send_append
+vsg_comm_buffer_recv_read
+
+vsg_comm_buffer_share
+
+vsg_comm_buffer_get_recv_buffer
+vsg_comm_buffer_get_send_buffer
+vsg_comm_buffer_set_bcast
+
+vsg_comm_buffer_drop_buffers
+vsg_comm_buffer_drop_recv_buffer
+vsg_comm_buffer_drop_recv_buffers
+vsg_comm_buffer_drop_send_buffer
+vsg_comm_buffer_drop_send_buffers
+
+vsg_comm_buffer_free
+<SUBSECTION Standard>
+</SECTION>
+
+<SECTION>
 <FILE>vsgvector2d</FILE>
 VsgVector2d
 VSG_TYPE_VECTOR2D
+VSG_MPI_TYPE_VECTOR2D
 
 VSG_VECTOR2D_COMP
 
@@ -50,12 +110,14 @@ vsg_vector2d_vector2f_locfunc
 
 <SUBSECTION Standard>
 vsg_vector2d_get_type
+vsg_vector2d_get_mpi_type
 </SECTION>
 
 <SECTION>
 <FILE>vsgvector2f</FILE>
 VsgVector2f
 VSG_TYPE_VECTOR2F
+VSG_MPI_TYPE_VECTOR2F
 
 VSG_VECTOR2F_COMP
 
@@ -89,12 +151,14 @@ vsg_vector2f_vector2d_locfunc
 
 <SUBSECTION Standard>
 vsg_vector2f_get_type
+vsg_vector2f_get_mpi_type
 </SECTION>
 
 <SECTION>
 <FILE>vsgvector3d</FILE>
 VsgVector3d
 VSG_TYPE_VECTOR3D
+VSG_MPI_TYPE_VECTOR3D
 
 VSG_VECTOR3D_COMP
 
@@ -128,12 +192,14 @@ vsg_vector3d_vector3f_locfunc
 
 <SUBSECTION Standard>
 vsg_vector3d_get_type
+vsg_vector3d_get_mpi_type
 </SECTION>
 
 <SECTION>
 <FILE>vsgvector3f</FILE>
 VsgVector3f
 VSG_TYPE_VECTOR3F
+VSG_MPI_TYPE_VECTOR3F
 
 VSG_VECTOR3F_COMP
 
@@ -167,12 +233,35 @@ vsg_vector3f_vector3d_locfunc
 
 <SUBSECTION Standard>
 vsg_vector3f_get_type
+vsg_vector3f_get_mpi_type
 </SECTION>
 
 <SECTION>
 <FILE>vsgprtree-common</FILE>
 VsgChildrenOrderDataFunc
 VsgChildrenOrderFunc
+VsgParallelStatus
+VsgParallelStorage
+
+VSG_PARALLEL_STATUS_IS_LOCAL
+VSG_PARALLEL_STATUS_IS_REMOTE
+VSG_PARALLEL_STATUS_IS_SHARED
+VSG_PARALLEL_STATUS_PROC
+
+<SUBSECTION Standard>
+</SECTION>
+
+<SECTION>
+<FILE>vsgprtree-parallel</FILE>
+VsgPRTreeParallelConfig
+VsgParallelMigrateVTable
+VsgParallelVTable
+
+VsgMigrableAllocDataFunc
+VsgMigrableDestroyDataFunc
+VsgMigrablePackDataFunc
+VsgMigrableUnpackDataFunc
+VsgMigrableReductionDataFunc
 
 <SUBSECTION Standard>
 </SECTION>
@@ -202,6 +291,34 @@ VsgRegion2Point2LocFunc
 <SUBSECTION Standard>
 </SECTION>
 
+
+<SECTION>
+<FILE>vsgprtreekey2d</FILE>
+VsgPRTreeKey2d
+
+VSG_MPI_TYPE_PRTREE_KEY2D
+
+VSG_PRTREE_KEY2D_BITS
+VSG_PRTREE_KEY2D_INDEX_MASK
+VSG_PRTREE_KEY2D_SIZE
+
+vsg_prtree_key2d_build_child
+vsg_prtree_key2d_child
+vsg_prtree_key2d_copy
+vsg_prtree_key2d_deepest_common_ancestor
+vsg_prtree_key2d_distance
+vsg_prtree_key2d_equals
+vsg_prtree_key2d_first_different_index
+vsg_prtree_key2d_get_father
+vsg_prtree_key2d_is_ancestor
+vsg_prtree_key2d_is_neighbour
+vsg_prtree_key2d_loc2
+vsg_prtree_key2d_write
+
+<SUBSECTION Standard>
+vsg_prtree_key2d_get_mpi_type
+</SECTION>
+
 <SECTION>
 <FILE>vsgprtree2d</FILE>
 VSG_TYPE_PRTREE2D
@@ -209,37 +326,49 @@ VSG_TYPE_PRTREE2D
 VsgPRTree2d
 VsgPRTree2dNodeInfo
 
+VSG_PRTREE2D_NODE_INFO_IS_LOCAL
+VSG_PRTREE2D_NODE_INFO_IS_REMOTE
+VSG_PRTREE2D_NODE_INFO_IS_SHARED
+VSG_PRTREE2D_NODE_INFO_PROC
+
 VsgPoint2dLocFunc
 
 VsgRegion2dLocFunc
 
 VsgPoint2dDistFunc
 
-VsgPoint2dLocMarshall
-VsgRegion2dLocMarshall
-VsgPoint2dDistMarshall
+VsgPoint2dLocDataFunc
+VsgRegion2dLocDataFunc
+VsgPoint2dDistDataFunc
 
 VsgPRTree2dFunc
 VsgPRTree2dFarInteractionFunc
 VsgPRTree2dInteractionFunc
 
+VsgPRTree2dDistributionFunc
+
 vsg_prtree2d_new_full
 vsg_prtree2d_new
 vsg_prtree2d_free
 vsg_prtree2d_clone
-vsg_prtree2d_set_point_loc_marshall
-vsg_prtree2d_set_region_loc_marshall
-vsg_prtree2d_set_point_dist_marshall
+vsg_prtree2d_set_point_loc
+vsg_prtree2d_set_point_loc_with_data
+vsg_prtree2d_set_region_loc
+vsg_prtree2d_set_region_loc_with_data
+vsg_prtree2d_set_point_dist
+vsg_prtree2d_set_point_dist_with_data
 vsg_prtree2d_set_children_order_with_data
 vsg_prtree2d_set_children_order
 vsg_prtree2d_get_tolerance
 vsg_prtree2d_set_tolerance
 vsg_prtree2d_set_node_data
+vsg_prtree2d_set_node_data_vtable
 vsg_prtree2d_get_bounds
 vsg_prtree2d_depth
 vsg_prtree2d_point_count
 vsg_prtree2d_region_count
 vsg_prtree2d_insert_point
+vsg_prtree2d_insert_point_local
 vsg_prtree2d_remove_point
 vsg_prtree2d_insert_region
 vsg_prtree2d_remove_region
@@ -256,6 +385,20 @@ vsg_prtree2d_near_far_traversal
 vsg_prtree2d_traverse_custom
 vsg_prtree2d_traverse
 
+vsg_prtree2d_set_children_order_hilbert
+vsg_prtree2d_set_children_order_default
+
+vsg_prtree2d_set_parallel
+vsg_prtree2d_get_parallel
+vsg_prtree2d_migrate_flush
+vsg_prtree2d_distribute_nodes
+vsg_prtree2d_shared_nodes_allreduce
+
+vsg_prtree2d_distribute_contiguous_leaves
+vsg_prtree2d_distribute_scatter_leaves
+vsg_prtree2d_distribute_concentrate
+
+
 <SUBSECTION Standard>
 vsg_prtree2d_get_type
 vsg_prtree2d_node_info_get_type
@@ -265,11 +408,43 @@ vsg_prtree2d_node_info_clone
 </SECTION>
 
 <SECTION>
+<FILE>vsgprtreekey2f</FILE>
+VsgPRTreeKey2f
+
+VSG_MPI_TYPE_PRTREE_KEY2F
+
+VSG_PRTREE_KEY2F_BITS
+VSG_PRTREE_KEY2F_INDEX_MASK
+VSG_PRTREE_KEY2F_SIZE
+
+vsg_prtree_key2f_build_child
+vsg_prtree_key2f_child
+vsg_prtree_key2f_copy
+vsg_prtree_key2f_deepest_common_ancestor
+vsg_prtree_key2f_distance
+vsg_prtree_key2f_equals
+vsg_prtree_key2f_first_different_index
+vsg_prtree_key2f_get_father
+vsg_prtree_key2f_is_ancestor
+vsg_prtree_key2f_is_neighbour
+vsg_prtree_key2f_loc2
+vsg_prtree_key2f_write
+
+<SUBSECTION Standard>
+vsg_prtree_key2f_get_mpi_type
+</SECTION>
+
+<SECTION>
 <FILE>vsgprtree2f</FILE>
 VSG_TYPE_PRTREE2F
 
 VsgPRTree2f
 VsgPRTree2fNodeInfo
+
+VSG_PRTREE2F_NODE_INFO_IS_LOCAL
+VSG_PRTREE2F_NODE_INFO_IS_REMOTE
+VSG_PRTREE2F_NODE_INFO_IS_SHARED
+VSG_PRTREE2F_NODE_INFO_PROC
 
 VsgPoint2fLocFunc
 
@@ -277,31 +452,38 @@ VsgRegion2fLocFunc
 
 VsgPoint2fDistFunc
 
-VsgPoint2fLocMarshall
-VsgRegion2fLocMarshall
-VsgPoint2fDistMarshall
+VsgPoint2fLocDataFunc
+VsgRegion2fLocDataFunc
+VsgPoint2fDistDataFunc
 
 VsgPRTree2fFunc
 VsgPRTree2fFarInteractionFunc
 VsgPRTree2fInteractionFunc
 
+VsgPRTree2fDistributionFunc
+
 vsg_prtree2f_new_full
 vsg_prtree2f_new
 vsg_prtree2f_free
 vsg_prtree2f_clone
-vsg_prtree2f_set_point_loc_marshall
-vsg_prtree2f_set_region_loc_marshall
-vsg_prtree2f_set_point_dist_marshall
+vsg_prtree2f_set_point_loc
+vsg_prtree2f_set_point_loc_with_data
+vsg_prtree2f_set_region_loc
+vsg_prtree2f_set_region_loc_with_data
+vsg_prtree2f_set_point_dist
+vsg_prtree2f_set_point_dist_with_data
 vsg_prtree2f_set_children_order_with_data
 vsg_prtree2f_set_children_order
 vsg_prtree2f_get_tolerance
 vsg_prtree2f_set_tolerance
 vsg_prtree2f_set_node_data
+vsg_prtree2f_set_node_data_vtable
 vsg_prtree2f_get_bounds
 vsg_prtree2f_depth
 vsg_prtree2f_point_count
 vsg_prtree2f_region_count
 vsg_prtree2f_insert_point
+vsg_prtree2f_insert_point_local
 vsg_prtree2f_remove_point
 vsg_prtree2f_insert_region
 vsg_prtree2f_remove_region
@@ -317,6 +499,19 @@ vsg_prtree2f_find_point
 vsg_prtree2f_near_far_traversal
 vsg_prtree2f_traverse_custom
 vsg_prtree2f_traverse
+
+vsg_prtree2f_set_children_order_hilbert
+vsg_prtree2f_set_children_order_default
+
+vsg_prtree2f_set_parallel
+vsg_prtree2f_get_parallel
+vsg_prtree2f_migrate_flush
+vsg_prtree2f_distribute_nodes
+vsg_prtree2f_shared_nodes_allreduce
+
+vsg_prtree2f_distribute_contiguous_leaves
+vsg_prtree2f_distribute_scatter_leaves
+vsg_prtree2f_distribute_concentrate
 
 <SUBSECTION Standard>
 vsg_prtree2f_get_type
@@ -367,9 +562,11 @@ VsgRegion3dLocFunc
 
 VsgPoint3dDistFunc
 
-VsgPoint3dLocMarshall
-VsgRegion3dLocMarshall
-VsgPoint3dDistMarshall
+VsgPoint3dLocDataFunc
+
+VsgRegion3dLocDataFunc
+
+VsgPoint3dDistDataFunc
 
 VsgPRTree3dFunc
 VsgPRTree3dFarInteractionFunc
@@ -379,9 +576,12 @@ vsg_prtree3d_new_full
 vsg_prtree3d_new
 vsg_prtree3d_free
 vsg_prtree3d_clone
-vsg_prtree3d_set_point_loc_marshall
-vsg_prtree3d_set_region_loc_marshall
-vsg_prtree3d_set_point_dist_marshall
+vsg_prtree3d_set_point_loc
+vsg_prtree3d_set_point_loc_with_data
+vsg_prtree3d_set_region_loc
+vsg_prtree3d_set_region_loc_with_data
+vsg_prtree3d_set_point_dist
+vsg_prtree3d_set_point_dist_with_data
 vsg_prtree3d_set_children_order_with_data
 vsg_prtree3d_set_children_order
 vsg_prtree3d_get_tolerance
@@ -428,9 +628,9 @@ VsgRegion3fLocFunc
 
 VsgPoint3fDistFunc
 
-VsgPoint3fLocMarshall
-VsgRegion3fLocMarshall
-VsgPoint3fDistMarshall
+VsgPoint3fLocDataFunc
+VsgRegion3fLocDataFunc
+VsgPoint3fDistDataFunc
 
 VsgPRTree3fFunc
 VsgPRTree3fFarInteractionFunc
@@ -440,9 +640,12 @@ vsg_prtree3f_new_full
 vsg_prtree3f_new
 vsg_prtree3f_free
 vsg_prtree3f_clone
-vsg_prtree3f_set_point_loc_marshall
-vsg_prtree3f_set_region_loc_marshall
-vsg_prtree3f_set_point_dist_marshall
+vsg_prtree3f_set_point_loc
+vsg_prtree3f_set_point_loc_with_data
+vsg_prtree3f_set_region_loc
+vsg_prtree3f_set_region_loc_with_data
+vsg_prtree3f_set_point_dist
+vsg_prtree3f_set_point_dist_with_data
 vsg_prtree3f_set_children_order_with_data
 vsg_prtree3f_set_children_order
 vsg_prtree3f_get_tolerance
@@ -482,6 +685,7 @@ vsg_prtree3f_node_info_clone
 <FILE>vsgmatrix3d</FILE>
 VsgMatrix3d
 VSG_TYPE_MATRIX3D
+VSG_MPI_TYPE_MATRIX3D
 
 VSG_MATRIX3D_COMP
 
@@ -513,12 +717,14 @@ vsg_matrix3d_print
 
 <SUBSECTION Standard>
 vsg_matrix3d_get_type
+vsg_matrix3d_get_mpi_type
 </SECTION>
 
 <SECTION>
 <FILE>vsgmatrix3f</FILE>
 VsgMatrix3f
 VSG_TYPE_MATRIX3F
+VSG_MPI_TYPE_MATRIX3F
 
 VSG_MATRIX3F_COMP
 
@@ -550,12 +756,14 @@ vsg_matrix3f_print
 
 <SUBSECTION Standard>
 vsg_matrix3f_get_type
+vsg_matrix3f_get_mpi_type
 </SECTION>
 
 <SECTION>
 <FILE>vsgmatrix4d</FILE>
 VsgMatrix4d
 VSG_TYPE_MATRIX4D
+VSG_MPI_TYPE_MATRIX4D
 
 VSG_MATRIX4D_COMP
 
@@ -595,12 +803,14 @@ vsg_matrix4d_print
 
 <SUBSECTION Standard>
 vsg_matrix4d_get_type
+vsg_matrix4d_get_mpi_type
 </SECTION>
 
 <SECTION>
 <FILE>vsgmatrix4f</FILE>
 VsgMatrix4f
 VSG_TYPE_MATRIX4F
+VSG_MPI_TYPE_MATRIX4F
 
 VSG_MATRIX4F_COMP
 
@@ -640,12 +850,14 @@ vsg_matrix4f_print
 
 <SUBSECTION Standard>
 vsg_matrix4f_get_type
+vsg_matrix4f_get_mpi_type
 </SECTION>
 
 <SECTION>
 <FILE>vsgquaterniond</FILE>
 VsgQuaterniond
 VSG_TYPE_QUATERNIOND
+VSG_MPI_TYPE_QUATERNIOND
 
 
 VSG_QUATERNIOND_COMP
@@ -681,13 +893,14 @@ vsg_quaterniond_print
 
 <SUBSECTION Standard>
 vsg_quaterniond_get_type
+vsg_quaterniond_get_mpi_type
 </SECTION>
 
 <SECTION>
 <FILE>vsgquaternionf</FILE>
 VsgQuaternionf
 VSG_TYPE_QUATERNIONF
-
+VSG_MPI_TYPE_QUATERNIONF
 
 VSG_QUATERNIONF_COMP
 vsg_quaternionf_new
@@ -722,5 +935,6 @@ vsg_quaternionf_print
 
 <SUBSECTION Standard>
 vsg_quaternionf_get_type
+vsg_quaternionf_get_mpi_type
 </SECTION>
 

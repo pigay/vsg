@@ -12,6 +12,11 @@
   )
 )
 
+(define-function vsg_matrix3@t@_get_mpi_type
+  (c-name "vsg_matrix3@t@_get_mpi_type")
+  (return-type "MPI_Datatype")
+)
+
 (define-function vsg_matrix3@t@_new
   (c-name "vsg_matrix3@t@_new")
   (is-constructor-of "VsgMatrix3@t@")
@@ -253,6 +258,11 @@
   (return-type "GType")
   (parameters
   )
+)
+
+(define-function vsg_matrix4@t@_get_mpi_type
+  (c-name "vsg_matrix4@t@_get_mpi_type")
+  (return-type "MPI_Datatype")
 )
 
 (define-function vsg_matrix4@t@_new
@@ -634,32 +644,59 @@
   (return-type "VsgPRTree2@t@*")
 )
 
-(define-method set_point_loc_marshall
+(define-method set_point_loc
   (of-object "VsgPRTree2@t@")
-  (c-name "vsg_prtree2@t@_set_point_loc_marshall")
+  (c-name "vsg_prtree2@t@_set_point_loc")
   (return-type "none")
   (parameters
-    '("VsgPoint2@t@LocMarshall" "marshall")
+    '("VsgPoint2@t@LocFunc" "locfunc")
+  )
+)
+
+(define-method set_point_loc_with_data
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_set_point_loc_with_data")
+  (return-type "none")
+  (parameters
+    '("VsgPoint2@t@LocDataFunc" "locfunc")
     '("gpointer" "locdata")
   )
 )
 
-(define-method set_region_loc_marshall
+(define-method set_region_loc
   (of-object "VsgPRTree2@t@")
-  (c-name "vsg_prtree2@t@_set_region_loc_marshall")
+  (c-name "vsg_prtree2@t@_set_region_loc")
   (return-type "none")
   (parameters
-    '("VsgRegion2@t@LocMarshall" "marshall")
+    '("VsgRegion2@t@LocFunc" "locfunc")
+  )
+)
+
+(define-method set_region_loc_with_data
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_set_region_loc_with_data")
+  (return-type "none")
+  (parameters
+    '("VsgRegion2@t@LocDataFunc" "locfunc")
     '("gpointer" "locdata")
   )
 )
 
-(define-method set_point_dist_marshall
+(define-method set_point_dist
   (of-object "VsgPRTree2@t@")
-  (c-name "vsg_prtree2@t@_set_point_dist_marshall")
+  (c-name "vsg_prtree2@t@_set_point_dist")
   (return-type "none")
   (parameters
-    '("VsgPoint2@t@DistMarshall" "marshall")
+    '("VsgPoint2@t@DistFunc" "distfunc")
+  )
+)
+
+(define-method set_point_dist_with_data
+  (of-object "VsgPRTree2@t@")
+  (c-name "vsg_prtree2@t@_set_point_dist_with_data")
+  (return-type "none")
+  (parameters
+    '("VsgPoint2@t@DistDataFunc" "distfunc")
     '("gpointer" "distdata")
   )
 )
@@ -945,32 +982,59 @@
   (return-type "VsgPRTree3@t@*")
 )
 
-(define-method set_point_loc_marshall
+(define-method set_point_loc
   (of-object "VsgPRTree3@t@")
-  (c-name "vsg_prtree3@t@_set_point_loc_marshall")
+  (c-name "vsg_prtree3@t@_set_point_loc")
   (return-type "none")
   (parameters
-    '("VsgPoint3@t@LocMarshall" "marshall")
+    '("VsgPoint3@t@LocFunc" "locfunc")
+  )
+)
+
+(define-method set_point_loc_with_data
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_set_point_loc_with_data")
+  (return-type "none")
+  (parameters
+    '("VsgPoint3@t@LocDataFunc" "locfunc")
     '("gpointer" "locdata")
   )
 )
 
-(define-method set_region_loc_marshall
+(define-method set_region_loc
   (of-object "VsgPRTree3@t@")
-  (c-name "vsg_prtree3@t@_set_region_loc_marshall")
+  (c-name "vsg_prtree3@t@_set_region_loc")
   (return-type "none")
   (parameters
-    '("VsgRegion3@t@LocMarshall" "marshall")
+    '("VsgRegion3@t@LocFunc" "locfunc")
+  )
+)
+
+(define-method set_region_loc_with_data
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_set_region_loc_with_data")
+  (return-type "none")
+  (parameters
+    '("VsgRegion3@t@LocDataFunc" "locfunc")
     '("gpointer" "locdata")
   )
 )
 
-(define-method set_point_dist_marshall
+(define-method set_point_dist
   (of-object "VsgPRTree3@t@")
-  (c-name "vsg_prtree3@t@_set_point_dist_marshall")
+  (c-name "vsg_prtree3@t@_set_point_dist")
   (return-type "none")
   (parameters
-    '("VsgPoint3@t@DistMarshall" "marshall")
+    '("VsgPoint3@t@DistFunc" "distfunc")
+  )
+)
+
+(define-method set_point_dist_with_data
+  (of-object "VsgPRTree3@t@")
+  (c-name "vsg_prtree3@t@_set_point_dist_with_data")
+  (return-type "none")
+  (parameters
+    '("VsgPoint3@t@DistDataFunc" "distfunc")
     '("gpointer" "distdata")
   )
 )
@@ -1214,6 +1278,11 @@
   (return-type "GType")
   (parameters
   )
+)
+
+(define-function vsg_quaternion@t@_get_mpi_type
+  (c-name "vsg_quaternion@t@_get_mpi_type")
+  (return-type "MPI_Datatype")
 )
 
 (define-function vsg_quaternion@t@_new
@@ -1477,6 +1546,11 @@
   (return-type "GType")
 )
 
+(define-function vsg_vector2@t@_get_mpi_type
+  (c-name "vsg_vector2@t@_get_mpi_type")
+  (return-type "MPI_Datatype")
+)
+
 (define-function vsg_vector2@t@_new
   (c-name "vsg_vector2@t@_new")
   (is-constructor-of "VsgVector2@t@")
@@ -1724,6 +1798,11 @@
   (return-type "GType")
   (parameters
   )
+)
+
+(define-function vsg_vector3@t@_get_mpi_type
+  (c-name "vsg_vector3@t@_get_mpi_type")
+  (return-type "MPI_Datatype")
 )
 
 (define-function vsg_vector3@t@_new

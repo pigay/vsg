@@ -54,7 +54,108 @@ typedef void (*VsgChildrenOrderFunc) (gpointer key, gint *children,
                                       gpointer *children_keys);
 
 
+/**
+ * VsgParallelStorage:
+ * @VSG_PARALLEL_SHARED: data is shared among all processors.
+ * @VSG_PARALLEL_LOCAL: data is local to current processor (the default in sequential programs).
+ * @VSG_PARALLEL_REMOTE: data is stored on some remote processor.
+ *
+ * Parallel storage of some data: shared between all processors, local
+ * to only one processor or stored on some remote processor.
+ *
+ * In a non parallel program, data is supposed to be %VSG_PARALLEL_LOCAL.
+ */
+typedef enum {
+  VSG_PARALLEL_SHARED,
+  VSG_PARALLEL_LOCAL,
+  VSG_PARALLEL_REMOTE
+} VsgParallelStorage;
+
+/**
+ * VsgParallelStatus:
+ * @storage: type of storage.
+ * @proc: processor number of data in case of a %VSG_PARALLEL_REMOTE
+ * storage.
+ *
+ * Parallel status associated with some piece of data.
+ */
+typedef struct _VsgParallelStatus VsgParallelStatus;
+
+struct _VsgParallelStatus {
+  VsgParallelStorage storage:2;
+  guint32 proc:30;
+};
+
+/**
+ * vsg_parallel_status_local:
+ *
+ * #VsgParallelStatus constant representing local data.
+ */
+static const VsgParallelStatus vsg_parallel_status_local = {
+  VSG_PARALLEL_LOCAL,
+  0,
+};
+
+/**
+ * vsg_parallel_status_shared:
+ *
+ * #VsgParallelStatus constant representing shared data.
+ */
+static const VsgParallelStatus vsg_parallel_status_shared = {
+  VSG_PARALLEL_SHARED,
+  -1,
+};
+
+/**
+ * VSG_PARALLEL_STATUS_IS_REMOTE:
+ * @status: a #VsgParallelStatus
+ *
+ * Convenience macro for questioning about @status storage type.
+ *
+ * Returns: #TRUE if @status is equal to #VSG_PARALLEL_REMOTE
+ */
+#define VSG_PARALLEL_STATUS_IS_REMOTE(status) ( \
+(status).storage == VSG_PARALLEL_REMOTE \
+)
+
+/**
+ * VSG_PARALLEL_STATUS_IS_LOCAL:
+ * @status: a #VsgParallelStatus
+ *
+ * Convenience macro for questioning about @status storage type.
+ *
+ * Returns: #TRUE if @status is equal to #VSG_PARALLEL_LOCAL
+ */
+#define VSG_PARALLEL_STATUS_IS_LOCAL(status) ( \
+(status).storage == VSG_PARALLEL_LOCAL \
+)
+
+/**
+ * VSG_PARALLEL_STATUS_IS_SHARED:
+ * @status: a #VsgParallelStatus
+ *
+ * Convenience macro for questioning about @status storage type.
+ *
+ * Returns: #TRUE if @status is equal to #VSG_PARALLEL_SHARED
+ */
+#define VSG_PARALLEL_STATUS_IS_SHARED(status) ( \
+(status).storage == VSG_PARALLEL_SHARED \
+)
+
+/**
+ * VSG_PARALLEL_STATUS_PROC:
+ * @status: a #VsgParallelStatus
+ *
+ * Convenience macro for questioning about @status processor number.
+ *
+ * Returns: @status.proc
+ */
+#define VSG_PARALLEL_STATUS_PROC(status) ( \
+(status).proc \
+)
+
 
 G_END_DECLS;
+
 
 #endif /* __VSG_PRTREE_COMMON_H__ */

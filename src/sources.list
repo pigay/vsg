@@ -1,40 +1,64 @@
 # -*- makefile -*-
 
+# some files are exclusively used by parallel version of the library
+if VSG_HAVE_MPI
+parallel_headers = vsgpackedmsg.h vsgcommbuffer.h
+parallel_private_headers = vsgcommbuffer-private.h
+parallel_sources = vsgpackedmsg.c vsgcommbuffer.c
+libvsgd_la_parallel_headers = vsgprtree2d-parallel.h vsgprtree3d-parallel.h
+libvsgd_la_parallel_sources = vsgprtree2d-parallel.c vsgprtree3d-parallel.c
+libvsgf_la_parallel_headers = vsgprtree2f-parallel.h vsgprtree3f-parallel.h
+libvsgf_la_parallel_sources = vsgprtree2f-parallel.c vsgprtree3f-parallel.c
+else
+parallel_headers = 
+parallel_private_headers = 
+parallel_sources = 
+libvsgd_la_parallel_headers = 
+libvsgd_la_parallel_sources = 
+libvsgf_la_parallel_headers = 
+libvsgf_la_parallel_sources = 
+endif
+
 # common files
-libvsg_common_headers = vsgprtree-common.h vsgprtree2-common.h \
-vsgprtree3-common.h
+libvsg_common_headers = $(parallel_headers) vsgprtree-common.h \
+vsgprtree2-common.h vsgprtree3-common.h vsgmpi.h vsgprtree-parallel.h
+libvsg_common_noinst_headers = $(parallel_private_headers)
+
+libvsg_duplicated_sources = $(parallel_sources)
 
 # gdouble library
 
-libvsgd_la_built_headers = vsgmatrix3d.h vsgmatrix4d.h vsgquaterniond.h \
-vsgvector2d.h vsgvector3d.h vsgprtree2d.h vsgprtree3d.h \
-vsgprtree2d-extras.h vsgprtree3d-extras.h vsgd.h vsgd-inline.h \
+libvsgd_la_built_headers = $(libvsgd_la_parallel_headers) vsgmatrix3d.h \
+vsgmatrix4d.h vsgquaterniond.h vsgvector2d.h vsgvector3d.h vsgprtree2d.h \
+vsgprtree3d.h vsgprtree2d-extras.h vsgprtree3d-extras.h vsgd.h vsgd-inline.h \
 vsgvector2d-inline.h vsgvector3d-inline.h vsgquaterniond-inline.h \
-vsgmatrix3d-inline.h vsgmatrix4d-inline.h 
+vsgmatrix3d-inline.h vsgmatrix4d-inline.h vsgprtreekey2d.h vsgprtreekey3d.h
 
-libvsgd_la_built_sources = vsgmatrix3d.c vsgmatrix4d.c vsgquaterniond.c \
-vsgvector2d.c vsgvector3d.c vsgprtree2d.c vsgprtree3d.c \
-vsgprtree2d-extras.c vsgprtree3d-extras.c vsgd.c
+libvsgd_la_built_sources = $(libvsgd_la_parallel_sources) vsgmatrix3d.c \
+vsgmatrix4d.c vsgquaterniond.c vsgvector2d.c vsgvector3d.c vsgprtree2d.c \
+vsgprtree3d.c vsgprtree2d-extras.c vsgprtree3d-extras.c vsgd.c \
+vsgprtreekey2d.c vsgprtreekey3d.c
 
 libvsgd_built_noinst_headers = vsgprtree2d-private.h vsgprtree3d-private.h
 
 # gfloat library
 
-libvsgf_la_built_headers = vsgmatrix3f.h vsgmatrix4f.h vsgquaternionf.h \
-vsgvector2f.h vsgvector3f.h vsgprtree2f.h vsgprtree3f.h \
-vsgprtree2f-extras.h vsgprtree3f-extras.h vsgf.h  vsgd-inline.h \
+libvsgf_la_built_headers = $(libvsgf_la_parallel_headers) vsgmatrix3f.h \
+vsgmatrix4f.h vsgquaternionf.h vsgvector2f.h vsgvector3f.h vsgprtree2f.h \
+vsgprtree3f.h vsgprtree2f-extras.h vsgprtree3f-extras.h vsgf.h vsgd-inline.h \
 vsgvector2f-inline.h vsgvector3f-inline.h vsgquaternionf-inline.h \
-vsgmatrix3f-inline.h vsgmatrix4f-inline.h 
+vsgmatrix3f-inline.h vsgmatrix4f-inline.h vsgprtreekey2f.h vsgprtreekey3f.h
 
-libvsgf_la_built_sources = vsgmatrix3f.c vsgmatrix4f.c vsgquaternionf.c \
-vsgvector2f.c vsgvector3f.c vsgprtree2f.c vsgprtree3f.c \
-vsgprtree2f-extras.c vsgprtree3f-extras.c vsgf.c
+libvsgf_la_built_sources = $(libvsgf_la_parallel_sources) vsgmatrix3f.c \
+vsgmatrix4f.c vsgquaternionf.c vsgvector2f.c vsgvector3f.c vsgprtree2f.c \
+vsgprtree3f.c vsgprtree2f-extras.c vsgprtree3f-extras.c vsgf.c \
+vsgprtreekey2f.c vsgprtreekey3f.c
 
 libvsgf_built_noinst_headers = vsgprtree2f-private.h vsgprtree3f-private.h
 
 # general library
+libvsg_la_headers = vsg.h
 
-libvsg_la_headers = vsg.h 
 libvsg_la_sources = vsg.c
 
 # template files
@@ -43,11 +67,13 @@ template_headers = vsgmatrix3@t@.h vsgmatrix4@t@.h vsgquaternion@t@.h \
 vsgvector2@t@.h vsgvector3@t@.h vsgprtree2@t@.h vsgprtree3@t@.h \
 vsgprtree2@t@-extras.h vsgprtree3@t@-extras.h vsg@t@.h vsg@t@-inline.h \
 vsgvector2@t@-inline.h vsgvector3@t@-inline.h vsgquaternion@t@-inline.h \
-vsgmatrix3@t@-inline.h vsgmatrix4@t@-inline.h 
+vsgmatrix3@t@-inline.h vsgmatrix4@t@-inline.h vsgprtree2@t@-parallel.h \
+vsgprtreekey2@t@.h vsgprtreekey3@t@.h
 
 template_sources = vsgmatrix3@t@.c vsgmatrix4@t@.c vsgquaternion@t@.c \
 vsgvector2@t@.c vsgvector3@t@.c vsgprtree2@t@.c vsgprtree3@t@.c \
-vsgprtree2@t@-extras.c vsgprtree3@t@-extras.c vsg@t@.c
+vsgprtree2@t@-extras.c vsgprtree3@t@-extras.c vsg@t@.c \
+vsgprtree2@t@-parallel.c vsgprtreekey2@t@.c vsgprtreekey3@t@.c
 
 template_noinst_headers = vsgprtree2@t@-private.h vsgprtree3@t@-private.h
 

@@ -19,10 +19,18 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-AT_TESTED([prtree2pt prtree2nftrav])
+AT_TESTED([prtreekey2 prtree2pt prtree2nftrav])
+
+AT_SETUP(VsgPRTreeKey2d operations)
+AT_CHECK(prtreekey2, 0)
+AT_CLEANUP
 
 AT_SETUP(VsgPRTree2d point operations)
 AT_CHECK(prtree2pt, 0)
+AT_CLEANUP
+
+AT_SETUP(VsgPRTree2d cloning)
+AT_CHECK(prtree2clone, 0)
 AT_CLEANUP
 
 AT_SETUP(VsgPRTree2d near/far traversals)

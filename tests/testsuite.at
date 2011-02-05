@@ -34,3 +34,5 @@ m4_include([mat4ops.at])
 m4_include([prtree2.at])
 
 m4_include([prtree3.at])
+
+m4_include([parallel.at])

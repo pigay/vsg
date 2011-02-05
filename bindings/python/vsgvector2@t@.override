@@ -465,8 +465,8 @@ _wrap_vsg_vector2@t@_inplace_mul_operator (PyObject *self, PyObject *other)
  
         }
 
-      cother = PyFloat_AS_DOUBLE (other);
-      Py_XDECREF (other);
+      cother = PyFloat_AS_DOUBLE (fother);
+      Py_XDECREF (fother);
 
       vsg_vector2@t@_scalp (pyg_boxed_get (self, VsgVector2@t@),
                             cother,

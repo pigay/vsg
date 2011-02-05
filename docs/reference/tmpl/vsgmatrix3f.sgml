@@ -22,6 +22,9 @@ vsgmatrix3f
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### SECTION Image ##### -->
+
+
 <!-- ##### STRUCT VsgMatrix3f ##### -->
 <para>
 
@@ -30,6 +33,13 @@ vsgmatrix3f
 @components: 
 
 <!-- ##### MACRO VSG_TYPE_MATRIX3F ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_MPI_TYPE_MATRIX3F ##### -->
 <para>
 
 </para>

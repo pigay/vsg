@@ -94,6 +94,12 @@ AC_ARG_ENABLE(check-params,
               [AC_DEFINE(VSG_CHECK_PARAMS, 1, [function parameters checking])])
 
 
+AC_ARG_ENABLE(msg-trace,
+              [AC_HELP_STRING([--enable-msg-trace],
+              [turns on MPI message trace])],
+              [AC_DEFINE(VSG_PACKED_MSG_TRACE, 1, [turns on MPI packed message trace (for debugging prurpose only)])])
+
+
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_AWK
@@ -204,6 +210,42 @@ AM_CONDITIONAL(ENABLE_PYGTK, test x$enable_pygtk = xyes)
 AC_SUBST(PYGTK_CFLAGS)
 AC_SUBST(PYGTK_LIBS)
 
+###############################################################################
+# check for MPI parallel libraries.
+###############################################################################
+
+dnl Let people disable parallel features.
+ACX_MPI_PATHS
+
+if test $MPI_ENABLED = 1; then
+  have_mpi=yes
+  VSG_DEFINE_HAVE_MPI="#define VSG_HAVE_MPI"
+else
+  have_mpi=no
+  VSG_DEFINE_HAVE_MPI="#undef VSG_HAVE_MPI /* Vsg Configured without MPI support */"
+fi
+
+AC_SUBST(VSG_DEFINE_HAVE_MPI)
+
+# define automake conditional
+AM_CONDITIONAL(VSG_HAVE_MPI, test x$have_mpi = xyes)
+
+# check for MPI_UNSIGNED_LONG_LONG
+if test x$have_mpi = xyes; then
+  AC_LANG_PUSH(C)
+  orig_CFLAGS="${CFLAGS}"
+  CFLAGS="${MPI_CFLAGS} ${CFLAGS}"
+  AC_MSG_CHECKING(if MPI have MPI_UNSIGNED_LONG_LONG)
+  AC_TRY_COMPILE([#include <mpi.h>],
+                 [MPI_Datatype type; type = MPI_UNSIGNED_LONG_LONG; ],
+                 [AC_MSG_RESULT(yes)],
+                 [AC_MSG_RESULT([no. Replacing with MPI_LONG_LONG_INT.])
+                  AC_DEFINE(MPI_UNSIGNED_LONG_LONG,MPI_LONG_LONG_INT,
+                            [Replace missing MPI_UNSIGNED_LONG_LONG])])
+  CFLAGS="${orig_CFLAGS}"
+  AC_LANG_POP()
+fi
+
 dnl Checks for header files.
 AC_HEADER_STDC
 dnl 
@@ -220,7 +262,6 @@ dnl Checks for library functions.
 # Testsuite configuration.
 AC_CONFIG_TESTDIR(tests)
 
-
 # Generate files.
 AC_OUTPUT([
 vsgd.pc
@@ -228,6 +269,7 @@ vsgf.pc
 vsg.pc
 Makefile
 src/Makefile
+src/vsgmpi.h
 build/Makefile
 build/vsg/Makefile
 gencode/Makefile

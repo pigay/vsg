@@ -23,6 +23,7 @@
 #include <vsg/vsgvector2@t@.h>
 #include <vsg/vsgvector3@t@.h>
 
+#include <vsg/vsgmpi.h>
 
 #include <glib.h>
 #include <glib-object.h>
@@ -32,6 +33,10 @@
 G_BEGIN_DECLS;
 /* macros */
 #define VSG_TYPE_MATRIX3@T@ (vsg_matrix3@t@_get_type ())
+
+#ifdef VSG_HAVE_MPI
+#define VSG_MPI_TYPE_MATRIX3@T@ (vsg_matrix3@t@_get_mpi_type ())
+#endif
 
 /* forward declarations */
 typedef struct _VsgMatrix3@t@ VsgMatrix3@t@;
@@ -64,6 +69,10 @@ static const VsgMatrix3@t@ VSG_M3@T@_ID = {
 
 /* functions */
 GType vsg_matrix3@t@_get_type () G_GNUC_CONST;
+
+#ifdef VSG_HAVE_MPI
+MPI_Datatype vsg_matrix3@t@_get_mpi_type (void) G_GNUC_CONST;
+#endif
 
 VsgMatrix3@t@ *vsg_matrix3@t@_new (@type@ a00, @type@ a01, @type@ a02,
                                    @type@ a10, @type@ a11, @type@ a12,

@@ -105,6 +105,62 @@ G_BEGIN_DECLS;
 #define VSG_RLOC2_MASK ((vsgrloc2) 0x0F)
 
 /**
+ * VSG_RLOC2_SW:
+ *
+ * #vsgrloc2 associated with VSG_LOC2_SW.
+ */
+#define VSG_RLOC2_SW VSG_RLOC2_COMP (VSG_LOC2_SW)
+
+/**
+ * VSG_RLOC2_SE:
+ *
+ * #vsgrloc2 associated with VSG_LOC2_SE.
+ */
+#define VSG_RLOC2_SE VSG_RLOC2_COMP (VSG_LOC2_SE)
+
+/**
+ * VSG_RLOC2_NW:
+ *
+ * #vsgrloc2 associated with VSG_LOC2_NW.
+ */
+#define VSG_RLOC2_NW VSG_RLOC2_COMP (VSG_LOC2_NW)
+
+/**
+ * VSG_RLOC2_NE:
+ *
+ * #vsgrloc2 associated with VSG_LOC2_NE.
+ */
+#define VSG_RLOC2_NE VSG_RLOC2_COMP (VSG_LOC2_NE)
+
+/**
+ * VSG_RLOC2_S:
+ *
+ * #vsgrloc2 composed with VSG_RLOC2_SW OR VSG_RLOC2_SE.
+ */
+#define VSG_RLOC2_S (VSG_RLOC2_SW | VSG_RLOC2_SE)
+
+/**
+ * VSG_RLOC2_E:
+ *
+ * #vsgrloc2 composed with VSG_RLOC2_SE OR VSG_RLOC2_NE.
+ */
+#define VSG_RLOC2_E (VSG_RLOC2_SE | VSG_RLOC2_NE)
+
+/**
+ * VSG_RLOC2_W:
+ *
+ * #vsgrloc2 composed with VSG_RLOC2_SW OR VSG_RLOC2_NW.
+ */
+#define VSG_RLOC2_W (VSG_RLOC2_SW | VSG_RLOC2_NW)
+
+/**
+ * VSG_RLOC2_N:
+ *
+ * #vsgrloc2 composed with VSG_RLOC2_NW OR VSG_RLOC2_NE.
+ */
+#define VSG_RLOC2_N (VSG_RLOC2_NW | VSG_RLOC2_NE)
+
+/**
  * VsgPoint2:
  *
  * Pointer type of vertices stored by VsgPRTree2?. They serve as localization

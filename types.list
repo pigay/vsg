@@ -13,6 +13,11 @@ types_list = [
      'def':'1.0',
      'tcode':'.10g',
      'epsilon':'1.e-7',
+     'MPI_DATATYPE':'MPI_FLOAT',
+     'key_type':'guint32',
+     'kcode':'\"G_GUINT32_FORMAT\"',
+     'kmod':'\"G_GINT32_MODIFIER\"',
+     'KEY_MPI_DATATYPE':'MPI_UNSIGNED_LONG',
      },
     {'type':'gdouble',
      't':'d',
@@ -27,5 +32,10 @@ types_list = [
      'def':'1.0',
      'tcode':'.10lg',
      'epsilon':'1.e-14',
+     'MPI_DATATYPE':'MPI_DOUBLE',
+     'key_type':'guint64',
+     'kcode':'\"G_GUINT64_FORMAT\"',
+     'kmod':'\"G_GINT64_MODIFIER\"',
+     'KEY_MPI_DATATYPE':'MPI_UNSIGNED_LONG_LONG',
      }
     ]

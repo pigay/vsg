@@ -22,6 +22,9 @@ vsgquaterniond
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### SECTION Image ##### -->
+
+
 <!-- ##### STRUCT VsgQuaterniond ##### -->
 <para>
 
@@ -33,6 +36,13 @@ vsgquaterniond
 @w: 
 
 <!-- ##### MACRO VSG_TYPE_QUATERNIOND ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_MPI_TYPE_QUATERNIOND ##### -->
 <para>
 
 </para>

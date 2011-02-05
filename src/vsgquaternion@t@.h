@@ -23,6 +23,7 @@
 #include <vsg/vsgvector3@t@.h>
 #include <vsg/vsgvector3@alt_t@.h>
 
+#include <vsg/vsgmpi.h>
 
 #include <glib.h>
 #include <glib-object.h>
@@ -33,6 +34,10 @@ G_BEGIN_DECLS;
 
 /* macros */
 #define VSG_TYPE_QUATERNION@T@ (vsg_quaternion@t@_get_type ())
+
+#ifdef VSG_HAVE_MPI
+#define VSG_MPI_TYPE_QUATERNION@T@ (vsg_quaternion@t@_get_mpi_type ())
+#endif
 
 #define VSG_QUATERNION@T@_COMP(quat,i) ( \
 ((@type@ *) (quat)) + (i) \
@@ -58,6 +63,10 @@ static const VsgQuaternion@t@ VSG_Q@T@_ID = {0., 0., 0., 1.};
 
 /* functions */
 GType vsg_quaternion@t@_get_type () G_GNUC_CONST;
+
+#ifdef VSG_HAVE_MPI
+MPI_Datatype vsg_quaternion@t@_get_mpi_type (void) G_GNUC_CONST;
+#endif
 
 VsgQuaternion@t@ *vsg_quaternion@t@_new (@type@ x,
                                          @type@ y,
