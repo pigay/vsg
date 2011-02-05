@@ -61,3 +61,38 @@ AT_CHECK([mpiexec -n 4 prtree2paranftrav --hilbert --np 20], 0)
 AT_CHECK([mpiexec -n 5 prtree2paranftrav --hilbert --np 20], 0)
 AT_CHECK([mpiexec -n 8 prtree2paranftrav --hilbert --np 100], 0)
 AT_CLEANUP
+
+AT_SETUP(3D Parallel tree creation)
+AT_KEYWORDS (parallel)
+AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
+AT_CHECK([mpiexec -n 1 prtree3parallel], 0)
+AT_CHECK([mpiexec -n 2 prtree3parallel], 0)
+AT_CHECK([mpiexec -n 3 prtree3parallel], 0)
+AT_CHECK([mpiexec -n 4 prtree3parallel], 0)
+AT_CLEANUP
+
+AT_SETUP(3D Parallel tree contiguous distribution)
+AT_KEYWORDS (parallel)
+AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
+AT_CHECK([mpiexec -n 1 prtree3paradist], 0)
+AT_CHECK([mpiexec -n 2 prtree3paradist], 0)
+AT_CHECK([mpiexec -n 2 prtree3paradist --np 20], 0)
+AT_CHECK([mpiexec -n 2 prtree3paradist --hilbert --np 100], 0)
+AT_CHECK([mpiexec -n 3 prtree3paradist --hilbert --np 100], 0)
+AT_CHECK([mpiexec -n 7 prtree3paradist --hilbert --np 100], 0)
+AT_CHECK([mpiexec -n 4 prtree3paradist --hilbert --scatter --np 40], 0)
+AT_CHECK([mpiexec -n 4 prtree3paradist --hilbert --np 400], 0)
+AT_CLEANUP
+
+AT_SETUP(3D Parallel tree near/far traversal)
+AT_KEYWORDS (parallel)
+AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
+AT_CHECK([mpiexec -n 1 prtree3paranftrav], 0)
+AT_CHECK([mpiexec -n 2 prtree3paranftrav], 0)
+AT_CHECK([mpiexec -n 2 prtree3paranftrav --hilbert --np 20], 0)
+AT_CHECK([mpiexec -n 3 prtree3paranftrav --hilbert --np 20], 0)
+AT_CHECK([mpiexec -n 4 prtree3paranftrav --hilbert --np 20], 0)
+AT_CHECK([mpiexec -n 5 prtree3paranftrav --hilbert --np 20], 0)
+AT_CHECK([mpiexec -n 8 prtree3paranftrav --hilbert --np 100], 0)
+AT_CHECK([mpiexec -n 8 prtree3paranftrav --hilbert --np 1000], 0)
+AT_CLEANUP
