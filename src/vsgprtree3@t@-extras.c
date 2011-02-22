@@ -746,6 +746,8 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
 #endif
 
 #ifdef VSG_HAVE_MPI
+  /* vsg_packed_msg_trace ("enter 1 [nf traversal]"); */
+
   vsg_nf_config3@t@_init (&nfc, comm, far_func, near_func, user_data);
 
   vsg_nf_config3@t@_tmp_alloc (&nfc, &prtree3@t@->config);
@@ -767,6 +769,9 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
                                          NULL, 0, TRUE);
 
 #ifdef VSG_HAVE_MPI
+  /* vsg_packed_msg_trace ("leave 1 [nf traversal]"); */
+  /* vsg_packed_msg_trace ("enter 1 [nf parallel_end]"); */
+
   if (nfc.sz > 1)
     {
       vsg_prtree3@t@_nf_check_parallel_end (prtree3@t@, &nfc);
@@ -775,6 +780,8 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
   vsg_nf_config3@t@_tmp_free (&nfc, &prtree3@t@->config);
 
   vsg_nf_config3@t@_clean (&nfc);
+
+  /* vsg_packed_msg_trace ("leave 1 [nf parallel_end]"); */
 #endif
 }
 

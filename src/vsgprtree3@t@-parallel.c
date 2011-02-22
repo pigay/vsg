@@ -1981,6 +1981,39 @@ static vsgrloc3 _selector_nf_visitor (VsgPRTree3@t@NodeInfo *ref_info,
   return 0x0;
 }
 
+static void
+_prtree3@t@node_traverse_visiting_nf (VsgPRTree3@t@Node *node,
+                                      VsgPRTree3@t@NodeInfo *father_info,
+                                      vsgloc3 child_number,
+                                      NIAndFuncs *niaf,
+                                      VsgPRTreeKey3@t@ *ref_ancestry_ids)
+{
+  VsgPRTree3@t@NodeInfo node_info;
+  guint8 i;
+  vsgrloc3 ipow;
+  vsgrloc3 locmask;
+
+  _vsg_prtree3@t@node_get_info (node, &node_info, father_info, child_number);
+
+  locmask = _selector_nf_visitor (&niaf->ref_info, &node_info,
+                                  ref_ancestry_ids);
+
+  if (PRTREE3@T@NODE_ISINT (node))
+    {
+      for (i=0; i<8; i++)
+        {
+          ipow = VSG_RLOC3_COMP (i);
+
+          if (ipow & locmask)
+            _prtree3@t@node_traverse_visiting_nf
+              (PRTREE3@T@NODE_CHILD(node, i), &node_info, i, niaf,
+               ref_ancestry_ids);
+        }
+    }
+
+  _traverse_visiting_nf (node, &node_info, niaf);
+}
+
 /* static gint _visitors = 0; */
 /* static gint _unused_visitors = 0; */
 
@@ -2021,13 +2054,8 @@ static gboolean _compute_visiting_node (VsgPRTree3@t@ *tree,
 
   niaf.done_flag = 0;
 
-  vsg_prtree3@t@_traverse_custom_internal (tree, G_POST_ORDER,
-                                           (VsgRegion3@t@InternalLocDataFunc)
-                                           _selector_nf_visitor,
-                                           &niaf.ref_info, ref_ancestry_ids,
-                                           (VsgPRTree3@t@InternalFunc)
-                                           _traverse_visiting_nf,
-                                           &niaf);
+  _prtree3@t@node_traverse_visiting_nf (tree->node, NULL, 0, &niaf,
+                                        ref_ancestry_ids);
 
   if (niaf.done_flag == 0)
     {
@@ -2461,6 +2489,37 @@ static void _traverse_check_remote_neighbours (VsgPRTree3@t@Node *node,
 
     }
 }
+static void
+_prtree3@t@node_traverse_check_parallel (VsgPRTree3@t@Node *node,
+                                         VsgPRTree3@t@NodeInfo *father_info,
+                                         vsgloc3 child_number,
+                                         NodeRemoteData *nrd,
+                                         VsgPRTreeKey3@t@ *ref_ancestry_ids)
+{
+  VsgPRTree3@t@NodeInfo node_info;
+  guint8 i;
+  vsgrloc3 ipow;
+
+  _vsg_prtree3@t@node_get_info (node, &node_info, father_info, child_number);
+
+  _traverse_check_remote_neighbours (node, &node_info, nrd);
+
+  if (PRTREE3@T@NODE_ISINT (node))
+    {
+      vsgrloc3 locmask = _selector_nf_remote (nrd->ref_info, &node_info,
+                                              ref_ancestry_ids);
+
+      for (i=0; i<8; i++)
+        {
+          ipow = VSG_RLOC3_COMP (i);
+
+          if (ipow & locmask)
+            _prtree3@t@node_traverse_check_parallel
+              (PRTREE3@T@NODE_CHILD(node, i), &node_info, i, nrd,
+               ref_ancestry_ids);
+        }
+    }
+}
 
 /*
  * checks wether some specified node is to be sent to distant processors in
@@ -2504,13 +2563,8 @@ vsg_prtree3@t@_node_check_parallel_near_far (VsgPRTree3@t@ *tree,
       memset (nrd.procs, 0, nfc->sz * sizeof (gboolean));
       nrd.sent = FALSE;
 
-      vsg_prtree3@t@_traverse_custom_internal (tree, G_PRE_ORDER,
-                                               (VsgRegion3@t@InternalLocDataFunc)
-                                               _selector_nf_remote,
-                                               info, ref_ancestry_ids,
-                                               (VsgPRTree3@t@InternalFunc)
-                                               _traverse_check_remote_neighbours,
-                                               &nrd);
+      _prtree3@t@node_traverse_check_parallel (tree->node, NULL, 0, &nrd,
+                                               ref_ancestry_ids);
 
       ret = nrd.sent;
     }
@@ -2738,7 +2792,7 @@ void vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
     &tree->config.parallel_config.node_data.visit_backward;
   VsgPackedMsg pm[nfc->sz];
   MPI_Request end_fw_reqs[nfc->sz];
-/*   GTimer *timer = g_timer_new (); */
+  /* GTimer *timer = g_timer_new (); */
 
 /*   g_printerr ("%d(%d) : parallel_end begin (fw pending wv=%d) (bw pending wv=%d)\n", */
 /*               nfc->rk, getpid (), */
@@ -2752,6 +2806,8 @@ void vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
     }
 
   end_fw_reqs[nfc->rk] = MPI_REQUEST_NULL;
+
+  /* vsg_packed_msg_trace ("enter 2 [end fw]"); */
 
   for (i=1; i<nfc->sz; i++)
     {
@@ -2785,6 +2841,8 @@ void vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
       dst = (nfc->rk+i) % nfc->sz;
       vsg_packed_msg_drop_buffer (&pm[dst]);
     }
+
+  /* vsg_packed_msg_trace ("leave 2 [end fw]"); */
 
 /*   g_printerr ("%d : end fw sent (elapsed %f)\n", nfc->rk, */
 /*               g_timer_elapsed (timer, NULL)); */
@@ -2821,8 +2879,8 @@ void vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
       vsg_prtree3@t@_nf_check_receive (tree, nfc, MPI_ANY_TAG, TRUE);
     }
 
-/*   g_printerr ("%d : pending bw recv ok (elapsed %f)\n", nfc->rk, */
-/*               g_timer_elapsed (timer, NULL)); */
+  /* g_printerr ("%d : pending bw recv ok elapsed=%g seconds\n", nfc->rk, */
+  /*             g_timer_elapsed (timer, NULL)); */
 
   MPI_Waitall (nfc->sz, nfc->procs_requests, MPI_STATUS_IGNORE); 
 
@@ -2835,8 +2893,8 @@ void vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
     _shared_nodes_allreduce_internal (tree, data_bw_vtable,
                                       nfc->tmp_node_data);
 
-/*   g_printerr ("%d : parallel_end done (%f seconds)\n", nfc->rk, */
-/*               g_timer_elapsed (timer, NULL)); */
+  /* g_printerr ("%d : parallel_end done elapsed=%g seconds\n", nfc->rk, */
+  /*             g_timer_elapsed (timer, NULL)); */
 
 /*   g_printerr ("%d : unused visitors %d (%d total)\n", nfc->rk, */
 /*               _unused_visitors, _visitors); */

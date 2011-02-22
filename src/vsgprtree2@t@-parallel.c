@@ -948,8 +948,8 @@ static void _flatten_remote (VsgPRTree2@t@Node *node,
 }
 
 static void _traverse_flatten_remote (VsgPRTree2@t@Node *node,
-				      VsgPRTree2@t@NodeInfo *node_info,
-				      const VsgPRTree2@t@Config *config)
+                                      VsgPRTree2@t@NodeInfo *node_info,
+                                      const VsgPRTree2@t@Config *config)
 {
   if (PRTREE2@T@NODE_IS_REMOTE (node))
     {
@@ -1179,8 +1179,8 @@ void vsg_prtree2@t@_distribute_nodes (VsgPRTree2@t@ *tree,
 
   /* gather all migration messages */
   vsg_prtree2@t@_traverse_custom_internal (tree, G_POST_ORDER, NULL, NULL, NULL,
-					   (VsgPRTree2@t@InternalFunc)
-					   _traverse_distribute_nodes, &dd);
+                                           (VsgPRTree2@t@InternalFunc)
+                                           _traverse_distribute_nodes, &dd);
 
 /*   g_printerr ("%d: after gather\n", rk); */
 
@@ -1267,9 +1267,9 @@ void vsg_prtree2@t@_distribute_nodes (VsgPRTree2@t@ *tree,
                                            (VsgRegion2@t@InternalLocDataFunc)
                                            _selector_skip_local_nodes,
                                            NULL, NULL,
-					   (VsgPRTree2@t@InternalFunc)
-					   _traverse_flatten_remote,
-					   &tree->config);
+                                           (VsgPRTree2@t@InternalFunc)
+                                           _traverse_flatten_remote,
+                                           &tree->config);
 
   /* remote trees depth may have changed */
   tree->config.remote_depth_dirty = TRUE;
@@ -1962,6 +1962,39 @@ static vsgrloc2 _selector_nf_visitor (VsgPRTree2@t@NodeInfo *ref_info,
   return 0x0;
 }
 
+static void
+_prtree2@t@node_traverse_visiting_nf (VsgPRTree2@t@Node *node,
+                                      VsgPRTree2@t@NodeInfo *father_info,
+                                      vsgloc2 child_number,
+                                      NIAndFuncs *niaf,
+                                      VsgPRTreeKey2@t@ *ref_ancestry_ids)
+{
+  VsgPRTree2@t@NodeInfo node_info;
+  guint8 i;
+  vsgrloc2 ipow;
+  vsgrloc2 locmask;
+
+  _vsg_prtree2@t@node_get_info (node, &node_info, father_info, child_number);
+
+  locmask = _selector_nf_visitor (&niaf->ref_info, &node_info,
+                                  ref_ancestry_ids);
+
+  if (PRTREE2@T@NODE_ISINT (node))
+    {
+      for (i=0; i<4; i++)
+        {
+          ipow = VSG_RLOC2_COMP (i);
+
+          if (ipow & locmask)
+            _prtree2@t@node_traverse_visiting_nf
+              (PRTREE2@T@NODE_CHILD(node, i), &node_info, i, niaf,
+               ref_ancestry_ids);
+        }
+    }
+
+  _traverse_visiting_nf (node, &node_info, niaf);
+}
+
 /* static gint _visitors = 0; */
 /* static gint _unused_visitors = 0; */
 
@@ -2002,13 +2035,9 @@ static gboolean _compute_visiting_node (VsgPRTree2@t@ *tree,
 
   niaf.done_flag = 0;
 
-  vsg_prtree2@t@_traverse_custom_internal (tree, G_POST_ORDER,
-                                           (VsgRegion2@t@InternalLocDataFunc)
-                                           _selector_nf_visitor,
-                                           &niaf.ref_info, ref_ancestry_ids,
-                                           (VsgPRTree2@t@InternalFunc)
-                                           _traverse_visiting_nf,
-                                           &niaf);
+  _prtree2@t@node_traverse_visiting_nf (tree->node, NULL, 0, &niaf,
+                                        ref_ancestry_ids);
+
 
   if (niaf.done_flag == 0)
     {
@@ -2100,10 +2129,10 @@ static void _send_final_dropped_visitors (gpointer key, VsgNFProcMsg *nfpm,
       MPI_Test (&nfpm->request, &flag, MPI_STATUS_IGNORE);
 
       if (!flag)
-	{
-	  (*remaining) ++;
-	  return;
-	}
+        {
+          (*remaining) ++;
+          return;
+        }
 
       nfpm->send_pm.position = 0;
 
@@ -2419,6 +2448,38 @@ static void _traverse_check_remote_neighbours (VsgPRTree2@t@Node *node,
 
     }
 }
+static void
+_prtree2@t@node_traverse_check_parallel (VsgPRTree2@t@Node *node,
+                                         VsgPRTree2@t@NodeInfo *father_info,
+                                         vsgloc2 child_number,
+                                         NodeRemoteData *nrd,
+                                         VsgPRTreeKey2@t@ *ref_ancestry_ids)
+{
+  VsgPRTree2@t@NodeInfo node_info;
+  guint8 i;
+  vsgrloc2 ipow;
+
+  _vsg_prtree2@t@node_get_info (node, &node_info, father_info, child_number);
+
+  _traverse_check_remote_neighbours (node, &node_info, nrd);
+
+  if (PRTREE2@T@NODE_ISINT (node))
+    {
+      vsgrloc2 locmask = _selector_nf_remote (nrd->ref_info, &node_info,
+                                              ref_ancestry_ids);
+
+      for (i=0; i<4; i++)
+        {
+          ipow = VSG_RLOC2_COMP (i);
+
+          if (ipow & locmask)
+            _prtree2@t@node_traverse_check_parallel
+              (PRTREE2@T@NODE_CHILD(node, i), &node_info, i, nrd,
+               ref_ancestry_ids);
+        }
+    }
+}
+
 
 /*
  * checks wether some specified node is to be sent to distant processors in
@@ -2462,13 +2523,8 @@ vsg_prtree2@t@_node_check_parallel_near_far (VsgPRTree2@t@ *tree,
       memset (nrd.procs, 0, nfc->sz * sizeof (gboolean));
       nrd.sent = FALSE;
 
-      vsg_prtree2@t@_traverse_custom_internal (tree, G_PRE_ORDER,
-                                               (VsgRegion2@t@InternalLocDataFunc)
-                                               _selector_nf_remote,
-                                               info, ref_ancestry_ids,
-                                               (VsgPRTree2@t@InternalFunc)
-                                               _traverse_check_remote_neighbours,
-                                               &nrd);
+      _prtree2@t@node_traverse_check_parallel (tree->node, NULL, 0, &nrd,
+                                               ref_ancestry_ids);
 
       ret = nrd.sent;
     }
@@ -2794,8 +2850,8 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
     {
       dropped_remaining = 0;
       g_hash_table_foreach (nfc->procs_msgs,
-			    (GHFunc) _send_final_dropped_visitors,
-			    &dropped_remaining);
+                            (GHFunc) _send_final_dropped_visitors,
+                            &dropped_remaining);
     }
 /*   g_printerr ("%d : all bw send ok (elapsed %f) (dropped %d)\n", nfc->rk, */
 /*               g_timer_elapsed (timer, NULL), _dropped_count); */
@@ -2977,7 +3033,7 @@ static gint contiguous_dist (VsgPRTree2@t@NodeInfo *node_info,
         ret = cda->current_lcount / (cda->q + 1);
 
       if (node_info->point_count == 0)
-	return ret;
+        return ret;
 
       cda->current_lcount ++;
 
