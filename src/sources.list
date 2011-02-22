@@ -45,7 +45,7 @@ libvsgd_built_noinst_headers = vsgprtree2d-private.h vsgprtree3d-private.h
 
 libvsgf_la_built_headers = $(libvsgf_la_parallel_headers) vsgmatrix3f.h \
 vsgmatrix4f.h vsgquaternionf.h vsgvector2f.h vsgvector3f.h vsgprtree2f.h \
-vsgprtree3f.h vsgprtree2f-extras.h vsgprtree3f-extras.h vsgf.h vsgd-inline.h \
+vsgprtree3f.h vsgprtree2f-extras.h vsgprtree3f-extras.h vsgf.h vsgf-inline.h \
 vsgvector2f-inline.h vsgvector3f-inline.h vsgquaternionf-inline.h \
 vsgmatrix3f-inline.h vsgmatrix4f-inline.h vsgprtreekey2f.h vsgprtreekey3f.h
 
