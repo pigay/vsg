@@ -339,8 +339,11 @@ _sub_neighborhood_near_far_traversal (VsgPRTree3@t@ *tree,
 
   if (PRTREE3@T@NODE_ISINT (one) && PRTREE3@T@NODE_ISINT (other))
     {
-      /* near/far interaction between one and other children */
+#ifdef VSG_HAVE_MPI
+      if (nfc->sz > 1) vsg_prtree3@t@_nf_check_send (tree, nfc);
+#endif
 
+      /* near/far interaction between one and other children */
       for (i=0; i<8; i++)
         {
           VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(one, i);
@@ -477,6 +480,12 @@ vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@ *tree,
     }
   else
     {
+      /* interactions in node's children descendants */
+      for (i=0; i<8; i++)
+        vsg_prtree3@t@node_near_far_traversal (tree, nfc,
+                                               PRTREE3@T@NODE_CHILD(node, i),
+                                               &node_info, i, parallel_check);
+
       /* interactions between node's children */
       for (i=0; i<8; i++)
         {
@@ -516,13 +525,9 @@ vsg_prtree3@t@node_near_far_traversal (VsgPRTree3@t@ *tree,
             }
         }
 
-      /* interactions in node's children descendants */
-      for (i=0; i<8; i++)
-        vsg_prtree3@t@node_near_far_traversal (tree, nfc,
-                                               PRTREE3@T@NODE_CHILD(node, i),
-                                               &node_info, i, parallel_check);
     }
 }
+
 typedef enum _Hilbert3Key Hilbert3Key;
 enum _Hilbert3Key {
   HK3_0_1_2,

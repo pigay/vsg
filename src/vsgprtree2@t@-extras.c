@@ -269,8 +269,10 @@ _sub_neighborhood_near_far_traversal (VsgPRTree2@t@ *tree,
 
   if (PRTREE2@T@NODE_ISINT (one) && PRTREE2@T@NODE_ISINT (other))
     {
+#ifdef VSG_HAVE_MPI
+      if (nfc->sz > 1) vsg_prtree2@t@_nf_check_send (tree, nfc);
+#endif
       /* near/far interaction between one and other children */
-
       for (i=0; i<4; i++)
         {
           VsgPRTree2@t@Node *one_child = PRTREE2@T@NODE_CHILD(one, i);
@@ -406,6 +408,12 @@ vsg_prtree2@t@node_near_far_traversal (VsgPRTree2@t@ *tree,
     }
   else
     {
+      /* interactions in node's children descendants */
+      for (i=0; i<4; i++)
+        vsg_prtree2@t@node_near_far_traversal (tree, nfc,
+                                               PRTREE2@T@NODE_CHILD(node, i),
+                                               &node_info, i, parallel_check);
+
       /* interactions between node's children */
       for (i=0; i<4; i++)
         {
@@ -444,13 +452,9 @@ vsg_prtree2@t@node_near_far_traversal (VsgPRTree2@t@ *tree,
             }
         }
 
-      /* interactions in node's children descendants */
-      for (i=0; i<4; i++)
-        vsg_prtree2@t@node_near_far_traversal (tree, nfc,
-                                               PRTREE2@T@NODE_CHILD(node, i),
-                                               &node_info, i, parallel_check);
     }
 }
+
 typedef enum _Hilbert2Key Hilbert2Key;
 enum _Hilbert2Key {
   HK2_0_1,
@@ -593,6 +597,7 @@ vsg_prtree2@t@_near_far_traversal (VsgPRTree2@t@ *prtree2@t@,
 #endif
 
 #ifdef VSG_HAVE_MPI
+  /* vsg_packed_msg_trace ("enter 1 [nf traversal]"); */
 
   vsg_nf_config2@t@_init (&nfc, comm, far_func, near_func, user_data);
 
@@ -615,6 +620,9 @@ vsg_prtree2@t@_near_far_traversal (VsgPRTree2@t@ *prtree2@t@,
                                          NULL, 0, TRUE);
 
 #ifdef VSG_HAVE_MPI
+  /* vsg_packed_msg_trace ("leave 1 [nf traversal]"); */
+  /* vsg_packed_msg_trace ("enter 1 [nf parallel_end]"); */
+
   if (nfc.sz > 1)
     {
       vsg_prtree2@t@_nf_check_parallel_end (prtree2@t@, &nfc);
@@ -623,6 +631,8 @@ vsg_prtree2@t@_near_far_traversal (VsgPRTree2@t@ *prtree2@t@,
   vsg_nf_config2@t@_tmp_free (&nfc, &prtree2@t@->config);
 
   vsg_nf_config2@t@_clean (&nfc);
+
+  /* vsg_packed_msg_trace ("leave 1 [nf parallel_end]"); */
 #endif
 
 }

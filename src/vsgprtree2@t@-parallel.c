@@ -2791,6 +2791,8 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
 
   end_fw_reqs[nfc->rk] = MPI_REQUEST_NULL;
 
+  /* vsg_packed_msg_trace ("enter 2 [end fw send]"); */
+
   for (i=1; i<nfc->sz; i++)
     {
       dst = (nfc->rk+i) % nfc->sz;
@@ -2824,6 +2826,9 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
       vsg_packed_msg_drop_buffer (&pm[dst]);
     }
 
+  /* vsg_packed_msg_trace ("leave 2 [end fw send]"); */
+  /* vsg_packed_msg_trace ("enter 2 [end fw recv]"); */
+
 /*   g_printerr ("%d : end fw sent (elapsed %f)\n", nfc->rk, */
 /*               g_timer_elapsed (timer, NULL)); */
 
@@ -2837,8 +2842,11 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
 /*   g_printerr ("%d : end fw received (elapsed %f)\n", nfc->rk, */
 /*               g_timer_elapsed (timer, NULL)); */
 
+  /* vsg_packed_msg_trace ("leave 2 [end fw recv]"); */
 
   /* now, no forward visitor should be left incoming */
+
+  /* vsg_packed_msg_trace ("enter 2 [end bw]"); */
 
   /* do all remaining stuff */
   while ((nfc->forward_pending_nb + nfc->backward_pending_nb) > 0)
@@ -2869,6 +2877,8 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
 
   MPI_Barrier (comm);
 
+  /* vsg_packed_msg_trace ("enter 2 [allreduce]"); */
+
 /*   g_printerr ("%d : allreduce begin\n", nfc->rk); */
 
   if (data_bw_vtable->pack != NULL && data_bw_vtable->unpack != NULL)
@@ -2892,6 +2902,8 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
 /*               _bw_pending_calls); */
 
 /*   g_timer_destroy (timer); */
+
+  /* vsg_packed_msg_trace ("leave 2 [allreduce]"); */
 }
 
 static guint8 _prtree2@t@node_mindepth (const VsgPRTree2@t@Node *node)

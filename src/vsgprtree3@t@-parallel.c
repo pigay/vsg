@@ -2093,8 +2093,7 @@ struct _NFSendData {
  * checks for all completed VsgNFPocMsg requests and fills the
  * requests with pending msgs.
  */
-static gint vsg_prtree3@t@_nf_check_send (VsgPRTree3@t@ *tree,
-                                          VsgNFConfig3@t@ *nfc)
+gint vsg_prtree3@t@_nf_check_send (VsgPRTree3@t@ *tree, VsgNFConfig3@t@ *nfc)
 {
   gint sent = 0;
   gint flag = FALSE;
@@ -2807,7 +2806,7 @@ void vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
 
   end_fw_reqs[nfc->rk] = MPI_REQUEST_NULL;
 
-  /* vsg_packed_msg_trace ("enter 2 [end fw]"); */
+  /* vsg_packed_msg_trace ("enter 2 [end fw send]"); */
 
   for (i=1; i<nfc->sz; i++)
     {
@@ -2842,7 +2841,8 @@ void vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
       vsg_packed_msg_drop_buffer (&pm[dst]);
     }
 
-  /* vsg_packed_msg_trace ("leave 2 [end fw]"); */
+  /* vsg_packed_msg_trace ("leave 2 [end fw send]"); */
+  /* vsg_packed_msg_trace ("enter 2 [end fw recv]"); */
 
 /*   g_printerr ("%d : end fw sent (elapsed %f)\n", nfc->rk, */
 /*               g_timer_elapsed (timer, NULL)); */
@@ -2857,7 +2857,11 @@ void vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
 /*   g_printerr ("%d : end fw received (elapsed %f)\n", nfc->rk, */
 /*               g_timer_elapsed (timer, NULL)); */
 
+  /* vsg_packed_msg_trace ("leave 2 [end fw recv]"); */
+
   /* now, no forward visitor should be left incoming */
+
+  /* vsg_packed_msg_trace ("enter 2 [end bw]"); */
 
   /* do all remaining stuff */
   while ((nfc->forward_pending_nb + nfc->backward_pending_nb) > 0)
@@ -2884,7 +2888,11 @@ void vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
 
   MPI_Waitall (nfc->sz, nfc->procs_requests, MPI_STATUS_IGNORE); 
 
+  /* vsg_packed_msg_trace ("leave 2 [end bw]"); */
+
   MPI_Barrier (comm);
+
+  /* vsg_packed_msg_trace ("enter 2 [allreduce]"); */
 
 /*   g_printerr ("%d : allreduce begin\n", nfc->rk); */
 
@@ -2909,6 +2917,8 @@ void vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
 /*               _bw_pending_calls); */
 
 /*   g_timer_destroy (timer); */
+
+  /* vsg_packed_msg_trace ("leave 2 [allreduce]"); */
 }
 
 static guint8 _prtree3@t@node_mindepth (const VsgPRTree3@t@Node *node)
