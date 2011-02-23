@@ -2040,7 +2040,6 @@ static gboolean _compute_visiting_node (VsgPRTree2@t@ *tree,
   _prtree2@t@node_traverse_visiting_nf (tree->node, NULL, 0, &niaf,
                                         ref_ancestry_ids);
 
-
   if (niaf.done_flag == 0)
     {
 /*       g_printerr ("%d : reject node [", nfc->rk); */
@@ -2065,8 +2064,6 @@ static gboolean _compute_visiting_node (VsgPRTree2@t@ *tree,
 
   return TRUE;
 }
-
-
 
 typedef struct _NFSendData NFSendData;
 struct _NFSendData {
@@ -2482,7 +2479,6 @@ _prtree2@t@node_traverse_check_parallel (VsgPRTree2@t@Node *node,
     }
 }
 
-
 /*
  * checks wether some specified node is to be sent to distant processors in
  * order to complete a near/far traversal. Returns TRUE if node id
@@ -2770,10 +2766,6 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
 /*               nfc->forward_pending_nb, */
 /*               nfc->backward_pending_nb); */
 
-/*   g_printerr ("%d : nodes msgs1 (fw send=%d recv=%d) (bw send=%d recv=%d)\n", */
-/*               nfc->rk, nfc->all_fw_sends, nfc->all_fw_recvs, nfc->all_bw_sends, */
-/*               nfc->all_bw_recvs); */
-
   while (nfc->forward_pending_nb > 0)
     {
       vsg_prtree2@t@_nf_check_receive (tree, nfc, MPI_ANY_TAG, FALSE);
@@ -2818,10 +2810,6 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
 /*   g_printerr ("%d : end fw sent (elapsed %f)\n", nfc->rk, */
 /*               g_timer_elapsed (timer, NULL)); */
 
-/*   g_printerr ("%d : nodes msgs2 (fw send=%d recv=%d) (bw send=%d recv=%d)\n", */
-/*               nfc->rk, nfc->all_fw_sends, nfc->all_fw_recvs, nfc->all_bw_sends, */
-/*               nfc->all_bw_recvs); */
-
   /* check all remaining messages */
   while (nfc->pending_end_forward > 0)
     {
@@ -2832,9 +2820,6 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
 /*   g_printerr ("%d : end fw received (elapsed %f)\n", nfc->rk, */
 /*               g_timer_elapsed (timer, NULL)); */
 
-/*   g_printerr ("%d : nodes msgs3 (fw send=%d recv=%d) (bw send=%d recv=%d)\n", */
-/*               nfc->rk, nfc->all_fw_sends, nfc->all_fw_recvs, nfc->all_bw_sends, */
-/*               nfc->all_bw_recvs); */
 
   /* now, no forward visitor should be left incoming */
 
