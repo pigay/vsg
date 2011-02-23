@@ -104,6 +104,8 @@ static GSList *_alloc_and_unpack_list (ForeachPackData *fpd, gint length)
     {
       gpointer obj = _alloc_and_unpack (fpd);
 
+      /* Don't use g_slist_prepend here since it is mandatory to keep
+         point list in the same order between fw and bw transfers */
       objlist  = g_slist_append (objlist, obj);
     }
 
@@ -407,8 +409,8 @@ void vsg_prtree2@t@_set_parallel (VsgPRTree2@t@ *tree,
           MPI_Bcast (bounds, 2, VSG_MPI_TYPE_VECTOR2@T@, 0, comm);
 
 /*       g_printerr ("%d: bounds", rk); */
-/*       vsg_vector2d_write (&bounds[0], stderr); */
-/*       vsg_vector2d_write (&bounds[1], stderr); */
+/*       vsg_vector2@t@_write (&bounds[0], stderr); */
+/*       vsg_vector2@t@_write (&bounds[1], stderr); */
 /*       g_printerr ("\n"); */
 
           /* send regions to 0 */
@@ -462,8 +464,8 @@ void vsg_prtree2@t@_set_parallel (VsgPRTree2@t@ *tree,
           MPI_Bcast (bounds, 2, VSG_MPI_TYPE_VECTOR2@T@, 0, comm);
 
 /*       g_printerr ("%d: bounds", rk); */
-/*       vsg_vector2d_write (&bounds[0], stderr); */
-/*       vsg_vector2d_write (&bounds[1], stderr); */
+/*       vsg_vector2@t@_write (&bounds[0], stderr); */
+/*       vsg_vector2@t@_write (&bounds[1], stderr); */
 /*       g_printerr ("\n"); */
 
           /* receive other procs regions */
