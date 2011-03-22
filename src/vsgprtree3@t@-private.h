@@ -196,6 +196,8 @@ struct _VsgPRTree3@t@ {
 
 struct _VsgNFConfig3@t@
 {
+  VsgPRTree3@t@ *tree;
+
   VsgPRTree3@t@FarInteractionFunc far_func;
   VsgPRTree3@t@InteractionFunc near_func;
   gpointer user_data;
@@ -272,7 +274,7 @@ void vsg_prtree3@t@node_make_int (VsgPRTree3@t@Node *node,
 
 #ifdef VSG_HAVE_MPI
 void vsg_nf_config3@t@_init (VsgNFConfig3@t@ *nfc,
-                             MPI_Comm comm,
+                             VsgPRTree3@t@ *tree,
                              VsgPRTree3@t@FarInteractionFunc far_func,
                              VsgPRTree3@t@InteractionFunc near_func,
                              gpointer user_data);
@@ -288,20 +290,17 @@ void vsg_nf_config3@t@_tmp_free (VsgNFConfig3@t@ *nfc,
 void vsg_nf_config3@t@_clean (VsgNFConfig3@t@ *nfc);
 
 gboolean
-vsg_prtree3@t@_node_check_parallel_near_far (VsgPRTree3@t@ *tree,
-                                             VsgNFConfig3@t@ *nfc,
+vsg_prtree3@t@_node_check_parallel_near_far (VsgNFConfig3@t@ *nfc,
                                              VsgPRTree3@t@Node *node,
                                              VsgPRTree3@t@NodeInfo *info,
                                              gboolean do_traversal);
 
-gint vsg_prtree3@t@_nf_check_send (VsgPRTree3@t@ *tree, VsgNFConfig3@t@ *nfc);
+gint vsg_prtree3@t@_nf_check_send (VsgNFConfig3@t@ *nfc);
 
-gboolean vsg_prtree3@t@_nf_check_receive (VsgPRTree3@t@ *tree,
-                                          VsgNFConfig3@t@ *nfc, gint tag,
+gboolean vsg_prtree3@t@_nf_check_receive (VsgNFConfig3@t@ *nfc, gint tag,
                                           gboolean blocking);
 void
-vsg_prtree3@t@_nf_check_parallel_end (VsgPRTree3@t@ *tree,
-                                      VsgNFConfig3@t@ *nfc);
+vsg_prtree3@t@_nf_check_parallel_end (VsgNFConfig3@t@ *nfc);
 
 void vsg_prtree3@t@_update_remote_depths (VsgPRTree3@t@ *tree);
 
@@ -309,8 +308,7 @@ void vsg_prtree3@t@node_recursive_near_func (VsgPRTree3@t@Node *one,
                                              VsgPRTree3@t@NodeInfo *one_info,
                                              VsgPRTree3@t@Node *other,
                                              VsgPRTree3@t@NodeInfo *other_info,
-                                             VsgPRTree3@t@InteractionFunc near_func,
-                                             gpointer user_data);
+                                             VsgNFConfig3@t@ *nfc);
 
 
 G_END_DECLS;
