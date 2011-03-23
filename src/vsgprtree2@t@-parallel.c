@@ -1422,11 +1422,15 @@ static void vsg_nf_proc_msg_free (VsgNFProcMsg *nfpm)
  * Initializes a VsgNFConfig2@t@.
  */
 void vsg_nf_config2@t@_init (VsgNFConfig2@t@ *nfc,
-                             MPI_Comm comm,
+                             VsgPRTree2@t@ *tree,
                              VsgPRTree2@t@FarInteractionFunc far_func,
                              VsgPRTree2@t@InteractionFunc near_func,
                              gpointer user_data)
 {
+  MPI_Comm comm = tree->config.parallel_config.communicator;
+
+  nfc->tree = tree;
+
   nfc->far_func = far_func;
   nfc->near_func = near_func;
   nfc->user_data = user_data;
@@ -1649,15 +1653,15 @@ static void _visiting_node_free (VsgPRTree2@t@Node *node,
   vsg_prtree2@t@node_free (node, config);
 }
 
-static void _do_send_forward_node (VsgPRTree2@t@ *tree,
-                                   VsgNFConfig2@t@ *nfc,
+static void _do_send_forward_node (VsgNFConfig2@t@ *nfc,
                                    VsgNFProcMsg *nfpm,
                                    VsgPRTree2@t@Node *node,
                                    VsgPRTreeKey2@t@ *id,
                                    gint proc)
 {
   VsgPackedMsg *msg = &nfpm->send_pm;
-  NodePackData npd = NPD_VISIT_FORWARD (&tree->config.parallel_config, msg);
+  NodePackData npd =
+    NPD_VISIT_FORWARD (&nfc->tree->config.parallel_config, msg);
 
   msg->position = 0;
 
@@ -1669,8 +1673,7 @@ static void _do_send_forward_node (VsgPRTree2@t@ *tree,
   nfc->all_fw_sends ++;
 }
 
-static void _send_pending_forward_node (VsgPRTree2@t@ *tree,
-                                        VsgNFConfig2@t@ *nfc,
+static void _send_pending_forward_node (VsgNFConfig2@t@ *nfc,
                                         VsgNFProcMsg *nfpm,
                                         gint proc)
 {
@@ -1680,7 +1683,7 @@ static void _send_pending_forward_node (VsgPRTree2@t@ *tree,
   nfpm->forward_pending = g_slist_next (nfpm->forward_pending);
   g_slist_free_1 (first);
 
-  _do_send_forward_node (tree, nfc, nfpm, wv->node, &wv->id, proc);
+  _do_send_forward_node (nfc, nfpm, wv->node, &wv->id, proc);
 
   _waiting_visitor_free (wv);
 
@@ -1692,15 +1695,15 @@ static void _send_pending_forward_node (VsgPRTree2@t@ *tree,
 /* static gint _bw_pending_sum = 0; */
 /* static gint _bw_pending_calls = 0; */
 
-static void _do_send_backward_node (VsgPRTree2@t@ *tree,
-                                    VsgNFConfig2@t@ *nfc,
+static void _do_send_backward_node (VsgNFConfig2@t@ *nfc,
                                     VsgNFProcMsg *nfpm,
                                     VsgPRTree2@t@Node *node,
                                     VsgPRTreeKey2@t@ *id,
                                     gint proc)
 {
   VsgPackedMsg *msg = &nfpm->send_pm;
-  NodePackData npd = NPD_VISIT_BACKWARD (&tree->config.parallel_config, msg);
+  NodePackData npd =
+    NPD_VISIT_BACKWARD (&nfc->tree->config.parallel_config, msg);
 
 /*   gint _bw_pending_length = g_slist_length (nfpm->backward_pending); */
 
@@ -1727,20 +1730,20 @@ static void _do_send_backward_node (VsgPRTree2@t@ *tree,
 
   vsg_packed_msg_send_append (msg, id, 1, VSG_MPI_TYPE_PRTREE_KEY2@T@);
   _node_pack_and_destroy (node, &npd);
-  vsg_prtree2@t@node_free (node, &tree->config);
+  vsg_prtree2@t@node_free (node, &nfc->tree->config);
 
   _nf_msg_isend (msg, proc, VISIT_BACKWARD_TAG, &nfc->procs_requests[proc]);
 
   nfc->all_bw_sends ++;
 }
 
-static void _send_pending_backward_node (VsgPRTree2@t@ *tree,
-                                         VsgNFConfig2@t@ *nfc,
+static void _send_pending_backward_node (VsgNFConfig2@t@ *nfc,
                                          VsgNFProcMsg *nfpm,
                                          gint proc)
 {
   VsgPackedMsg *msg = &nfpm->send_pm;
-  NodePackData npd = NPD_VISIT_BACKWARD (&tree->config.parallel_config, msg);
+  NodePackData npd =
+    NPD_VISIT_BACKWARD (&nfc->tree->config.parallel_config, msg);
   gint maxsize = MAX (_packed_msg_max_size, vsg_packed_msg_header_size ()+1);
   gint sending = 0;
 
@@ -1771,7 +1774,7 @@ static void _send_pending_backward_node (VsgPRTree2@t@ *tree,
 
       vsg_packed_msg_send_append (msg, &wv->id, 1, VSG_MPI_TYPE_PRTREE_KEY2@T@);
       _node_pack_and_destroy (wv->node, &npd);
-      vsg_prtree2@t@node_free (wv->node, &tree->config);
+      vsg_prtree2@t@node_free (wv->node, &nfc->tree->config);
 
       _waiting_visitor_free (wv);
 
@@ -1789,8 +1792,7 @@ static void _send_pending_backward_node (VsgPRTree2@t@ *tree,
     }
 }
 
-static void _propose_node_forward (VsgPRTree2@t@ *tree,
-                                   VsgNFConfig2@t@ *nfc,
+static void _propose_node_forward (VsgNFConfig2@t@ *nfc,
                                    gint proc,
                                    VsgPRTree2@t@Node *node,
                                    VsgPRTreeKey2@t@ *id)
@@ -1804,7 +1806,7 @@ static void _propose_node_forward (VsgPRTree2@t@ *tree,
 
   if (flag && nfpm->backward_pending == NULL)
     {
-      _do_send_forward_node (tree, nfc, nfpm, node, id, proc);
+      _do_send_forward_node (nfc, nfpm, node, id, proc);
 
 /*       g_printerr ("%d : propose fw direct to %d - ", nfc->rk, proc); */
 /*       vsg_prtree_key2@t@_write (id, stderr); */
@@ -1824,15 +1826,14 @@ static void _propose_node_forward (VsgPRTree2@t@ *tree,
 
       if (flag)
         {
-          _send_pending_backward_node (tree, nfc, nfpm, proc);
+          _send_pending_backward_node (nfc, nfpm, proc);
         }
 
       nfc->forward_pending_nb ++;
     }
 
 }
-static void _propose_node_backward (VsgPRTree2@t@ *tree,
-                                    VsgNFConfig2@t@ *nfc,
+static void _propose_node_backward (VsgNFConfig2@t@ *nfc,
                                     gint proc,
                                     WaitingVisitor *wv)
 {
@@ -1845,7 +1846,7 @@ static void _propose_node_backward (VsgPRTree2@t@ *tree,
 
   if (flag != 0)
     {
-      _do_send_backward_node (tree, nfc, nfpm, wv->node, &wv->id, proc);
+      _do_send_backward_node (nfc, nfpm, wv->node, &wv->id, proc);
 
 /*       g_printerr ("%d : propose bw direct to %d - ", nfc->rk, proc); */
 /*       vsg_prtree_key2@t@_write (&wv->id, stderr); */
@@ -1874,9 +1875,7 @@ typedef struct _NIAndFuncs NIAndFuncs;
 struct _NIAndFuncs {
   VsgPRTree2@t@Node *ref;
   VsgPRTree2@t@NodeInfo ref_info;
-  VsgPRTree2@t@FarInteractionFunc far_func;
-  VsgPRTree2@t@InteractionFunc near_func;
-  gpointer user_data;
+  VsgNFConfig2@t@ *nfc;
   VsgPRTreeKey2@t@ *ref_ancestry_ids;
   gint8 done_flag;
 };
@@ -1915,8 +1914,7 @@ static void _traverse_visiting_nf (VsgPRTree2@t@Node *node,
 
               vsg_prtree2@t@node_recursive_near_func (niaf->ref, ref_info,
                                                       node, node_info,
-                                                      niaf->near_func,
-                                                      niaf->user_data);
+                                                      niaf->nfc);
               niaf->done_flag |= 1;
             }
         }
@@ -1930,7 +1928,8 @@ static void _traverse_visiting_nf (VsgPRTree2@t@Node *node,
 /*         vsg_prtree_key2@t@_write (&node_info->id, stderr); */
 /*         g_printerr ("]\n"); */
 
-          fardone = niaf->far_func (ref_info, node_info, niaf->user_data);
+          fardone = niaf->nfc->far_func (ref_info, node_info,
+                                         niaf->nfc->user_data);
           if (! fardone)
             g_critical ("far_func() -> FALSE not handled in \"%s\"",
                         __PRETTY_FUNCTION__);
@@ -2014,8 +2013,7 @@ _prtree2@t@node_traverse_visiting_nf (VsgPRTree2@t@Node *node,
 /*
  * operates a traversal of near/far interactions for a visiting node.
  */
-static gboolean _compute_visiting_node (VsgPRTree2@t@ *tree,
-                                        VsgNFConfig2@t@ *nfc,
+static gboolean _compute_visiting_node (VsgNFConfig2@t@ *nfc,
                                         WaitingVisitor *wv)
 {
   NIAndFuncs niaf;
@@ -2023,9 +2021,7 @@ static gboolean _compute_visiting_node (VsgPRTree2@t@ *tree,
   gint i;
 
   niaf.ref = wv->node;
-  niaf.far_func = nfc->far_func;
-  niaf.near_func = nfc->near_func;
-  niaf.user_data = nfc->user_data;
+  niaf.nfc = nfc;
 
   _vsg_prtree2@t@node_get_info (wv->node, &niaf.ref_info, NULL, 0);
   memcpy (&niaf.ref_info.id, &wv->id, sizeof (VsgPRTreeKey2@t@));
@@ -2048,7 +2044,7 @@ static gboolean _compute_visiting_node (VsgPRTree2@t@ *tree,
 
   niaf.done_flag = 0;
 
-  _prtree2@t@node_traverse_visiting_nf (tree->node, NULL, 0, &niaf,
+  _prtree2@t@node_traverse_visiting_nf (nfc->tree->node, NULL, 0, &niaf,
                                         ref_ancestry_ids);
 
   if (niaf.done_flag == 0)
@@ -2060,7 +2056,7 @@ static gboolean _compute_visiting_node (VsgPRTree2@t@ *tree,
       VsgNFProcMsg *nfpm = vsg_nf_config2@t@_proc_msgs_lookup (nfc, wv->src);
 
       nfpm->dropped_visitors ++;
-      _visiting_node_free (wv->node, &tree->config);
+      _visiting_node_free (wv->node, &nfc->tree->config);
       _waiting_visitor_free (wv);
 
       return FALSE;
@@ -2076,18 +2072,11 @@ static gboolean _compute_visiting_node (VsgPRTree2@t@ *tree,
   return TRUE;
 }
 
-typedef struct _NFSendData NFSendData;
-struct _NFSendData {
-  VsgPRTree2@t@ *tree;
-  VsgNFConfig2@t@ *nfc;
-  gint sent;
-};
-
 /*
  * checks for all completed VsgNFPocMsg requests and fills the
  * requests with pending msgs.
  */
-gint vsg_prtree2@t@_nf_check_send (VsgPRTree2@t@ *tree, VsgNFConfig2@t@ *nfc)
+gint vsg_prtree2@t@_nf_check_send (VsgNFConfig2@t@ *nfc)
 {
   gint sent = 0;
   gint flag = FALSE;
@@ -2102,13 +2091,13 @@ gint vsg_prtree2@t@_nf_check_send (VsgPRTree2@t@ *tree, VsgNFConfig2@t@ *nfc)
       if (nfpm->backward_pending != NULL)
         {
           /* First, check for backward messages */
-          _send_pending_backward_node (tree, nfc, nfpm, index);
+          _send_pending_backward_node (nfc, nfpm, index);
           sent ++;
         }
       else if (nfpm->forward_pending != NULL)
         {
           /* Fallback into forward message */
-          _send_pending_forward_node (tree, nfc, nfpm, index);
+          _send_pending_forward_node (nfc, nfpm, index);
           sent ++;
         }
 
@@ -2179,12 +2168,11 @@ static gint _dropped_count = 0;
  * until any receive happens. The time spent waiting will be used in
  * pending computations (of visitors) or in sending pending messages.
  */
-gboolean vsg_prtree2@t@_nf_check_receive (VsgPRTree2@t@ *tree,
-                                          VsgNFConfig2@t@ *nfc, gint tag,
+gboolean vsg_prtree2@t@_nf_check_receive (VsgNFConfig2@t@ *nfc, gint tag,
                                           gboolean blocking)
 {
   gint flag = FALSE;
-  VsgPRTree2@t@Config *config = &tree->config;
+  VsgPRTree2@t@Config *config = &nfc->tree->config;
   VsgPRTreeParallelConfig * pc = &config->parallel_config;
   MPI_Status status;
   gint received = 0;
@@ -2196,7 +2184,7 @@ gboolean vsg_prtree2@t@_nf_check_receive (VsgPRTree2@t@ *tree,
       while (!flag)
         {
           if ((nfc->forward_pending_nb + nfc->backward_pending_nb) > 0 &&
-              vsg_prtree2@t@_nf_check_send (tree, nfc) == 0)
+              vsg_prtree2@t@_nf_check_send (nfc) == 0)
             {
               /* fallback asleep for just a moment before rechecking */
               g_usleep (1);
@@ -2236,19 +2224,19 @@ gboolean vsg_prtree2@t@_nf_check_receive (VsgPRTree2@t@ *tree,
 /*           g_printerr ("\n"); */
 /*         fflush (stderr); */
 
-          node = _new_visiting_node (tree, &id, status.MPI_SOURCE);
+          node = _new_visiting_node (nfc->tree, &id, status.MPI_SOURCE);
 
           wv = _waiting_visitor_new (node, &id, status.MPI_SOURCE);
 
           _node_unpack (node, &npd);
 
           /* compute nf interactions with local tree */
-          if (_compute_visiting_node (tree, nfc, wv))
+          if (_compute_visiting_node (nfc, wv))
             {
-              _propose_node_backward (tree, nfc, status.MPI_SOURCE, wv);
+              _propose_node_backward (nfc, status.MPI_SOURCE, wv);
             }
           else
-            vsg_prtree2@t@_nf_check_send (tree, nfc);
+            vsg_prtree2@t@_nf_check_send (nfc);
 
           nfc->all_fw_recvs ++;
 
@@ -2283,7 +2271,7 @@ gboolean vsg_prtree2@t@_nf_check_receive (VsgPRTree2@t@ *tree,
                                         VSG_MPI_TYPE_PRTREE_KEY2@T@);
             }
 
-          node = vsg_prtree2@t@node_key_lookup (tree->node, id);
+          node = vsg_prtree2@t@node_key_lookup (nfc->tree->node, id);
 
 /*         g_printerr ("%d(%d) : bw recv from %d - ", nfc->rk, getpid (), */
 /*                     status.MPI_SOURCE); */
@@ -2332,7 +2320,6 @@ gboolean vsg_prtree2@t@_nf_check_receive (VsgPRTree2@t@ *tree,
 typedef struct _NodeRemoteData NodeRemoteData;
 struct _NodeRemoteData
 {
-  VsgPRTree2@t@ *tree;
   VsgNFConfig2@t@ *nfc;
   VsgPRTree2@t@Node *ref_node;
   VsgPRTree2@t@NodeInfo *ref_info;
@@ -2463,7 +2450,7 @@ static void _traverse_check_remote_neighbours (VsgPRTree2@t@Node *node,
       else
         if (ref_info->point_count == 0) return;
 
-      _propose_node_forward (data->tree, data->nfc, proc,
+      _propose_node_forward (data->nfc, proc,
                              data->ref_node, &data->ref_info->id);
 
       data->procs[proc] = TRUE;
@@ -2511,8 +2498,7 @@ _prtree2@t@node_traverse_check_parallel (VsgPRTree2@t@Node *node,
  * LOCAL and was sent to another processor.
  */
 gboolean
-vsg_prtree2@t@_node_check_parallel_near_far (VsgPRTree2@t@ *tree,
-                                             VsgNFConfig2@t@ *nfc,
+vsg_prtree2@t@_node_check_parallel_near_far (VsgNFConfig2@t@ *nfc,
                                              VsgPRTree2@t@Node *node,
                                              VsgPRTree2@t@NodeInfo *info,
                                              gboolean do_traversal)
@@ -2521,7 +2507,7 @@ vsg_prtree2@t@_node_check_parallel_near_far (VsgPRTree2@t@ *tree,
 
   if (nfc->sz < 2) return FALSE;
 
-  vsg_prtree2@t@_nf_check_receive (tree, nfc, MPI_ANY_TAG, FALSE);
+  vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, FALSE);
 
   if (do_traversal && VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (info))
     {
@@ -2529,7 +2515,6 @@ vsg_prtree2@t@_node_check_parallel_near_far (VsgPRTree2@t@ *tree,
       NodeRemoteData nrd;
       VsgPRTreeKey2@t@ ref_ancestry_ids[sizeof (@key_type@) * 8];
 
-      nrd.tree = tree;
       nrd.nfc = nfc;
       nrd.ref_node = node;
       nrd.ref_info = info;
@@ -2547,13 +2532,13 @@ vsg_prtree2@t@_node_check_parallel_near_far (VsgPRTree2@t@ *tree,
       memset (nrd.procs, 0, nfc->sz * sizeof (gboolean));
       nrd.sent = FALSE;
 
-      _prtree2@t@node_traverse_check_parallel (tree->node, NULL, 0, &nrd,
+      _prtree2@t@node_traverse_check_parallel (nfc->tree->node, NULL, 0, &nrd,
                                                ref_ancestry_ids);
 
       ret = nrd.sent;
     }
 
-  vsg_prtree2@t@_nf_check_send (tree, nfc);
+  vsg_prtree2@t@_nf_check_send (nfc);
 
   return ret;
 }
@@ -2767,13 +2752,12 @@ vsg_prtree2@t@_shared_nodes_allreduce (VsgPRTree2@t@ *tree,
  * finishes all communication and computations involved in a parallel near/far
  * interaction.
  */
-void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
-                                           VsgNFConfig2@t@ *nfc)
+void vsg_prtree2@t@_nf_check_parallel_end (VsgNFConfig2@t@ *nfc)
 {
-  MPI_Comm comm = tree->config.parallel_config.communicator;
+  MPI_Comm comm = nfc->tree->config.parallel_config.communicator;
   gint i, dst;
   VsgParallelMigrateVTable *data_bw_vtable =
-    &tree->config.parallel_config.node_data.visit_backward;
+    &nfc->tree->config.parallel_config.node_data.visit_backward;
   VsgPackedMsg pm[nfc->sz];
   MPI_Request end_fw_reqs[nfc->sz];
   /* GTimer *timer = g_timer_new (); */
@@ -2785,8 +2769,8 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
 
   while (nfc->forward_pending_nb > 0)
     {
-      vsg_prtree2@t@_nf_check_receive (tree, nfc, MPI_ANY_TAG, FALSE);
-      vsg_prtree2@t@_nf_check_send (tree, nfc);
+      vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, FALSE);
+      vsg_prtree2@t@_nf_check_send (nfc);
     }
 
   end_fw_reqs[nfc->rk] = MPI_REQUEST_NULL;
@@ -2813,9 +2797,9 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
         }
       else
         {
-          vsg_prtree2@t@_nf_check_send (tree, nfc);
+          vsg_prtree2@t@_nf_check_send (nfc);
           /* fall asleep if no message is incoming */
-          if (! vsg_prtree2@t@_nf_check_receive (tree, nfc, MPI_ANY_TAG, FALSE))
+          if (! vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, FALSE))
             g_usleep (1);
         }
     }
@@ -2836,7 +2820,7 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
   while (nfc->pending_end_forward > 0)
     {
 /*     g_printerr ("%d : check %d\n", nfc->rk,  nfc->end_forward_received); */
-      vsg_prtree2@t@_nf_check_receive (tree, nfc, MPI_ANY_TAG, TRUE);
+      vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, TRUE);
     }
 
 /*   g_printerr ("%d : end fw received (elapsed %f)\n", nfc->rk, */
@@ -2853,8 +2837,8 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
     {
 /*       g_printerr ("%d : pending bw %d\n", */
 /*                   nfc->rk, nfc->pending_backward_msgs); */
-      vsg_prtree2@t@_nf_check_send (tree, nfc);
-      vsg_prtree2@t@_nf_check_receive (tree, nfc, MPI_ANY_TAG, FALSE);
+      vsg_prtree2@t@_nf_check_send (nfc);
+      vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, FALSE);
     }
 
   /* send information on all remaining dropped visitors */
@@ -2865,7 +2849,7 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
 
   while (nfc->pending_backward_msgs > 0)
     {
-      vsg_prtree2@t@_nf_check_receive (tree, nfc, MPI_ANY_TAG, TRUE);
+      vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, TRUE);
     }
 
   /* g_printerr ("%d : pending bw recv ok elapsed=%g seconds\n", nfc->rk, */
@@ -2883,7 +2867,7 @@ void vsg_prtree2@t@_nf_check_parallel_end (VsgPRTree2@t@ *tree,
 
   if (data_bw_vtable->pack != NULL && data_bw_vtable->unpack != NULL)
 
-    _shared_nodes_allreduce_internal (tree, data_bw_vtable,
+    _shared_nodes_allreduce_internal (nfc->tree, data_bw_vtable,
                                       nfc->tmp_node_data);
 
   /* g_printerr ("%d : parallel_end done elapsed=%g seconds\n", nfc->rk, */
