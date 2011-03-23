@@ -175,6 +175,11 @@ static void recursive_near_func (VsgPRTree2@t@Node *one,
 {
   vsgloc2 i;
 
+#ifdef VSG_HAVE_MPI
+  if (nfc->sz > 1)
+    vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, FALSE);
+#endif
+
   if (PRTREE2@T@NODE_ISINT (one))
     {
       for (i=0; i<4; i++)
@@ -318,6 +323,10 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
                           PRTREE2@T@NODE_IS_SHARED (other_child) &&
                           PRTREE2@T@NODE_PROC (one_child) != nfc->rk)
                         continue;
+
+                      if (nfc->sz > 1)
+                        vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG,
+                                                         FALSE);
 #endif
 
                       far_done = nfc->far_func (&one_child_info, &other_child_info,
@@ -587,7 +596,7 @@ vsg_prtree2@t@_near_far_traversal (VsgPRTree2@t@ *prtree2@t@,
 #endif
 
 #ifdef VSG_HAVE_MPI
-  /* vsg_packed_msg_trace ("enter 1 [nf traversal]"); */
+  vsg_packed_msg_trace ("enter 1 [nf traversal]");
 
   vsg_nf_config2@t@_init (&nfc, prtree2@t@, far_func, near_func, user_data);
 
@@ -611,8 +620,8 @@ vsg_prtree2@t@_near_far_traversal (VsgPRTree2@t@ *prtree2@t@,
                                          NULL, 0, TRUE);
 
 #ifdef VSG_HAVE_MPI
-  /* vsg_packed_msg_trace ("leave 1 [nf traversal]"); */
-  /* vsg_packed_msg_trace ("enter 1 [nf parallel_end]"); */
+  vsg_packed_msg_trace ("leave 1 [nf traversal]");
+  vsg_packed_msg_trace ("enter 1 [nf parallel_end]");
 
   if (nfc.sz > 1)
     {
@@ -623,7 +632,7 @@ vsg_prtree2@t@_near_far_traversal (VsgPRTree2@t@ *prtree2@t@,
 
   vsg_nf_config2@t@_clean (&nfc);
 
-  /* vsg_packed_msg_trace ("leave 1 [nf parallel_end]"); */
+  vsg_packed_msg_trace ("leave 1 [nf parallel_end]");
 #endif
 
 }
