@@ -1436,6 +1436,7 @@ void vsg_nf_config3@t@_init (VsgNFConfig3@t@ *nfc,
   nfc->user_data = user_data;
 
   vsg_packed_msg_init (&nfc->recv, comm);
+  nfc->recv_lock = FALSE;
   nfc->procs_msgs = NULL;
   nfc->procs_requests = NULL;
 
@@ -2183,6 +2184,8 @@ gboolean vsg_prtree3@t@_nf_check_receive (VsgNFConfig3@t@ *nfc, gint tag,
   MPI_Status status;
   gint received = 0;
 
+  if (nfc->recv_lock) return FALSE;
+
   MPI_Iprobe (MPI_ANY_SOURCE, tag, pc->communicator, &flag, &status);
 
   if (blocking)
@@ -2212,6 +2215,7 @@ gboolean vsg_prtree3@t@_nf_check_receive (VsgNFConfig3@t@ *nfc, gint tag,
       flag = FALSE;
       received ++;
 
+      nfc->recv_lock = TRUE;
       vsg_packed_msg_recv (&nfc->recv, status.MPI_SOURCE, status.MPI_TAG);
 
 /*       g_printerr ("%d : check_recv recv completed\n", nfc->rk); */
@@ -2317,6 +2321,7 @@ gboolean vsg_prtree3@t@_nf_check_receive (VsgNFConfig3@t@ *nfc, gint tag,
 /*                   nfc->pending_backward_msgs, */
 /*                   nfc->forward_pending_nb, */
 /*                   nfc->backward_pending_nb); */
+      nfc->recv_lock = FALSE;
 
     }
 

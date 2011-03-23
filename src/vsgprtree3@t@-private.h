@@ -207,6 +207,7 @@ struct _VsgNFConfig3@t@
 
 #ifdef VSG_HAVE_MPI
   VsgPackedMsg recv;
+  gboolean recv_lock;
   GHashTable *procs_msgs;
   MPI_Request *procs_requests;
   gpointer tmp_node_data;
