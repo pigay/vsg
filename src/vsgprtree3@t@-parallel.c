@@ -2216,7 +2216,7 @@ gboolean vsg_prtree3@t@_nf_check_receive (VsgNFConfig3@t@ *nfc, gint tag,
       received ++;
 
       nfc->recv_lock = TRUE;
-      vsg_packed_msg_recv (&nfc->recv, status.MPI_SOURCE, status.MPI_TAG);
+      vsg_packed_msg_recv_probed (&nfc->recv, &status);
 
 /*       g_printerr ("%d : check_recv recv completed\n", nfc->rk); */
 

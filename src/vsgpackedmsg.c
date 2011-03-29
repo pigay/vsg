@@ -692,6 +692,36 @@ void vsg_packed_msg_recv (VsgPackedMsg *pm, gint src, gint tag)
 }
 
 /**
+ * vsg_packed_msg_recv_probed:
+ * @pm: a #VsgPackedMsg.
+ * @status: probed #MPI_Status
+ *
+ * Receives an already probed from @status message and stores it in
+ * @pm. any previously stored data will be lost.
+ */
+void vsg_packed_msg_recv_probed (VsgPackedMsg *pm, MPI_Status *status)
+{
+  gint ierr;
+  gint rsize = 0;
+
+  g_assert (pm->own_buffer == TRUE);
+
+  MPI_Get_count (status, MPI_PACKED, &rsize);
+
+  pm->buffer = g_realloc (pm->buffer, rsize);
+  pm->size = rsize;
+
+  ierr = MPI_Recv (pm->buffer, rsize, MPI_PACKED, status->MPI_SOURCE,
+                   status->MPI_TAG, pm->communicator, status);
+
+  _trace_write_msg_recv (pm, "recv", status->MPI_SOURCE, status->MPI_TAG);
+
+  pm->position = _PM_BEGIN_POS;
+
+  if (ierr != MPI_SUCCESS) vsg_mpi_error_output (ierr);
+}
+
+/**
  * vsg_packed_msg_bcast:
  * @pm: a #VsgPackedMsg.
  * @src: the source task id. Can be %MPI_ANY_SOURCE.

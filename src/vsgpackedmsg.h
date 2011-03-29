@@ -91,6 +91,7 @@ void vsg_packed_msg_issend (VsgPackedMsg *pm, gint dst, gint tag,
 void vsg_packed_msg_wait (VsgPackedMsg *pm, MPI_Request *request);
 
 void vsg_packed_msg_recv (VsgPackedMsg *pm, gint src, gint tag);
+void vsg_packed_msg_recv_probed (VsgPackedMsg *pm, MPI_Status *status);
 
 void vsg_packed_msg_bcast (VsgPackedMsg *pm, gint src);
 
