@@ -214,6 +214,7 @@ static inline void _trace_set_msgid (VsgPackedMsg *msg, _trace_id msgid)
     {
       msg->buffer = g_malloc0 (_PM_ID_SIZE);
       msg->size = _PM_ID_SIZE;
+      msg->allocated = msg->size;
     }
 
   MPI_Pack (&msgid, 1, _MPI_TRACE_ID_TYPE, msg->buffer, msg->size,
@@ -362,6 +363,7 @@ void vsg_packed_msg_init (VsgPackedMsg *pm, MPI_Comm comm)
 #endif
   pm->position = _PM_BEGIN_POS;
   pm->size = _PM_ID_SIZE;
+  pm->allocated = pm->size;
   pm->own_buffer = TRUE;
 }
 
@@ -424,6 +426,7 @@ void vsg_packed_msg_send_append (VsgPackedMsg *pm, gpointer buf,
     {
       if (pm->buffer == NULL) pm->buffer = g_malloc0 (_PM_ID_SIZE);
       pm->size = MAX (pm->size, _PM_ID_SIZE);
+      pm->allocated = pm->size;
       pm->position = _PM_BEGIN_POS;
     }
 #endif
@@ -442,6 +445,7 @@ void vsg_packed_msg_send_append (VsgPackedMsg *pm, gpointer buf,
       pm->buffer = g_realloc (pm->buffer, size * sizeof (char));
 
       pm->size = size;
+      pm->allocated = pm->size;
     }
 
   ierr = MPI_Pack (buf, count, type, pm->buffer, size,
@@ -718,7 +722,12 @@ void vsg_packed_msg_recv (VsgPackedMsg *pm, gint src, gint tag)
 
   MPI_Get_count (&status, MPI_PACKED, &rsize);
 
-  pm->buffer = g_realloc (pm->buffer, rsize);
+  if (rsize > pm->allocated)
+    {
+      pm->buffer = g_realloc (pm->buffer, rsize);
+      pm->allocated = rsize;
+    }
+
   pm->size = rsize;
 
   ierr = MPI_Recv (pm->buffer, rsize, MPI_PACKED, src, tag,
@@ -727,7 +736,7 @@ void vsg_packed_msg_recv (VsgPackedMsg *pm, gint src, gint tag)
   _recv_count ++;
   _recv_size += rsize;
 
-  _trace_write_msg_recv (pm, "recv", src, tag);
+  _trace_write_msg_recv (pm, "recv", status.MPI_SOURCE, status.MPI_TAG);
 
   pm->position = _PM_BEGIN_POS;
 
@@ -751,7 +760,12 @@ void vsg_packed_msg_recv_probed (VsgPackedMsg *pm, MPI_Status *status)
 
   MPI_Get_count (status, MPI_PACKED, &rsize);
 
-  pm->buffer = g_realloc (pm->buffer, rsize);
+  if (rsize > pm->allocated)
+    {
+      pm->buffer = g_realloc (pm->buffer, rsize);
+      pm->allocated = rsize;
+    }
+
   pm->size = rsize;
 
   ierr = MPI_Recv (pm->buffer, rsize, MPI_PACKED, status->MPI_SOURCE,
@@ -838,6 +852,7 @@ void vsg_packed_msg_drop_buffer (VsgPackedMsg *pm)
   pm->buffer = NULL;
   pm->position = 0;
   pm->size = 0;
+  pm->allocated = 0;
   pm->own_buffer = TRUE;
 }
 

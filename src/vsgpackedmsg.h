@@ -39,6 +39,7 @@ struct _VsgPackedMsg
   gchar *buffer;
   gint position;
   gint size;
+  gint allocated;
   gboolean own_buffer;
 };
 
@@ -53,7 +54,7 @@ struct _VsgPackedMsgCounters
 };
 
 #define VSG_PACKED_MSG_STATIC_INIT(comm) \
-{(comm), NULL, 0, 0, TRUE}
+{(comm), NULL, 0, 0, 0, TRUE}
 
 static const VsgPackedMsg VSG_PACKED_MSG_NULL =
 VSG_PACKED_MSG_STATIC_INIT (MPI_COMM_NULL);
