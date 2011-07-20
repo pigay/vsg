@@ -730,8 +730,8 @@ void vsg_packed_msg_recv (VsgPackedMsg *pm, gint src, gint tag)
 
   pm->size = rsize;
 
-  ierr = MPI_Recv (pm->buffer, rsize, MPI_PACKED, src, tag,
-                   pm->communicator, &status);
+  ierr = MPI_Recv (pm->buffer, rsize, MPI_PACKED, status.MPI_SOURCE,
+                   status.MPI_TAG, pm->communicator, &status);
 
   _recv_count ++;
   _recv_size += rsize;
