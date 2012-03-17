@@ -1,3 +1,7 @@
+testsuite
+testsuite.dir/
+testsuite.log
+package.m4
 vec2add
 atconfig
 atlocal
