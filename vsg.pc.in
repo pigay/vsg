@@ -5,7 +5,9 @@ includedir=@includedir@
 
 Name: LibVsg
 Description: Visaurin Geometric Library
+URL: http://www.libvsg.org
 Version: @VERSION@
+Requires.private: vsgd vsgf glib-2.0 gobject-2.0
 Libs: -L${libdir} -lvsg @MPI_LIBS@
 Cflags: -I${includedir} @MPI_CFLAGS@
 

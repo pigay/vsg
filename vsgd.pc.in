@@ -6,6 +6,7 @@ includedir=@includedir@
 Name: LibVsgDouble
 Description: Double Precision Visaurin Geometric Library
 Version: @VERSION@
+Requires: glib-2.0 gobject-2.0
 Libs: -L${libdir} -lvsgd @MPI_LIBS@
 Cflags: -I${includedir} @MPI_CFLAGS@
 
