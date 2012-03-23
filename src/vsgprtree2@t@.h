@@ -207,6 +207,11 @@ gboolean vsg_prtree2@t@_insert_point_local (VsgPRTree2@t@ *prtree2@t@,
 gboolean vsg_prtree2@t@_remove_point (VsgPRTree2@t@ *prtree2@t@,
                                       VsgPoint2 point);
 
+gboolean vsg_prtree2@t@_move_point (VsgPRTree2@t@ *prtree2@t@,
+				    VsgPoint2 point,
+				    GFunc move_func,
+				    gpointer move_data);
+
 void vsg_prtree2@t@_insert_region (VsgPRTree2@t@ *prtree2@t@,
 				   VsgRegion2 region);
 
