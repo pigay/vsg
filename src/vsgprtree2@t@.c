@@ -2136,7 +2136,8 @@ void vsg_prtree2@t@_bounds_extend (VsgPRTree2@t@ *prtree2@t@,
     }
 
   /*  take care of single leaf trees that must stay single leaf */
-  if (prtree2@t@->node->point_count <= config->max_point &&
+  if (PRTREE2@T@NODE_ISINT (prtree2@t@->node) &&
+      prtree2@t@->node->point_count <= config->max_point &&
       PRTREE2@T@NODE_IS_LOCAL (prtree2@t@->node))
     _prtree2@t@node_flatten (prtree2@t@->node, config);
 
