@@ -50,6 +50,18 @@ AT_CHECK([mpiexec -n 4 prtree2paradist --hilbert --scatter --np 40], 0)
 AT_CHECK([mpiexec -n 4 prtree2paradist --hilbert --np 400], 0)
 AT_CLEANUP
 
+AT_SETUP(2D Parallel tree move points)
+AT_KEYWORDS (parallel)
+AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
+AT_CHECK([mpiexec -n 1 prtree2mv], 0)
+AT_CHECK([mpiexec -n 2 prtree2mv], 0)
+AT_CHECK([mpiexec -n 2 prtree2mv --mpi], 0)
+AT_CHECK([mpiexec -n 2 prtree2mv --mpi --np 20], 0)
+AT_CHECK([mpiexec -n 2 prtree2mv --mpi --move random --fill random --np 1000 --maxbox 10], 0)
+AT_CHECK([mpiexec -n 2 prtree2mv --mpi --move rotate0.001 --fill random --np 1000 --maxbox 10], 0)
+AT_CHECK([mpiexec -n 2 prtree2mv --mpi --move exterior --fill random --np 1000 --maxbox 10], 0)
+AT_CLEANUP
+
 AT_SETUP(2D Parallel tree near/far traversal)
 AT_KEYWORDS (parallel)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
