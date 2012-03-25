@@ -721,9 +721,97 @@ _prtree3@t@node_remove_point (VsgPRTree3@t@Node *node,
   return ret;
 }
 
-static void _wtabs (FILE *file, guint tab)
+enum _MoveStatus {
+  NOT_FOUND = 0,
+  LOCAL_MOVE = 1,
+  EXTERIOR_MOVE = 2,
+};
+typedef enum _MoveStatus MoveStatus;
+
+static MoveStatus
+_prtree3@t@node_move_point (VsgPRTree3@t@Node *node,
+                            VsgPoint3 point,
+                            GFunc move_func,
+                            gpointer move_data,
+                            const VsgPRTree3@t@Config *config)
 {
-  guint i;
+  vsgloc3 i;
+  MoveStatus ms;
+
+#ifdef VSG_HAVE_MPI
+  if (PRTREE3@T@NODE_IS_REMOTE (node))
+    {
+      /* unable to remove a node located on another processor */
+      return NOT_FOUND;
+    }
+#endif
+
+  if (PRTREE3@T@NODE_ISLEAF (node))
+    {
+      GSList *found = g_slist_find (PRTREE3@T@NODE_LEAF (node).point,
+                                    point);
+
+      if (found != NULL)
+        {
+          /* change point's position */
+          move_func (point, move_data);
+
+          /* check if we need to reinsert point into another node */
+          if (CALL_POINT3@T@_LOC (config, point, &node->lbound) == VSG_LOC3_UNE &&
+              CALL_POINT3@T@_LOC (config, point, &node->ubound) == VSG_LOC3_BSW)
+            {
+              /* fake a remove/insert to get same point order by both methods */
+              PRTREE3@T@NODE_LEAF (node).point =
+                g_slist_remove_link (PRTREE3@T@NODE_LEAF (node).point, found);
+              PRTREE3@T@NODE_LEAF (node).point =
+                g_slist_concat (found, PRTREE3@T@NODE_LEAF (node).point);
+
+              return LOCAL_MOVE;
+            }
+
+          /* remove point from node */
+          PRTREE3@T@NODE_LEAF (node).point =
+            g_slist_remove (PRTREE3@T@NODE_LEAF (node).point, point);
+          node->point_count --;
+
+          /* tell caller to reinsert point elsewhere */
+          return EXTERIOR_MOVE;
+        }
+
+      return NOT_FOUND;
+    }
+
+  i = CALL_POINT3@T@_LOC (config, point, &node->center);
+
+  ms = _prtree3@t@node_move_point (PRTREE3@T@NODE_CHILD (node, i),
+                                      point, move_func, move_data, config);
+
+  if (ms != EXTERIOR_MOVE)
+    return ms; /* not found or already reinserted */
+
+  /* check if we need to reinsert point into an exterior node */
+  if (CALL_POINT3@T@_LOC (config, point, &node->lbound) == VSG_LOC3_UNE &&
+      CALL_POINT3@T@_LOC (config, point, &node->ubound) == VSG_LOC3_BSW)
+    {
+      node->point_count --; /* decrease point_count just before reinsert */
+      _prtree3@t@node_insert_point (node, point, config);
+      return LOCAL_MOVE;
+    }
+
+  node->point_count --;
+
+  /* flatten only if node is local. Shared nodes mean heterogenously
+   * distributed children.
+   */
+  if (node->point_count <= config->max_point &&
+      PRTREE3@T@NODE_IS_LOCAL (node))
+    _prtree3@t@node_flatten (node, config);
+
+  return EXTERIOR_MOVE;
+}
+
+static void _wtabs (FILE *file, guint tab)
+{  guint i;
 
   for (i=0; i<tab; i++)
     {
@@ -1109,7 +1197,7 @@ _prtree3@t@node_traverse_custom_internal (VsgPRTree3@t@Node *node,
                               config->children_order_data);
 
       for (i=0; i<4; i++)
-	{
+        {
           gint ic = children[i];
 
           ipow = VSG_RLOC3_COMP (ic);
@@ -1119,7 +1207,7 @@ _prtree3@t@node_traverse_custom_internal (VsgPRTree3@t@Node *node,
               (PRTREE3@T@NODE_CHILD(node, ic), &node_info, ic,
                order, sel_func, selector, sel_data, func, user_data, config,
                children_keys[i]);
-	}
+        }
     }
 
   if (order == G_IN_ORDER)
@@ -1128,7 +1216,7 @@ _prtree3@t@node_traverse_custom_internal (VsgPRTree3@t@Node *node,
   if (PRTREE3@T@NODE_ISINT (node))
     {
       for (i=4; i<8; i++)
-	{
+        {
           gint ic = children[i];
 
           ipow = VSG_RLOC3_COMP (ic);
@@ -1138,7 +1226,7 @@ _prtree3@t@node_traverse_custom_internal (VsgPRTree3@t@Node *node,
               (PRTREE3@T@NODE_CHILD(node, ic), &node_info, ic,
                order, sel_func, selector, sel_data, func, user_data, config,
                children_keys[i]);
-	}
+        }
     }
 
   if (order == G_POST_ORDER)
@@ -1184,7 +1272,7 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
                               config->children_order_data);
 
       for (i=0; i<4; i++)
-	{
+        {
           gint ic = children[i];
 
           ipow = VSG_RLOC3_COMP (ic);
@@ -1194,7 +1282,7 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
                                              &node_info, ic,
                                              order, selector, func, user_data,
                                              config, children_keys[i]);
-	}
+        }
     }
 
   if (order == G_IN_ORDER)
@@ -1203,7 +1291,7 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
   if (PRTREE3@T@NODE_ISINT (node))
     {
       for (i=4; i<8; i++)
-	{
+        {
           gint ic = children[i];
 
           ipow = VSG_RLOC3_COMP (ic);
@@ -1213,7 +1301,7 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
                                              &node_info, ic,
                                              order, selector, func, user_data,
                                              config, children_keys[i]);
-	}
+        }
     }
 
   if (order == G_POST_ORDER)
@@ -2063,6 +2151,13 @@ void vsg_prtree3@t@_bounds_extend (VsgPRTree3@t@ *prtree3@t@,
       lbound = &prtree3@t@->node->lbound;
       ubound = &prtree3@t@->node->ubound;
     }
+
+  /*  take care of single leaf trees that must stay single leaf */
+  if (PRTREE3@T@NODE_ISINT (prtree3@t@->node) &&
+      prtree3@t@->node->point_count <= config->max_point &&
+      PRTREE3@T@NODE_IS_LOCAL (prtree3@t@->node))
+    _prtree3@t@node_flatten (prtree3@t@->node, config);
+
 }
 
 /**
@@ -2224,6 +2319,44 @@ gboolean vsg_prtree3@t@_remove_point (VsgPRTree3@t@ *prtree3@t@,
   return
     _prtree3@t@node_remove_point (prtree3@t@->node, point,
                                   &prtree3@t@->config);
+}
+
+/**
+ * vsg_prtree3@t@_move_point:
+ * @prtree3@t@: a #VsgPRTree3@t@
+ * @point: a #VsgPoint3
+ * @move_func: a callback function for changing @point's position
+ * @move_data: data to be passed to @move_func
+ *
+ * Efficiently moves specified #VsgPoint3 by calling @move_func on @point when
+ * it is found. Once position is updated, a new enclosing box will be found for
+ * storing @point if needed.
+ *
+ * Returns: %TRUE if @point was found and moved, %FALSE otherwise.
+ */
+gboolean vsg_prtree3@t@_move_point (VsgPRTree3@t@ *prtree3@t@,
+                                    VsgPoint3 point,
+                                    GFunc move_func,
+                                    gpointer move_data)
+{
+  MoveStatus ms;
+
+#ifdef VSG_CHECK_PARAMS
+  g_return_val_if_fail (prtree3@t@ != NULL, FALSE);
+  g_return_val_if_fail (point != NULL, FALSE);
+  g_return_val_if_fail (move_func != NULL, FALSE);
+#endif
+
+
+  ms = _prtree3@t@node_move_point (prtree3@t@->node, point, move_func,
+                                   move_data, &prtree3@t@->config);
+
+  if (ms != EXTERIOR_MOVE) return ms == LOCAL_MOVE;
+
+  /* point was moved outside of root bounding box */
+  vsg_prtree3@t@_insert_point (prtree3@t@, point);
+
+  return TRUE;
 }
 
 /**

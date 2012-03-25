@@ -19,7 +19,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-AT_TESTED([commbuffer prtree2parallel prtree2paradist prtree2paranftrav])
+AT_TESTED([commbuffer prtree2parallel prtree2paradist prtree2paranftrav prtree2mv prtree3mv])
 
 AT_SETUP(Vsg basic parallel features)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
@@ -81,6 +81,18 @@ AT_CHECK([mpiexec -n 1 prtree3parallel], 0)
 AT_CHECK([mpiexec -n 2 prtree3parallel], 0)
 AT_CHECK([mpiexec -n 3 prtree3parallel], 0)
 AT_CHECK([mpiexec -n 4 prtree3parallel], 0)
+AT_CLEANUP
+
+AT_SETUP(3D Parallel tree move points)
+AT_KEYWORDS (parallel)
+AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
+AT_CHECK([mpiexec -n 1 prtree3mv], 0)
+AT_CHECK([mpiexec -n 2 prtree3mv], 0)
+AT_CHECK([mpiexec -n 2 prtree3mv --mpi], 0)
+AT_CHECK([mpiexec -n 2 prtree3mv --mpi --np 20], 0)
+AT_CHECK([mpiexec -n 2 prtree3mv --mpi --move random --fill random --np 1000 --maxbox 10], 0)
+AT_CHECK([mpiexec -n 2 prtree3mv --mpi --move rotate0.001 --fill random --np 1000 --maxbox 10], 0)
+AT_CHECK([mpiexec -n 2 prtree3mv --mpi --move exterior --fill random --np 1000 --maxbox 10], 0)
 AT_CLEANUP
 
 AT_SETUP(3D Parallel tree contiguous distribution)
