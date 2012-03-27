@@ -22,9 +22,6 @@ vsgprtree2d
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### SECTION Image ##### -->
-
-
 <!-- ##### MACRO VSG_TYPE_PRTREE2D ##### -->
 <para>
 
@@ -182,7 +179,7 @@ vsgprtree2d
 @user_data: 
 
 
-<!-- ##### USER_FUNCTION VsgPRTree2dDistributionFunc ##### -->
+<!-- ##### FUNCTION VsgPRTree2dDistributionFunc ##### -->
 <para>
 
 </para>

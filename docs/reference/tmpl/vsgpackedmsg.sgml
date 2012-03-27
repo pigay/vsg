@@ -60,9 +60,6 @@ vsg_packed_msg_free (msg);
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### SECTION Image ##### -->
-
-
 <!-- ##### STRUCT VsgPackedMsg ##### -->
 <para>
 

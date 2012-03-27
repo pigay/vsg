@@ -278,6 +278,14 @@ VSG_LOC2_X
 VSG_LOC2_Y
 VSG_RLOC2_COMP
 VSG_RLOC2_MASK
+VSG_RLOC2_E
+VSG_RLOC2_N
+VSG_RLOC2_NE
+VSG_RLOC2_NW
+VSG_RLOC2_S
+VSG_RLOC2_SE
+VSG_RLOC2_SW
+VSG_RLOC2_W
 
 VsgPoint2
 vsgloc2
@@ -302,6 +310,7 @@ VSG_PRTREE_KEY2D_BITS
 VSG_PRTREE_KEY2D_INDEX_MASK
 VSG_PRTREE_KEY2D_SIZE
 
+vsg_prtree_key2d_build_father
 vsg_prtree_key2d_build_child
 vsg_prtree_key2d_child
 vsg_prtree_key2d_copy
@@ -417,6 +426,7 @@ VSG_PRTREE_KEY2F_BITS
 VSG_PRTREE_KEY2F_INDEX_MASK
 VSG_PRTREE_KEY2F_SIZE
 
+vsg_prtree_key2f_build_father
 vsg_prtree_key2f_build_child
 vsg_prtree_key2f_child
 vsg_prtree_key2f_copy
@@ -538,6 +548,30 @@ VSG_LOC3_Y
 VSG_LOC3_Z
 VSG_RLOC3_COMP
 VSG_RLOC3_MASK
+VSG_RLOC3_
+VSG_RLOC3_BE
+VSG_RLOC3_BN
+VSG_RLOC3_BNE
+VSG_RLOC3_BNW
+VSG_RLOC3_BS
+VSG_RLOC3_BSE
+VSG_RLOC3_BSW
+VSG_RLOC3_BW
+VSG_RLOC3_E
+VSG_RLOC3_N
+VSG_RLOC3_NE
+VSG_RLOC3_NW
+VSG_RLOC3_S
+VSG_RLOC3_SE
+VSG_RLOC3_SW
+VSG_RLOC3_UE
+VSG_RLOC3_UN
+VSG_RLOC3_UNE
+VSG_RLOC3_UNW
+VSG_RLOC3_USE
+VSG_RLOC3_USW
+VSG_RLOC3_UW
+VSG_RLOC3_W
 
 VsgPoint3
 vsgloc3
@@ -549,6 +583,34 @@ VsgRegion3CheckFunc
 VsgRegion3Point3LocFunc
 
 <SUBSECTION Standard>
+</SECTION>
+
+<SECTION>
+<FILE>vsgprtreekey3d</FILE>
+VsgPRTreeKey3d
+
+VSG_MPI_TYPE_PRTREE_KEY3D
+
+VSG_PRTREE_KEY3D_BITS
+VSG_PRTREE_KEY3D_INDEX_MASK
+VSG_PRTREE_KEY3D_SIZE
+
+vsg_prtree_key3d_build_father
+vsg_prtree_key3d_build_child
+vsg_prtree_key3d_child
+vsg_prtree_key3d_copy
+vsg_prtree_key3d_deepest_common_ancestor
+vsg_prtree_key3d_distance
+vsg_prtree_key3d_equals
+vsg_prtree_key3d_first_different_index
+vsg_prtree_key3d_get_father
+vsg_prtree_key3d_is_ancestor
+vsg_prtree_key3d_is_neighbour
+vsg_prtree_key3d_loc3
+vsg_prtree_key3d_write
+
+<SUBSECTION Standard>
+vsg_prtree_key3d_get_mpi_type
 </SECTION>
 
 <SECTION>
@@ -615,6 +677,34 @@ vsg_prtree3d_node_info_clone
 vsg_prtree3d_node_info_free
 vsg_prtree3d_get_type
 VSG_TYPE_PRTREE3D
+</SECTION>
+
+<SECTION>
+<FILE>vsgprtreekey3f</FILE>
+VsgPRTreeKey3f
+
+VSG_MPI_TYPE_PRTREE_KEY3F
+
+VSG_PRTREE_KEY3F_BITS
+VSG_PRTREE_KEY3F_INDEX_MASK
+VSG_PRTREE_KEY3F_SIZE
+
+vsg_prtree_key3f_build_father
+vsg_prtree_key3f_build_child
+vsg_prtree_key3f_child
+vsg_prtree_key3f_copy
+vsg_prtree_key3f_deepest_common_ancestor
+vsg_prtree_key3f_distance
+vsg_prtree_key3f_equals
+vsg_prtree_key3f_first_different_index
+vsg_prtree_key3f_get_father
+vsg_prtree_key3f_is_ancestor
+vsg_prtree_key3f_is_neighbour
+vsg_prtree_key3f_loc3
+vsg_prtree_key3f_write
+
+<SUBSECTION Standard>
+vsg_prtree_key3f_get_mpi_type
 </SECTION>
 
 <SECTION>

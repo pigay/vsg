@@ -2081,6 +2081,11 @@ guint vsg_prtree2@t@_region_count (const VsgPRTree2@t@ *prtree2@t@)
 }
 
 /**
+ * vsg_prtree2@t@_bounds_extend:
+ * @prtree2@t@: a #VsgPRTree2@t@
+ * @point: a #VsgPoint2
+ * @extk: a #VsgPRTreeKey2
+ *
  * Extends @prtree2@t@ bounds in order to allow @point to be inside the box.
  * @extk is the key the old root node in the new tree.
  */

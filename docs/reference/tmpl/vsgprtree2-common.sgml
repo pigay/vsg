@@ -17,9 +17,6 @@ vsgprtree2-common
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### SECTION Image ##### -->
-
-
 <!-- ##### MACRO VSG_LOC2_SW ##### -->
 <para>
 
@@ -86,6 +83,62 @@ vsgprtree2-common
 
 
 <!-- ##### MACRO VSG_RLOC2_MASK ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_RLOC2_E ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_RLOC2_N ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_RLOC2_NE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_RLOC2_NW ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_RLOC2_S ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_RLOC2_SE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_RLOC2_SW ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO VSG_RLOC2_W ##### -->
 <para>
 
 </para>

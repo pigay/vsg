@@ -17,9 +17,6 @@ Use this function to initialize libvsg.
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### SECTION Image ##### -->
-
-
 <!-- ##### FUNCTION vsg_init ##### -->
 <para>
 

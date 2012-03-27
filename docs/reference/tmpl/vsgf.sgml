@@ -17,9 +17,6 @@ Single precision Vsg library initialization.
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### SECTION Image ##### -->
-
-
 <!-- ##### FUNCTION vsg_init_gfloat ##### -->
 <para>
 

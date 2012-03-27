@@ -196,8 +196,8 @@ typedef gboolean (*VsgRegion2CheckFunc) (const VsgRegion2 region,
 
 /**
  * VsgRegion2Point2LocFunc:
- * @region:
- * @point:
+ * @region: a #VsgRegion2
+ * @point: a #VsgPoint2
  *
  * Function type related to VsgRegion2*LocFunc but that takes a #VsgPoint2
  * instead of a #VsgVector2* for second argument.
