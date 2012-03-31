@@ -1890,7 +1890,6 @@ static void _traverse_visiting_nf (VsgPRTree2@t@Node *node,
 {
   VsgPRTree2@t@NodeInfo *ref_info = &niaf->ref_info;
   guint8 node_depth;
-  gboolean fardone;
 /*       gint rk; */
 
 /*       MPI_Comm_rank (MPI_COMM_WORLD, &rk); */
@@ -1929,11 +1928,7 @@ static void _traverse_visiting_nf (VsgPRTree2@t@Node *node,
 /*         vsg_prtree_key2@t@_write (&node_info->id, stderr); */
 /*         g_printerr ("]\n"); */
 
-          fardone = niaf->nfc->far_func (ref_info, node_info,
-                                         niaf->nfc->user_data);
-          if (! fardone)
-            g_critical ("far_func() -> FALSE not handled in \"%s\"",
-                        __PRETTY_FUNCTION__);
+          niaf->nfc->far_func (ref_info, node_info, niaf->nfc->user_data);
           niaf->done_flag |= 1<<1;
         }
     }
