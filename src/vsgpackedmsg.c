@@ -725,7 +725,6 @@ void vsg_packed_msg_recv_probed (VsgPackedMsg *pm, MPI_Status *status)
  * vsg_packed_msg_bcast:
  * @pm: a #VsgPackedMsg.
  * @src: the source task id. Can be %MPI_ANY_SOURCE.
- * @tag: an integer message tag. Can be %MPI_ANY_TAG.
  *
  * Performs a MPI_Bcast on @pm. @pm must be of the same size across
  * all processes (ie. similar calls to vsg_packed_msg_send_append()

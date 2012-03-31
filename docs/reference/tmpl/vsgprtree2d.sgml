@@ -412,6 +412,18 @@ vsgprtree2d
 @Returns: 
 
 
+<!-- ##### FUNCTION vsg_prtree2d_move_point ##### -->
+<para>
+
+</para>
+
+@prtree2d: 
+@point: 
+@move_func: 
+@move_data: 
+@Returns: 
+
+
 <!-- ##### FUNCTION vsg_prtree2d_insert_region ##### -->
 <para>
 

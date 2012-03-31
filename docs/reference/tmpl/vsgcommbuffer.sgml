@@ -32,6 +32,14 @@ vsgcommbuffer
 @Returns: 
 
 
+<!-- ##### FUNCTION vsg_comm_buffer_free ##### -->
+<para>
+
+</para>
+
+@cb: 
+
+
 <!-- ##### FUNCTION vsg_comm_buffer_send_append ##### -->
 <para>
 
@@ -128,14 +136,6 @@ vsgcommbuffer
 
 
 <!-- ##### FUNCTION vsg_comm_buffer_drop_send_buffers ##### -->
-<para>
-
-</para>
-
-@cb: 
-
-
-<!-- ##### FUNCTION vsg_comm_buffer_free ##### -->
 <para>
 
 </para>

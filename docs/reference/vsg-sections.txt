@@ -31,6 +31,7 @@ VSG_PACKED_MSG_STATIC_INIT
 vsg_packed_msg_init
 vsg_packed_msg_new
 vsg_packed_msg_recv_new
+vsg_packed_msg_free
 
 vsg_packed_msg_send
 vsg_packed_msg_isend
@@ -42,7 +43,19 @@ vsg_packed_msg_drop_buffer
 
 vsg_packed_msg_set_reference
 
-vsg_packed_msg_free
+vsg_packed_msg_bcast
+vsg_packed_msg_bsend
+vsg_packed_msg_header_size
+vsg_packed_msg_ibsend
+vsg_packed_msg_irsend
+vsg_packed_msg_issend
+vsg_packed_msg_recv_probed
+vsg_packed_msg_reset
+vsg_packed_msg_rsend
+vsg_packed_msg_ssend
+vsg_packed_msg_trace
+vsg_packed_msg_trace_get_active
+vsg_packed_msg_trace_set_active
 
 <SUBSECTION Standard>
 </SECTION>
@@ -52,6 +65,7 @@ vsg_packed_msg_free
 VsgCommBuffer
 
 vsg_comm_buffer_new
+vsg_comm_buffer_free
 
 vsg_comm_buffer_send_append
 vsg_comm_buffer_recv_read
@@ -68,7 +82,6 @@ vsg_comm_buffer_drop_recv_buffers
 vsg_comm_buffer_drop_send_buffer
 vsg_comm_buffer_drop_send_buffers
 
-vsg_comm_buffer_free
 <SUBSECTION Standard>
 </SECTION>
 
@@ -379,6 +392,7 @@ vsg_prtree2d_region_count
 vsg_prtree2d_insert_point
 vsg_prtree2d_insert_point_local
 vsg_prtree2d_remove_point
+vsg_prtree2d_move_point
 vsg_prtree2d_insert_region
 vsg_prtree2d_remove_region
 vsg_prtree2d_write
@@ -495,6 +509,7 @@ vsg_prtree2f_region_count
 vsg_prtree2f_insert_point
 vsg_prtree2f_insert_point_local
 vsg_prtree2f_remove_point
+vsg_prtree2f_move_point
 vsg_prtree2f_insert_region
 vsg_prtree2f_remove_region
 vsg_prtree2f_write
@@ -618,6 +633,11 @@ vsg_prtree_key3d_get_mpi_type
 VsgPRTree3d
 VsgPRTree3dNodeInfo
 
+VSG_PRTREE3D_NODE_INFO_IS_LOCAL
+VSG_PRTREE3D_NODE_INFO_IS_REMOTE
+VSG_PRTREE3D_NODE_INFO_IS_SHARED
+VSG_PRTREE3D_NODE_INFO_PROC
+
 VsgPoint3dLocFunc
 
 VsgRegion3dLocFunc
@@ -634,6 +654,8 @@ VsgPRTree3dFunc
 VsgPRTree3dFarInteractionFunc
 VsgPRTree3dInteractionFunc
 
+VsgPRTree3dDistributionFunc
+
 vsg_prtree3d_new_full
 vsg_prtree3d_new
 vsg_prtree3d_free
@@ -649,12 +671,15 @@ vsg_prtree3d_set_children_order
 vsg_prtree3d_get_tolerance
 vsg_prtree3d_set_tolerance
 vsg_prtree3d_set_node_data
+vsg_prtree3d_set_node_data_vtable
 vsg_prtree3d_get_bounds
 vsg_prtree3d_depth
 vsg_prtree3d_point_count
 vsg_prtree3d_region_count
 vsg_prtree3d_insert_point
+vsg_prtree3d_insert_point_local
 vsg_prtree3d_remove_point
+vsg_prtree3d_move_point
 vsg_prtree3d_insert_region
 vsg_prtree3d_remove_region
 vsg_prtree3d_write
@@ -669,6 +694,19 @@ vsg_prtree3d_find_point
 vsg_prtree3d_near_far_traversal
 vsg_prtree3d_traverse_custom
 vsg_prtree3d_traverse
+
+vsg_prtree3d_set_children_order_hilbert
+vsg_prtree3d_set_children_order_default
+
+vsg_prtree3d_set_parallel
+vsg_prtree3d_get_parallel
+vsg_prtree3d_migrate_flush
+vsg_prtree3d_distribute_nodes
+vsg_prtree3d_shared_nodes_allreduce
+
+vsg_prtree3d_distribute_contiguous_leaves
+vsg_prtree3d_distribute_scatter_leaves
+vsg_prtree3d_distribute_concentrate
 
 <SUBSECTION Standard>
 VSG_TYPE_PRTREE3D_NODE_INFO
@@ -712,6 +750,11 @@ vsg_prtree_key3f_get_mpi_type
 VsgPRTree3f
 VsgPRTree3fNodeInfo
 
+VSG_PRTREE3F_NODE_INFO_IS_LOCAL
+VSG_PRTREE3F_NODE_INFO_IS_REMOTE
+VSG_PRTREE3F_NODE_INFO_IS_SHARED
+VSG_PRTREE3F_NODE_INFO_PROC
+
 VsgPoint3fLocFunc
 
 VsgRegion3fLocFunc
@@ -725,6 +768,8 @@ VsgPoint3fDistDataFunc
 VsgPRTree3fFunc
 VsgPRTree3fFarInteractionFunc
 VsgPRTree3fInteractionFunc
+
+VsgPRTree3fDistributionFunc
 
 vsg_prtree3f_new_full
 vsg_prtree3f_new
@@ -741,12 +786,15 @@ vsg_prtree3f_set_children_order
 vsg_prtree3f_get_tolerance
 vsg_prtree3f_set_tolerance
 vsg_prtree3f_set_node_data
+vsg_prtree3f_set_node_data_vtable
 vsg_prtree3f_get_bounds
 vsg_prtree3f_depth
 vsg_prtree3f_point_count
 vsg_prtree3f_region_count
 vsg_prtree3f_insert_point
+vsg_prtree3f_insert_point_local
 vsg_prtree3f_remove_point
+vsg_prtree3f_move_point
 vsg_prtree3f_insert_region
 vsg_prtree3f_remove_region
 vsg_prtree3f_write
@@ -761,6 +809,19 @@ vsg_prtree3f_find_point
 vsg_prtree3f_near_far_traversal
 vsg_prtree3f_traverse_custom
 vsg_prtree3f_traverse
+
+vsg_prtree3f_set_children_order_hilbert
+vsg_prtree3f_set_children_order_default
+
+vsg_prtree3f_set_parallel
+vsg_prtree3f_get_parallel
+vsg_prtree3f_migrate_flush
+vsg_prtree3f_distribute_nodes
+vsg_prtree3f_shared_nodes_allreduce
+
+vsg_prtree3f_distribute_contiguous_leaves
+vsg_prtree3f_distribute_scatter_leaves
+vsg_prtree3f_distribute_concentrate
 
 <SUBSECTION Standard>
 VSG_TYPE_PRTREE3F_NODE_INFO

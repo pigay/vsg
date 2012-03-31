@@ -104,6 +104,14 @@ vsg_packed_msg_free (msg);
 @Returns: 
 
 
+<!-- ##### FUNCTION vsg_packed_msg_free ##### -->
+<para>
+
+</para>
+
+@pm: 
+
+
 <!-- ##### FUNCTION vsg_packed_msg_send ##### -->
 <para>
 
@@ -183,11 +191,125 @@ vsg_packed_msg_free (msg);
 @model: 
 
 
-<!-- ##### FUNCTION vsg_packed_msg_free ##### -->
+<!-- ##### FUNCTION vsg_packed_msg_bcast ##### -->
 <para>
 
 </para>
 
 @pm: 
+@src: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_bsend ##### -->
+<para>
+
+</para>
+
+@pm: 
+@dst: 
+@tag: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_header_size ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_ibsend ##### -->
+<para>
+
+</para>
+
+@pm: 
+@dst: 
+@tag: 
+@request: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_irsend ##### -->
+<para>
+
+</para>
+
+@pm: 
+@dst: 
+@tag: 
+@request: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_issend ##### -->
+<para>
+
+</para>
+
+@pm: 
+@dst: 
+@tag: 
+@request: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_recv_probed ##### -->
+<para>
+
+</para>
+
+@pm: 
+@status: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_reset ##### -->
+<para>
+
+</para>
+
+@pm: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_rsend ##### -->
+<para>
+
+</para>
+
+@pm: 
+@dst: 
+@tag: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_ssend ##### -->
+<para>
+
+</para>
+
+@pm: 
+@dst: 
+@tag: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_trace ##### -->
+<para>
+
+</para>
+
+@format: 
+@Varargs: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_trace_get_active ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_packed_msg_trace_set_active ##### -->
+<para>
+
+</para>
+
+@active: 
 
 

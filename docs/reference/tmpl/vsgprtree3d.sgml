@@ -47,6 +47,38 @@ vsgprtree3d
 @id: 
 @parallel_status: 
 
+<!-- ##### MACRO VSG_PRTREE3D_NODE_INFO_IS_LOCAL ##### -->
+<para>
+
+</para>
+
+@node_info: 
+
+
+<!-- ##### MACRO VSG_PRTREE3D_NODE_INFO_IS_REMOTE ##### -->
+<para>
+
+</para>
+
+@node_info: 
+
+
+<!-- ##### MACRO VSG_PRTREE3D_NODE_INFO_IS_SHARED ##### -->
+<para>
+
+</para>
+
+@node_info: 
+
+
+<!-- ##### MACRO VSG_PRTREE3D_NODE_INFO_PROC ##### -->
+<para>
+
+</para>
+
+@node_info: 
+
+
 <!-- ##### USER_FUNCTION VsgPoint3dLocFunc ##### -->
 <para>
 
@@ -138,6 +170,16 @@ vsgprtree3d
 @one_info: 
 @other_info: 
 @user_data: 
+
+
+<!-- ##### FUNCTION VsgPRTree3dDistributionFunc ##### -->
+<para>
+
+</para>
+
+@node_info: 
+@user_data: 
+@Returns: 
 
 
 <!-- ##### FUNCTION vsg_prtree3d_new_full ##### -->
@@ -288,6 +330,15 @@ vsgprtree3d
 @user_data_model: 
 
 
+<!-- ##### FUNCTION vsg_prtree3d_set_node_data_vtable ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@vtable: 
+
+
 <!-- ##### FUNCTION vsg_prtree3d_get_bounds ##### -->
 <para>
 
@@ -334,6 +385,16 @@ vsgprtree3d
 @point: 
 
 
+<!-- ##### FUNCTION vsg_prtree3d_insert_point_local ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@point: 
+@Returns: 
+
+
 <!-- ##### FUNCTION vsg_prtree3d_remove_point ##### -->
 <para>
 
@@ -341,6 +402,18 @@ vsgprtree3d
 
 @prtree3d: 
 @point: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_move_point ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@point: 
+@move_func: 
+@move_data: 
 @Returns: 
 
 
@@ -477,5 +550,91 @@ vsgprtree3d
 @order: 
 @func: 
 @user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_set_children_order_hilbert ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_set_children_order_default ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_set_parallel ##### -->
+<para>
+
+</para>
+
+@tree: 
+@pconfig: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_get_parallel ##### -->
+<para>
+
+</para>
+
+@tree: 
+@pconfig: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_migrate_flush ##### -->
+<para>
+
+</para>
+
+@tree: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_distribute_nodes ##### -->
+<para>
+
+</para>
+
+@tree: 
+@func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_shared_nodes_allreduce ##### -->
+<para>
+
+</para>
+
+@tree: 
+@data_vtable: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_distribute_contiguous_leaves ##### -->
+<para>
+
+</para>
+
+@tree: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_distribute_scatter_leaves ##### -->
+<para>
+
+</para>
+
+@tree: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_distribute_concentrate ##### -->
+<para>
+
+</para>
+
+@tree: 
+@dst: 
 
 
