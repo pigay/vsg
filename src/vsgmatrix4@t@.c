@@ -226,9 +226,9 @@ VsgMatrix4@t@ *vsg_matrix4@t@_identity_new ()
 
 /**
  * vsg_matrix4@t@_rotate_cardan_new:
- * @ax: a #@type@
- * @ay: a #@type@
- * @az: a #@type@
+ * @ax: an angle in radians
+ * @ay: an angle in radians
+ * @az: an angle in radians
  *
  * Creates a new #VsgMatrix4@t@ corresponding to a 3D rotation of Cardan angles
  * @ax, @ay, @az.
@@ -248,9 +248,9 @@ VsgMatrix4@t@ *vsg_matrix4@t@_rotate_cardan_new (@type@ ax,
 
 /**
  * vsg_matrix4@t@_rotate_euler_new:
- * @alpha: a #@type@
- * @beta: a #@type@
- * @gamma: a #@type@
+ * @alpha: an angle in radians
+ * @beta: an angle in radians
+ * @gamma: an angle in radians
  *
  * Creates a new #VsgMatrix4@t@ corresponding to a 3D rotation of Euler angles
  * @alpha, @beta, @gamma in ZYZ convetion.
@@ -436,7 +436,7 @@ VsgMatrix4@t@ *vsg_matrix4@t@_clone (const VsgMatrix4@t@ *src)
 /**
  * vsg_matrix4@t@_rotate_x:
  * @mat: a #VsgMatrix4@t@
- * @angle: a #@type@.
+ * @angle: an angle in radians
  *
  * Performs a rotation of angle @angle about X axis on matrix @mat.
  */
@@ -452,7 +452,7 @@ void vsg_matrix4@t@_rotate_x (VsgMatrix4@t@ *mat, @type@ angle)
 /**
  * vsg_matrix4@t@_rotate_y:
  * @mat: a #VsgMatrix4@t@
- * @angle: a #@type@.
+ * @angle: an angle in radians
  *
  * Performs a rotation of angle @angle about Y axis on matrix @mat.
  */
@@ -468,7 +468,7 @@ void vsg_matrix4@t@_rotate_y (VsgMatrix4@t@ *mat, @type@ angle)
 /**
  * vsg_matrix4@t@_rotate_z:
  * @mat: a #VsgMatrix4@t@
- * @angle: a #@type@.
+ * @angle: an angle in radians
  *
  * Performs a rotation of angle @angle about Z axis on matrix @mat.
  */
@@ -484,9 +484,9 @@ void vsg_matrix4@t@_rotate_z (VsgMatrix4@t@ *mat, @type@ angle)
 /**
  * vsg_matrix4@t@_rotate_cardan:
  * @mat: a #VsgMatrix4@t@
- * @ax: a #@type@
- * @ay: a #@type@
- * @az: a #@type@
+ * @ax: an angle in radians
+ * @ay: an angle in radians
+ * @az: an angle in radians
  *
  * Performs a 3D rotation of Cardan angles @ax, @ay, @az (ie. Cardano
  * convention) on matrix @mat.
@@ -506,9 +506,9 @@ void vsg_matrix4@t@_rotate_cardan (VsgMatrix4@t@ *mat,
 /**
  * vsg_matrix4@t@_rotate_euler:
  * @mat: a #VsgMatrix4@t@
- * @alpha: a #@type@
- * @beta: a #@type@
- * @gamma: a #@type@
+ * @alpha: an angle in radians
+ * @beta: an angle in radians
+ * @gamma: an angle in radians
  *
  * Performs a 3D rotation of Euler angles  (ie. ZYZ convention) on matrix
  * @mat.

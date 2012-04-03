@@ -533,7 +533,7 @@ void vsg_vector2@t@_to_polar_internal (const VsgVector2@t@ *vec,
  * vsg_vector2@t@_to_polar:
  * @vec: a #VsgVector2@t@
  * @r: radius
- * @theta: angle.
+ * @theta: angle in radians.
  *
  * Computes @vec polar preliminary coordinates.
  */
@@ -571,7 +571,7 @@ void vsg_vector2@t@_from_polar_internal (VsgVector2@t@ *vec,
  * vsg_vector2@t@_from_polar:
  * @vec: a #VsgVector2@t@
  * @r: radius
- * @theta: angle.
+ * @theta: angle in radians.
  *
  * Sets @vec to cartesian coordinates coorresponding to @r @theta polar
  * coordinates.

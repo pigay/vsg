@@ -206,7 +206,7 @@ VsgMatrix3@t@ *vsg_matrix3@t@_identity_new ()
 
 /**
  * vsg_matrix3@t@_rotate_new:
- * @a: a #@type@
+ * @a: an angle in radians
  *
  * Creates a new #VsgMatrix3@t@ corresponding to a 2D rotation of angle @a.
  *
@@ -352,7 +352,7 @@ VsgMatrix3@t@ *vsg_matrix3@t@_clone (const VsgMatrix3@t@ *src)
 /**
  * vsg_matrix3@t@_rotate:
  * @mat: a #VsgMatrix3@t@
- * @a: a #@type@
+ * @a: an angle in radians
  *
  * Performs a 2D rotation of angle @a on matrix @mat.
  */

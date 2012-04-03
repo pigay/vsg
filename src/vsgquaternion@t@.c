@@ -298,7 +298,7 @@ vsg_quaternion@t@_vector3@alt_t@_set (VsgQuaternion@t@ *quat,
 /**
  * vsg_quaternion@t@_make_rotate@t@:
  * @quat: a #VsgQuaternion@t@
- * @angle: a #@type@
+ * @angle: an angle in radians
  * @vec: a #VsgVector3@t@
  *
  * Sets @quat components so as to correspond to a 3D rotation of angle
@@ -356,7 +356,7 @@ void vsg_quaternion@t@_identity (VsgQuaternion@t@ *quat)
 /**
  * vsg_quaternion@t@_rotate_x:
  * @quat: a #VsgQuaternion@t@
- * @angle: a @type@
+ * @angle: an angle in radians
  *
  * Sets @quat components to a 3D rotation of angle @angle and axis X.
  */
@@ -372,7 +372,7 @@ void vsg_quaternion@t@_rotate_x (VsgQuaternion@t@ *quat, @type@ angle)
 /**
  * vsg_quaternion@t@_rotate_y:
  * @quat: a #VsgQuaternion@t@
- * @angle: a @type@
+ * @angle: an angle in radians
  *
  * Sets @quat components to a 3D rotation of angle @angle and axis Y.
  */
@@ -388,7 +388,7 @@ void vsg_quaternion@t@_rotate_y (VsgQuaternion@t@ *quat, @type@ angle)
 /**
  * vsg_quaternion@t@_rotate_z:
  * @quat: a #VsgQuaternion@t@
- * @angle: a @type@
+ * @angle: an angle in radians
  *
  * Sets @quat components to a 3D rotation of angle @angle and axis Z.
  */
@@ -404,9 +404,9 @@ void vsg_quaternion@t@_rotate_z (VsgQuaternion@t@ *quat, @type@ angle)
 /**
  * vsg_quaternion@t@_rotate_cardan:
  * @quat: a #VsgQuaternion@t@
- * @ax: a #@type@
- * @ay: a #@type@
- * @az: a #@type@
+ * @ax: an angle in radians
+ * @ay: an angle in radians
+ * @az: an angle in radians
  *
  * Sets @quat components to  a 3D rotation of cardan angles 
  * @ax, @ay, @az.
@@ -426,9 +426,9 @@ void vsg_quaternion@t@_rotate_cardan (VsgQuaternion@t@ *quat,
 /**
  * vsg_quaternion@t@_rotate_euler:
  * @quat: a #VsgQuaternion@t@
- * @alpha: a #@type@
- * @beta: a #@type@
- * @gamma: a #@type@
+ * @alpha: an angle in radians
+ * @beta: an angle in radians
+ * @gamma: an angle in radians
  *
  * Sets @quat components to  a 3D rotation of euler angles 
  * @alpha, @beta, @gamma.

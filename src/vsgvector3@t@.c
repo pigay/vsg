@@ -544,8 +544,8 @@ void vsg_vector3@t@_to_spherical_internal (const VsgVector3@t@ *vec,
  * vsg_vector3@t@_to_spherical:
  * @vec: a #VsgVector3@t@
  * @r: radius
- * @theta: polar (colatitudinal) angle.
- * @phi: azimuthal (longitudinal) angle.
+ * @theta: polar (colatitudinal) angle in radians.
+ * @phi: azimuthal (longitudinal) angle in radians.
  *
  * Computes @vec spherical preliminary coordinates.
  *
@@ -592,8 +592,8 @@ void vsg_vector3@t@_from_spherical_internal (VsgVector3@t@ *vec,
  * vsg_vector3@t@_from_spherical:
  * @vec: a #VsgVector3@t@
  * @r: radius
- * @theta: polar (colatitudinal) angle.
- * @phi: azimuthal (longitudinal) angle.
+ * @theta: polar (colatitudinal) angle in radians.
+ * @phi: azimuthal (longitudinal) angle in radians.
  *
  * Sets @vec to cartesian coordinates coorresponding to @r, @theta and @phi
  * spherical coordinates.
