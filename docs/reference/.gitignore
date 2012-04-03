@@ -2,3 +2,12 @@ version.xml
 *.bak
 xml/
 html/
+vsg-decl-list.txt
+vsg-decl.txt
+vsg-overrides.txt
+vsg-undeclared.txt
+vsg-undocumented.txt
+vsg-unused.txt
+vsg.args
+vsg.hierarchy
+vsg.signals
