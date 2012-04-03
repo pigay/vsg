@@ -400,26 +400,8 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig3@t@ *nfc,
                                                          FALSE);
 #endif
 
-                      far_done = nfc->far_func (&one_child_info, &other_child_info,
-                                                nfc->user_data);
-                      if (!far_done)
-                        {
-#ifdef VSG_HAVE_MPI
-                          if (PRTREE3@T@NODE_IS_SHARED (one_child) ||
-                              PRTREE3@T@NODE_IS_SHARED (other_child))
-                            {
-                              g_critical ("far_func() -> FALSE not handled " \
-                                          "for shared nodes in \"%s\"",
-                                          __PRETTY_FUNCTION__);
-
-                            }
-#endif
-
-                          /* near interaction between one and other */
-                          recursive_near_func (one_child, &one_child_info,
-                                               other_child, &other_child_info,
-                                               nfc);
-                        }
+                      nfc->far_func (&one_child_info, &other_child_info,
+                                     nfc->user_data);
                     }
                 }
               else
@@ -709,8 +691,6 @@ static void hilbert3_order (gpointer node_key, gint *children,
  * return %FALSE if the far interaction won't be computed (for any reason).
  * In this case, vsg_prtree3@t@_near_far_traversal() will fallback to near
  * interaction evaluation.
- *
- * Returns: Confirmation that the interaction really occurred.
  */
 
 /*-------------------------------------------------------------------*/

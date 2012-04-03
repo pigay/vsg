@@ -41,10 +41,6 @@ AT_SETUP(VsgPRTree3d near/far traversals)
 AT_CHECK(prtree3nftrav, 0)
 AT_CLEANUP
 
-AT_SETUP(VsgPRTree3d near/far extended traversals)
-AT_CHECK(prtree3nftrave, 0)
-AT_CLEANUP
-
 AT_SETUP(VsgPRTree3d Hilbert curve ordering traversal)
 AT_CHECK([prtree3hilb 1 && cp $abs_srcdir/hilbert3-lvl1.ref expout], 0, expout)
 AT_CHECK([prtree3hilb 2 && cp $abs_srcdir/hilbert3-lvl2.ref expout], 0, expout)
