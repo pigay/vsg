@@ -686,11 +686,7 @@ static void hilbert3_order (gpointer node_key, gint *children,
  * @user_data: user provided data.
  *
  * A type of functions for #VsgPRTree3@t@ nodes interaction traversals. Used
- * for far interactions, the function should return %TRUE when it effectively
- * realizes the far interaction computations. Alternatively, the function can
- * return %FALSE if the far interaction won't be computed (for any reason).
- * In this case, vsg_prtree3@t@_near_far_traversal() will fallback to near
- * interaction evaluation.
+ * for far interactions.
  */
 
 /*-------------------------------------------------------------------*/
