@@ -29,9 +29,9 @@ typedef void (*VsgPRTree3@t@InteractionFunc) (VsgPRTree3@t@NodeInfo *one_info,
 					      VsgPRTree3@t@NodeInfo *other_info,
 					      gpointer user_data);
 
-typedef gboolean (*VsgPRTree3@t@FarInteractionFunc) (VsgPRTree3@t@NodeInfo *one_info,
-						     VsgPRTree3@t@NodeInfo *other_info,
-						     gpointer user_data);
+typedef void (*VsgPRTree3@t@FarInteractionFunc) (VsgPRTree3@t@NodeInfo *one_info,
+                                                 VsgPRTree3@t@NodeInfo *other_info,
+                                                 gpointer user_data);
 
 /* public functions */
 void

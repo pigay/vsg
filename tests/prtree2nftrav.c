@@ -71,7 +71,7 @@ static void near (VsgPRTree2dNodeInfo *one_info,
                      &one_info->point_count);
 }
 
-static gboolean far (VsgPRTree2dNodeInfo *one_info,
+static void far (VsgPRTree2dNodeInfo *one_info,
                  VsgPRTree2dNodeInfo *other_info,
                  gint *err)
 {
@@ -80,8 +80,6 @@ static gboolean far (VsgPRTree2dNodeInfo *one_info,
 
   ((NodeCounter *) other_info->user_data)->out_count +=
     ((NodeCounter *) one_info->user_data)->in_count;
-
-  return TRUE;
 }
 
 static void up (VsgPRTree2dNodeInfo *node_info, gpointer data)

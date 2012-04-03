@@ -1016,9 +1016,9 @@ void _near (VsgPRTree2dNodeInfo *one_info,
   _near_count ++;
 }
 
-gboolean _far (VsgPRTree2dNodeInfo *one_info,
-               VsgPRTree2dNodeInfo *other_info,
-               gint *err)
+void _far (VsgPRTree2dNodeInfo *one_info,
+           VsgPRTree2dNodeInfo *other_info,
+           gint *err)
 {
   ((NodeCounter *) one_info->user_data)->out_count +=
     ((NodeCounter *) other_info->user_data)->in_count;
@@ -1055,10 +1055,7 @@ gboolean _far (VsgPRTree2dNodeInfo *one_info,
       {
         j = j + i;
       }
-    return j == _far_slowdown*(_far_slowdown-1)/2;
   }
-
-  return TRUE;
 }
 
 void _up (VsgPRTree2dNodeInfo *node_info, gpointer data)
