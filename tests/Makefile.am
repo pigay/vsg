@@ -14,7 +14,7 @@ noinst_PROGRAMS = $(parallel_programs) vec2add vec2sub vec2dotp vec2scalp \
 vec2norm vec2vecp vec2pred vec3add vec3sub vec3dotp vec3scalp vec3vecp \
 vec3norm vec3pred mat3add mat4add prtree2pt prtree2nftrav \
 prtree3pt prtree3nftrav prtree2hilb prtree3hilb prtree2clone \
-prtreekey2 prtree3clone prtreekey3 prtree2mv prtree3mv
+prtreekey2 prtree3clone prtreekey3 prtree2mv prtree3mv prtree2virt-maxbox
 
 AM_CFLAGS = -I$(top_srcdir)/build $(MPI_CFLAGS)
 LDADD = $(top_srcdir)/build/vsg/libvsg.la $(top_srcdir)/build/vsg/libvsgd.la $(MPI_LIBS)
