@@ -276,6 +276,18 @@ VsgMigrablePackDataFunc
 VsgMigrableUnpackDataFunc
 VsgMigrableReductionDataFunc
 
+vsg_parallel_migrate_vtable_set
+vsg_parallel_vtable_set
+vsg_parallel_vtable_set_migrate
+vsg_parallel_vtable_set_parallel
+vsg_parallel_vtable_set_visit_backward
+vsg_parallel_vtable_set_visit_forward
+vsg_prtree_parallel_config_set
+vsg_prtree_parallel_config_set_communicator
+vsg_prtree_parallel_config_set_node_data
+vsg_prtree_parallel_config_set_point
+vsg_prtree_parallel_config_set_region
+
 <SUBSECTION Standard>
 </SECTION>
 

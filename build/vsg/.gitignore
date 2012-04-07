@@ -8,6 +8,7 @@ vsgprtree2f-extras.c
 vsgmatrix3d.h
 vsgvector3f.h
 vsgprtree-parallel.h
+vsgprtree-parallel.c
 vsgprtree3d-extras.h
 vsgprtree2f-extras.h
 vsgcommbuffer-private.h

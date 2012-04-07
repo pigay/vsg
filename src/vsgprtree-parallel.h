@@ -20,6 +20,8 @@
 #ifndef __VSGPRTREE_PARALLEL_H__
 #define __VSGPRTREE_PARALLEL_H__
 
+#include <glib.h>
+
 #include <vsg/vsgmpi.h>
 #ifdef VSG_HAVE_MPI
 #include <vsg/vsgpackedmsg.h>
@@ -128,7 +130,6 @@ struct _VsgParallelMigrateVTable {
   VsgMigrableReductionDataFunc reduce;
   gpointer reduce_data;
 };
-
 #endif
 
 /**
@@ -185,6 +186,88 @@ struct _VsgPRTreeParallelConfig {
   MPI_Comm communicator;
 #endif
 };
+
+
+#ifdef VSG_HAVE_MPI
+
+void vsg_parallel_migrate_vtable_set (VsgParallelMigrateVTable *vtable,
+                                      VsgMigrablePackDataFunc pack,
+                                      gpointer pack_data,
+                                      VsgMigrableUnpackDataFunc unpack,
+                                      gpointer unpack_data,
+                                      VsgMigrableReductionDataFunc reduce,
+                                      gpointer reduce_data);
+
+void vsg_parallel_vtable_set_migrate (VsgParallelVTable *vtable,
+                                      VsgMigrablePackDataFunc pack,
+                                      gpointer pack_data,
+                                      VsgMigrableUnpackDataFunc unpack,
+                                      gpointer unpack_data,
+                                      VsgMigrableReductionDataFunc reduce,
+                                      gpointer reduce_data);
+
+void vsg_parallel_vtable_set_visit_forward (VsgParallelVTable *vtable,
+                                            VsgMigrablePackDataFunc pack,
+                                            gpointer pack_data,
+                                            VsgMigrableUnpackDataFunc unpack,
+                                            gpointer unpack_data,
+                                            VsgMigrableReductionDataFunc reduce,
+                                            gpointer reduce_data);
+
+void vsg_parallel_vtable_set_visit_backward (VsgParallelVTable *vtable,
+                                             VsgMigrablePackDataFunc pack,
+                                             gpointer pack_data,
+                                             VsgMigrableUnpackDataFunc unpack,
+                                             gpointer unpack_data,
+                                             VsgMigrableReductionDataFunc reduce,
+                                             gpointer reduce_data);
+
+void vsg_parallel_vtable_set_parallel (VsgParallelVTable *vtable,
+                                       VsgMigrablePackDataFunc pack,
+                                       gpointer pack_data,
+                                       VsgMigrableUnpackDataFunc unpack,
+                                       gpointer unpack_data,
+                                       VsgMigrableReductionDataFunc reduce,
+                                       gpointer reduce_data,
+                                       VsgMigrablePackDataFunc fwpack,
+                                       gpointer fwpack_data,
+                                       VsgMigrableUnpackDataFunc fwunpack,
+                                       gpointer fwunpack_data,
+                                       VsgMigrableReductionDataFunc fwreduce,
+                                       gpointer fwreduce_data,
+                                       VsgMigrablePackDataFunc bwpack,
+                                       gpointer bwpack_data,
+                                       VsgMigrableUnpackDataFunc bwunpack,
+                                       gpointer bwunpack_data,
+                                       VsgMigrableReductionDataFunc bwreduce,
+                                       gpointer bwreduce_data);
+#endif
+
+void vsg_parallel_vtable_set (VsgParallelVTable *vtable,
+                              VsgMigrableAllocDataFunc alloc,
+                              gpointer alloc_data,
+                              VsgMigrableDestroyDataFunc destroy,
+                              gpointer destroy_data);
+
+void vsg_prtree_parallel_config_set (VsgPRTreeParallelConfig *config,
+                                     VsgParallelVTable *point,
+                                     VsgParallelVTable *region,
+                                     VsgParallelVTable *node_data);
+
+void vsg_prtree_parallel_config_set_point (VsgPRTreeParallelConfig *config,
+                                           VsgParallelVTable *point);
+
+void vsg_prtree_parallel_config_set_region (VsgPRTreeParallelConfig *config,
+                                            VsgParallelVTable *region);
+
+void vsg_prtree_parallel_config_set_node_data (VsgPRTreeParallelConfig *config,
+                                               VsgParallelVTable *node_data);
+#ifdef VSG_HAVE_MPI
+void
+vsg_prtree_parallel_config_set_communicator (VsgPRTreeParallelConfig *config,
+                                             MPI_Comm communicator);
+
+#endif
 
 G_END_DECLS;
 
