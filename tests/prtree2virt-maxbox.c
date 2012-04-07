@@ -30,6 +30,7 @@ static GPtrArray *pointsref_array = NULL;
 
 static glong _near_count = 0;
 static glong _far_count = 0;
+static glong _expect_far_count = -1;
 
 static void (*_fill) (guint *npoints, GPtrArray *array) = grid_fill;
 
@@ -249,12 +250,12 @@ static void grid_fill (guint *npoints, GPtrArray *array)
 
   for (i=0; i<n; i++)
     {
-      gdouble x = (2.*i)/(n-1) - 1.;
+      gdouble x = (2.*i)/(n) - 1.;
 
       for (j=0; j<n; j++)
         {
           Pt *point = pt_alloc (TRUE, array);
-          gdouble y = (2.*j)/(n-1) - 1.;
+          gdouble y = (2.*j)/(n) - 1.;
 
 
           point->vector.x = x;
@@ -490,6 +491,19 @@ void parse_args (int argc, char **argv)
 	    test_printerr ("Invalid virtual maxbox (--virtual-maxbox %s)\n",
                            arg);
 	}
+      else if (g_ascii_strncasecmp (arg, "--expect-far-count", 18) == 0)
+	{
+	  guint tmp = 0;
+	  iarg ++;
+
+	  arg = (iarg<argc) ? argv[iarg] : NULL;
+
+	  if (sscanf (arg, "%u", &tmp) == 1)
+            _expect_far_count = tmp;
+	  else
+	    test_printerr ("Invalid expected far count (--expect-far-count %s)\n",
+                           arg);
+	}
       else if (g_ascii_strncasecmp (arg, "--fill", 6) == 0)
 	{
 	  iarg ++;
@@ -589,6 +603,8 @@ gint main (gint argc, gchar ** argv)
                            NULL, _maxbox);
   treeref = vsg_prtree2d_clone (tree);
 
+  vsg_prtree2d_set_nf_max_point (tree, _virtual_maxbox);
+
   vsg_parallel_vtable_set (&pconfig.node_data,
                            node_counter_alloc, NULL,
                            node_counter_destroy, NULL);
@@ -685,9 +701,6 @@ gint main (gint argc, gchar ** argv)
                                    &ret);
   vsg_prtree2d_traverse (tree, G_PRE_ORDER, (VsgPRTree2dFunc) _down, NULL);
 
-  test_printerr ("ref far_count=%d  -  far_count=%d\n", ref_far_count,
-                 _far_count);
-
   /* check results */
   for (i=0; i<points_array->len; i++)
     {
@@ -699,6 +712,10 @@ gint main (gint argc, gchar ** argv)
       else if (_verbose)
         test_printerr ("correct comparison %d (count=%d)\n", i, pt->count);
     }
+
+  if ((_expect_far_count >= 0) && (_expect_far_count != _far_count) || _verbose)
+    test_printerr ("far_count=%d != expected far_count=%d (ref=%d)\n",
+                   _far_count, _expect_far_count, ref_far_count);
 
   /* remove the points */
   for (i=0; i<points_array->len; i++)

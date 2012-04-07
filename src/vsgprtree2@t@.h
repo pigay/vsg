@@ -181,6 +181,11 @@ vsg_prtree2@t@_set_children_order (VsgPRTree2@t@ *prtree2@t@,
 void vsg_prtree2@t@_set_tolerance (VsgPRTree2@t@ *prtree2@t@,
                                    @type@ tolerance);
 
+void vsg_prtree2@t@_set_nf_max_point (VsgPRTree2@t@ *prtree2@t@,
+                                      guint nf_max_point);
+
+guint vsg_prtree2@t@_get_nf_max_point (VsgPRTree2@t@ *prtree2@t@);
+
 void vsg_prtree2@t@_set_node_data (VsgPRTree2@t@ *prtree2@t@,
                                    GType user_data_type,
                                    gpointer user_data_model);

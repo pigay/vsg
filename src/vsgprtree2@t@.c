@@ -1590,6 +1590,7 @@ vsg_prtree2@t@_new_full (const VsgVector2@t@ *lbound,
   if (max_point == 0)
     max_point = PRTREE2@T@LEAF_MAXSIZE;
   prtree2@t@->config.max_point = max_point;
+  prtree2@t@->config.nf_max_point = max_point;
 
   prtree2@t@->config.remote_depth_dirty = TRUE;
 
@@ -1656,6 +1657,7 @@ VsgPRTree2@t@ *vsg_prtree2@t@_clone (VsgPRTree2@t@ *prtree2@t@)
   res->config.tolerance = prtree2@t@->config.tolerance;
 
   res->config.max_point = prtree2@t@->config.max_point;
+  res->config.nf_max_point = prtree2@t@->config.nf_max_point;
 
   res->config.children_order = prtree2@t@->config.children_order;
   res->config.children_order_data = prtree2@t@->config.children_order_data;
@@ -1918,6 +1920,46 @@ void vsg_prtree2@t@_set_tolerance (VsgPRTree2@t@ *prtree2@t@,
   prtree2@t@->config.tolerance = tolerance;
 }
 
+/**
+ * vsg_prtree2@t@_set_nf_max_point:
+ * @prtree2@t@: a #VsgPRTree2@t@
+ * @nf_max_point: a #guint
+ *
+ * Set the number under which a near/far traversal (see
+ * vsg_prtree2@t@_near_far_traversal()) considers any tree node is a leaf. This
+ * number has to be larger than the tree's natural max_point number.
+ */
+void vsg_prtree2@t@_set_nf_max_point (VsgPRTree2@t@ *prtree2@t@,
+                                      guint nf_max_point)
+{
+  VsgPRTree2@t@Config *config;
+#ifdef VSG_CHECK_PARAMS
+  g_return_if_fail (prtree2@t@ != NULL);
+#endif
+
+  config = &prtree2@t@->config;
+  g_return_if_fail (nf_max_point >= config->max_point);
+
+  config->nf_max_point = nf_max_point;
+}
+
+/**
+ * vsg_prtree2@t@_get_nf_max_point:
+ * @prtree2@t@: a #VsgPRTree2@t@
+ *
+ * inquire @prtree2@t@ for the near/far virtual max_point it is configured with.
+ * (see vsg_prtree2@t@_set_nf_max_point ())
+ *
+ * Returns: nf_max_point
+ */
+guint vsg_prtree2@t@_get_nf_max_point (VsgPRTree2@t@ *prtree2@t@)
+{
+#ifdef VSG_CHECK_PARAMS
+  g_return_if_fail (prtree2@t@ != NULL);
+#endif
+
+  return MAX (prtree2@t@->config.max_point, prtree2@t@->config.nf_max_point);
+}
 /**
  * vsg_prtree2@t@_set_node_data:
  * @prtree2@t@: a #VsgPRTree2@t@

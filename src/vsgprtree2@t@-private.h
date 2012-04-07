@@ -161,6 +161,8 @@ struct _VsgPRTree2@t@Config {
 
   /* config */
   guint max_point;
+  guint nf_max_point;
+
 
   /* spatial tolerance */
   @type@ tolerance;

@@ -326,6 +326,24 @@ vsgprtree2f
 @tolerance: 
 
 
+<!-- ##### FUNCTION vsg_prtree2f_get_nf_max_point ##### -->
+<para>
+
+</para>
+
+@prtree2f: 
+@Returns: 
+
+
+<!-- ##### FUNCTION vsg_prtree2f_set_nf_max_point ##### -->
+<para>
+
+</para>
+
+@prtree2f: 
+@nf_max_point: 
+
+
 <!-- ##### FUNCTION vsg_prtree2f_set_node_data ##### -->
 <para>
 
