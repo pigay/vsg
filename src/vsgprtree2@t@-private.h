@@ -161,8 +161,9 @@ struct _VsgPRTree2@t@Config {
 
   /* config */
   guint max_point;
-  guint nf_max_point;
 
+  VsgPRTree2@t@NFIsleafFunc nf_isleaf;
+  gpointer nf_isleaf_data;
 
   /* spatial tolerance */
   @type@ tolerance;

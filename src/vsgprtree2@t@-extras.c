@@ -245,13 +245,14 @@ void vsg_prtree2@t@node_recursive_near_func (VsgPRTree2@t@Node *one,
 )
 #endif
 
-#define _NODE_IS_NF_INT(node,config) ( \
- PRTREE2@T@NODE_IS_SHARED (node) ||  \
- (node)->point_count > (config)->nf_max_point \
+#define _NODE_INFO_NF_ISLEAF(node_info,config) ( \
+  (node_info)->isleaf || \
+  (! VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info) && \
+   (config)->nf_isleaf ((node_info), (config)->nf_isleaf_data)) \
 )
 
-#define _NODE_IS_NF_LEAF(node,config) ( \
- ! _NODE_IS_NF_INT (node, config)        \
+#define _NODE_INFO_NF_ISINT(node_info,config) ( \
+  ! _NODE_INFO_NF_ISLEAF (node_info, config) \
 )
 
 static void
@@ -278,8 +279,8 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
     vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, FALSE);
 #endif
 
-  if (_NODE_IS_NF_INT (one, &nfc->tree->config) &&
-      _NODE_IS_NF_INT (other, &nfc->tree->config))
+  if (_NODE_INFO_NF_ISINT (one_info, &nfc->tree->config) &&
+      _NODE_INFO_NF_ISINT (other_info, &nfc->tree->config))
     {
 #ifdef VSG_HAVE_MPI
       if (nfc->sz > 1) vsg_prtree2@t@_nf_check_send (nfc);
@@ -487,6 +488,11 @@ static void hilbert2_order (gpointer node_key, gint *children,
     }
 }
 
+static gboolean _default_nf_isleaf (const VsgPRTree2@t@NodeInfo *node_info,
+                                    gpointer user_data)
+{
+  return node_info->isleaf;
+}
 
 /*-------------------------------------------------------------------*/
 /* typedefs and structure doc */
@@ -620,6 +626,35 @@ vsg_prtree2@t@_near_far_traversal (VsgPRTree2@t@ *prtree2@t@,
   vsg_packed_msg_trace ("leave 1 [nf parallel_end]");
 #endif
 
+}
+
+/**
+ * vsg_prtree2@t@_set_nf_isleaf:
+ * @prtree2@t@: a #VsgPRTree2@t@
+ * @isleaf: a #VsgPRTree2@t@NFIsleafFunc
+ * @user_data: user data to be passed to @isleaf
+ *
+ * sets the Near/Far "virtual isleaf" predicate to @isleaf. The default
+ * behaviour is to use the real tree structure.
+ *
+ * This allows to simulate tree leaves that are larger than the real ones. One
+ * could make an internal node to be considered as a leaf for the NF traversal
+ * (for example if it contains a feature that prevent the NF algorithm to be
+ * accurate past some tree depth).
+ */
+void vsg_prtree2@t@_set_nf_isleaf (VsgPRTree2@t@ *prtree2@t@,
+                                   VsgPRTree2@t@NFIsleafFunc isleaf,
+                                   gpointer user_data)
+{
+  VsgPRTree2@t@Config *config;
+#ifdef VSG_CHECK_PARAMS
+  g_return_if_fail (prtree2@t@ != NULL);
+#endif
+
+  config = &prtree2@t@->config;
+
+  config->nf_isleaf = (isleaf != NULL) ? isleaf : _default_nf_isleaf;
+  config->nf_isleaf_data = user_data;
 }
 
 /**

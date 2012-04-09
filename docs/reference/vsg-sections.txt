@@ -376,6 +376,7 @@ VsgRegion2dLocDataFunc
 VsgPoint2dDistDataFunc
 
 VsgPRTree2dFunc
+VsgPRTree2dNFIsleafFunc
 VsgPRTree2dFarInteractionFunc
 VsgPRTree2dInteractionFunc
 
@@ -395,8 +396,6 @@ vsg_prtree2d_set_children_order_with_data
 vsg_prtree2d_set_children_order
 vsg_prtree2d_get_tolerance
 vsg_prtree2d_set_tolerance
-vsg_prtree2d_get_nf_max_point
-vsg_prtree2d_set_nf_max_point
 vsg_prtree2d_set_node_data
 vsg_prtree2d_set_node_data_vtable
 vsg_prtree2d_get_bounds
@@ -422,6 +421,7 @@ vsg_prtree2d_near_far_traversal
 vsg_prtree2d_traverse_custom
 vsg_prtree2d_traverse
 
+vsg_prtree2d_set_nf_isleaf
 vsg_prtree2d_set_children_order_hilbert
 vsg_prtree2d_set_children_order_default
 
@@ -495,6 +495,7 @@ VsgRegion2fLocDataFunc
 VsgPoint2fDistDataFunc
 
 VsgPRTree2fFunc
+VsgPRTree2fNFIsleafFunc
 VsgPRTree2fFarInteractionFunc
 VsgPRTree2fInteractionFunc
 
@@ -514,8 +515,6 @@ vsg_prtree2f_set_children_order_with_data
 vsg_prtree2f_set_children_order
 vsg_prtree2f_get_tolerance
 vsg_prtree2f_set_tolerance
-vsg_prtree2f_get_nf_max_point
-vsg_prtree2f_set_nf_max_point
 vsg_prtree2f_set_node_data
 vsg_prtree2f_set_node_data_vtable
 vsg_prtree2f_get_bounds
@@ -541,6 +540,7 @@ vsg_prtree2f_near_far_traversal
 vsg_prtree2f_traverse_custom
 vsg_prtree2f_traverse
 
+vsg_prtree2f_set_nf_isleaf
 vsg_prtree2f_set_children_order_hilbert
 vsg_prtree2f_set_children_order_default
 

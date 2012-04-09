@@ -158,6 +158,16 @@ vsgprtree2d
 @user_data: 
 
 
+<!-- ##### USER_FUNCTION VsgPRTree2dNFIsleafFunc ##### -->
+<para>
+
+</para>
+
+@node_info: 
+@user_data: 
+@Returns: 
+
+
 <!-- ##### USER_FUNCTION VsgPRTree2dFarInteractionFunc ##### -->
 <para>
 
@@ -324,24 +334,6 @@ vsgprtree2d
 
 @prtree2d: 
 @tolerance: 
-
-
-<!-- ##### FUNCTION vsg_prtree2d_get_nf_max_point ##### -->
-<para>
-
-</para>
-
-@prtree2d: 
-@Returns: 
-
-
-<!-- ##### FUNCTION vsg_prtree2d_set_nf_max_point ##### -->
-<para>
-
-</para>
-
-@prtree2d: 
-@nf_max_point: 
 
 
 <!-- ##### FUNCTION vsg_prtree2d_set_node_data ##### -->
@@ -573,6 +565,16 @@ vsgprtree2d
 @prtree2d: 
 @order: 
 @func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree2d_set_nf_isleaf ##### -->
+<para>
+
+</para>
+
+@prtree2d: 
+@isleaf: 
 @user_data: 
 
 

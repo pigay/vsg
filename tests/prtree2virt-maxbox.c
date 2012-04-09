@@ -456,6 +456,12 @@ void _check_pt_count (Pt *pt, const glong *ref)
     }
 }
 
+gboolean _nf_isleaf_virtual_maxbox (const VsgPRTree2dNodeInfo *node_info,
+                                    gpointer virtual_maxbox)
+{
+  return node_info->point_count <= * ((guint *) virtual_maxbox);
+}
+
 static
 void parse_args (int argc, char **argv)
 {
@@ -603,7 +609,8 @@ gint main (gint argc, gchar ** argv)
                            NULL, _maxbox);
   treeref = vsg_prtree2d_clone (tree);
 
-  vsg_prtree2d_set_nf_max_point (tree, _virtual_maxbox);
+  vsg_prtree2d_set_nf_isleaf (tree, _nf_isleaf_virtual_maxbox,
+                              &_virtual_maxbox);
 
   vsg_parallel_vtable_set (&pconfig.node_data,
                            node_counter_alloc, NULL,
@@ -713,7 +720,8 @@ gint main (gint argc, gchar ** argv)
         test_printerr ("correct comparison %d (count=%d)\n", i, pt->count);
     }
 
-  if ((_expect_far_count >= 0) && (_expect_far_count != _far_count) || _verbose)
+  if (((_expect_far_count >= 0) && (_expect_far_count != _far_count)) ||
+      _verbose)
     test_printerr ("far_count=%d != expected far_count=%d (ref=%d)\n",
                    _far_count, _expect_far_count, ref_far_count);
 
