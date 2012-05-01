@@ -146,6 +146,17 @@ VSG_PARALLEL_STATUS_IS_SHARED (node->parallel_status) \
 VSG_PARALLEL_STATUS_PROC (node->parallel_status) \
 )
 
+#define PRTREE2@T@_NODE_INFO_NF_ISLEAF(node_info,config) ( \
+  (node_info)->isleaf || \
+  (! VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info) && \
+   (config)->nf_isleaf ((node_info), (config)->nf_isleaf_data)) \
+)
+
+#define PRTREE2@T@_NODE_INFO_NF_ISINT(node_info,config) ( \
+  ! PRTREE2@T@_NODE_INFO_NF_ISLEAF (node_info, config) \
+)
+
+
 struct _VsgPRTree2@t@Config {
 
   /* localization methods */

@@ -14,7 +14,6 @@
 static gint rk = 0, sz = 1;
 
 static gboolean _verbose = FALSE;
-static gboolean _do_write = FALSE;
 static gboolean _do_check = TRUE;
 static gboolean _mpi = FALSE;
 
@@ -322,20 +321,6 @@ void _near (VsgPRTree2dNodeInfo *one_info,
       (*err) ++;
     }
 
-  if (_do_write && VSG_PRTREE2D_NODE_INFO_IS_REMOTE (one_info))
-    {
-      gchar fn[1024];
-      FILE *f;
-      sprintf (fn, "comm-%03d.svg", rk);
-      f = fopen (fn, "a");
-
-      fprintf (f, "<!--s=%d--><polyline points=\"%g,%g %g,%g\" "        \
-               "style=\"stroke:#00FF00;\"/>\n",
-               rk,
-               one_info->center.x, -one_info->center.y,
-               other_info->center.x, -other_info->center.y);
-      fclose (f);
-    }
   _near_count ++;
 }
 
@@ -354,21 +339,6 @@ void _far (VsgPRTree2dNodeInfo *one_info,
       (other_info->point_count == 0 &&
        VSG_PRTREE2D_NODE_INFO_IS_LOCAL (other_info)))
     g_printerr ("%d : unnecessary far call\n", rk);
-
-  if (_do_write && VSG_PRTREE2D_NODE_INFO_IS_REMOTE (one_info))
-    {
-      gchar fn[1024];
-      FILE *f;
-      sprintf (fn, "comm-%03d.svg", rk);
-      f = fopen (fn, "a");
-
-      fprintf (f, "<!--s=%d--><polyline points=\"%g,%g %g,%g\" "        \
-               "style=\"stroke:#0000FF;\"/>\n",
-               rk,
-               one_info->center.x, -one_info->center.y,
-               other_info->center.x, -other_info->center.y);
-      fclose (f);
-    }
 
   _far_count ++;
 }
@@ -399,6 +369,9 @@ void _zero_pt (Pt *pt, gpointer data)
 {
   pt->count = 0;
 }
+
+gboolean _nf_isleaf_virtual_maxbox (const VsgPRTree2dNodeInfo *node_info,
+                                    gpointer virtual_maxbox);
 
 void _zero (VsgPRTree2dNodeInfo *node_info, gpointer data)
 {
@@ -462,6 +435,8 @@ gboolean _nf_isleaf_virtual_maxbox (const VsgPRTree2dNodeInfo *node_info,
   return node_info->point_count <= * ((guint *) virtual_maxbox);
 }
 
+static gchar **counts = NULL;
+
 static
 void parse_args (int argc, char **argv)
 {
@@ -496,6 +471,15 @@ void parse_args (int argc, char **argv)
 	  else
 	    test_printerr ("Invalid virtual maxbox (--virtual-maxbox %s)\n",
                            arg);
+	}
+      else if (g_ascii_strncasecmp (arg, "--expect-far-counts", 19) == 0)
+	{
+	  iarg ++;
+
+	  arg = (iarg<argc) ? argv[iarg] : NULL;
+
+          counts = g_strsplit (arg, ",", 100);
+
 	}
       else if (g_ascii_strncasecmp (arg, "--expect-far-count", 18) == 0)
 	{
@@ -532,10 +516,6 @@ void parse_args (int argc, char **argv)
 
 	  _npoints = atoi (arg);
         }
-      else if (g_strncasecmp (arg, "--write", 7) == 0)
-        {
-          _do_write = TRUE;
-        }
       else if (g_strncasecmp (arg, "--no-check", 9) == 0)
         {
           _do_check = FALSE;
@@ -547,7 +527,7 @@ void parse_args (int argc, char **argv)
         }
       else if (g_ascii_strcasecmp (arg, "--version") == 0)
 	{
-	  test_printerr ("%s version %s\n", argv[0], PACKAGE_VERSION);
+	  g_printerr ("%s version %s\n", argv[0], PACKAGE_VERSION);
 	  exit (0);
 	}
       else if (g_strncasecmp (arg, "--mpi", 5) == 0)
@@ -586,6 +566,21 @@ gint main (gint argc, gchar ** argv)
 
       MPI_Comm_size (MPI_COMM_WORLD, &sz);
       MPI_Comm_rank (MPI_COMM_WORLD, &rk);
+
+      if (counts != NULL)
+        {
+          gint i = 0;
+          gint tmp = 0;
+
+          while (counts[i+1] != NULL && i<rk) i ++;
+
+	  if (sscanf (counts[i], "%u", &tmp) == 1)
+            _expect_far_count = tmp;
+	  else
+	    test_printerr ("Invalid expected far count list (--expect-far-counts)\n");
+
+          g_strfreev (counts);
+        }
     }
 #endif
 
@@ -646,6 +641,28 @@ gint main (gint argc, gchar ** argv)
                                         pt_visit_bw_reduce, NULL);
 
       vsg_parallel_vtable_set_parallel (&pconfig.node_data,
+                                        nc_migrate_pack, NULL,
+                                        nc_migrate_unpack, NULL,
+                                        NULL, NULL,
+                                        nc_visit_fw_pack, NULL,
+                                        nc_visit_fw_unpack, NULL,
+                                        nc_visit_fw_reduce, NULL,
+                                        nc_visit_bw_pack, NULL,
+                                        nc_visit_bw_unpack, NULL,
+                                        nc_visit_bw_reduce, NULL);
+
+      vsg_parallel_vtable_set_parallel (&prefconfig.point,
+                                        pt_migrate_pack, NULL,
+                                        pt_migrate_unpack, NULL,
+                                        NULL, NULL,
+                                        pt_visit_fw_pack, NULL,
+                                        pt_visit_fw_unpack, NULL,
+                                        NULL, NULL,
+                                        pt_visit_bw_pack, NULL,
+                                        pt_visit_bw_unpack, NULL,
+                                        pt_visit_bw_reduce, NULL);
+
+      vsg_parallel_vtable_set_parallel (&prefconfig.node_data,
                                         nc_migrate_pack, NULL,
                                         nc_migrate_unpack, NULL,
                                         NULL, NULL,
@@ -720,9 +737,11 @@ gint main (gint argc, gchar ** argv)
         test_printerr ("correct comparison %d (count=%d)\n", i, pt->count);
     }
 
-  if (((_expect_far_count >= 0) && (_expect_far_count != _far_count)) ||
-      _verbose)
+  if ((_expect_far_count >= 0) && (_expect_far_count != _far_count))
     test_printerr ("far_count=%d != expected far_count=%d (ref=%d)\n",
+                   _far_count, _expect_far_count, ref_far_count);
+  else if (_verbose)
+    test_printerr ("far_count=%d == expected far_count=%d (ref=%d)\n",
                    _far_count, _expect_far_count, ref_far_count);
 
   /* remove the points */

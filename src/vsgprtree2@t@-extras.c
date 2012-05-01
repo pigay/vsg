@@ -245,16 +245,6 @@ void vsg_prtree2@t@node_recursive_near_func (VsgPRTree2@t@Node *one,
 )
 #endif
 
-#define _NODE_INFO_NF_ISLEAF(node_info,config) ( \
-  (node_info)->isleaf || \
-  (! VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info) && \
-   (config)->nf_isleaf ((node_info), (config)->nf_isleaf_data)) \
-)
-
-#define _NODE_INFO_NF_ISINT(node_info,config) ( \
-  ! _NODE_INFO_NF_ISLEAF (node_info, config) \
-)
-
 static void
 _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
                                       VsgPRTree2@t@Node *one,
@@ -279,8 +269,8 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
     vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, FALSE);
 #endif
 
-  if (_NODE_INFO_NF_ISINT (one_info, &nfc->tree->config) &&
-      _NODE_INFO_NF_ISINT (other_info, &nfc->tree->config))
+  if (PRTREE2@T@_NODE_INFO_NF_ISINT (one_info, &nfc->tree->config) &&
+      PRTREE2@T@_NODE_INFO_NF_ISINT (other_info, &nfc->tree->config))
     {
 #ifdef VSG_HAVE_MPI
       if (nfc->sz > 1) vsg_prtree2@t@_nf_check_send (nfc);
