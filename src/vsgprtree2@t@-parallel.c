@@ -2591,13 +2591,16 @@ vsg_prtree2@t@_node_check_parallel_near_far (VsgNFConfig2@t@ *nfc,
                                              VsgPRTree2@t@NodeInfo *info,
                                              gboolean do_traversal)
 {
-  gboolean ret = do_traversal;
+  static gint _virtual_shared_warning_done = 0;
 
+  gboolean ret = do_traversal;
   if (nfc->sz < 2) return FALSE;
 
   vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, FALSE);
 
-  if (do_traversal && VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (info))
+  if (!do_traversal) return ret;
+
+  if (VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (info))
     {
       gint i;
       NodeRemoteData nrd;
@@ -2609,10 +2612,8 @@ vsg_prtree2@t@_node_check_parallel_near_far (VsgNFConfig2@t@ *nfc,
 
       vsg_prtree_key2@t@_copy (&ref_ancestry_ids[info->id.depth], &info->id);
       for (i = info->id.depth-1; i >= 0; i --)
-        {
-          vsg_prtree_key2@t@_get_father (&ref_ancestry_ids[i+1],
-                                         &ref_ancestry_ids[i]);
-        }
+        vsg_prtree_key2@t@_get_father (&ref_ancestry_ids[i+1],
+                                       &ref_ancestry_ids[i]);
 
       nrd.ref_ancestry_ids = ref_ancestry_ids;
 
@@ -2626,6 +2627,18 @@ vsg_prtree2@t@_node_check_parallel_near_far (VsgNFConfig2@t@ *nfc,
                                                ref_ancestry_ids);
 
       ret = nrd.sent && ! nrd.fake_leaf;
+    }
+  else if (VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (info) &&
+           nfc->tree->config.nf_isleaf (info,
+                                        nfc->tree->config.nf_isleaf_data))
+    {
+      if (_virtual_shared_warning_done == 0)
+        {
+          g_warning ("%d : virtual-leaf shared node not handled in parallel "
+                     "near/far traversal. Results will be unpredictable.",
+                     nfc->rk);
+          _virtual_shared_warning_done ++;
+        }
     }
 
   vsg_prtree2@t@_nf_check_send (nfc);
