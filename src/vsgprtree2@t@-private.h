@@ -146,6 +146,10 @@ VSG_PARALLEL_STATUS_IS_SHARED (node->parallel_status) \
 VSG_PARALLEL_STATUS_PROC (node->parallel_status) \
 )
 
+#define PRTREE2@T@_NODE_INFO_CALL_NF_ISLEAF(node_info, config) ( \
+  (config)->nf_isleaf ((node_info), (config)->nf_isleaf_data) \
+)
+
 #define PRTREE2@T@_NODE_INFO_NF_ISLEAF(node_info,config) ( \
   (node_info)->isleaf || \
   (! VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info) && \
@@ -324,6 +328,7 @@ void vsg_prtree2@t@node_recursive_near_func (VsgPRTree2@t@Node *one,
                                              VsgPRTree2@t@NodeInfo *other_info,
                                              VsgNFConfig2@t@ *nfc);
 
+gboolean vsg_prtree2@t@_nf_isleaf_is_default (VsgPRTree2@t@ *tree);
 
 G_END_DECLS;
 

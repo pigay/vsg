@@ -3110,8 +3110,14 @@ void vsg_prtree2@t@_update_remote_depths (VsgPRTree2@t@ *tree)
   tree->config.remote_depth_dirty = FALSE;
 }
 
+typedef struct _LocalNFLeafCountData LocalNFLeafCountData;
+struct _LocalNFLeafCountData {
+  VsgPRTree2@t@Config *config;
+  GArray *array;
+};
+
 static void _local_leaves_count (VsgPRTree2@t@NodeInfo *node_info,
-                                 GArray *array)
+                                 LocalNFLeafCountData *lnflcd)
 {
   if (! VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info))
     {
@@ -3120,44 +3126,72 @@ static void _local_leaves_count (VsgPRTree2@t@NodeInfo *node_info,
           VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info->father_info))
         {
           gint i = 0;
-          g_array_append_val (array, i);
+          g_array_append_val (lnflcd->array, i);
         }
 
       /* increment local leaves */
       if (node_info->isleaf && VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info) &&
           node_info->point_count != 0)
-        g_array_index (array, gint, array->len-1) ++;
+        g_array_index (lnflcd->array, gint, lnflcd->array->len-1) ++;
+    }
+}
+
+static void _local_nf_leaves_count (VsgPRTree2@t@NodeInfo *node_info,
+                                    LocalNFLeafCountData *lnflcd)
+{
+  if (! VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info))
+    {
+      /* detect root of local (remote) subtrees */
+      if (node_info->father_info == NULL ||
+          VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info->father_info))
+        {
+          gint i = 0;
+          g_array_append_val (lnflcd->array, i);
+        }
+
+      /* increment local leaves */
+      if ((PRTREE2@T@_NODE_INFO_CALL_NF_ISLEAF(node_info, lnflcd->config) &&
+           (node_info->father_info == NULL || ! PRTREE2@T@_NODE_INFO_CALL_NF_ISLEAF(node_info->father_info, lnflcd->config))) &&
+          VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info) &&
+          node_info->point_count != 0)
+        g_array_index (lnflcd->array, gint, lnflcd->array->len-1) ++;
     }
 }
 
 typedef struct _ContiguousDistData ContiguousDistData;
 struct _ContiguousDistData {
+  VsgPRTree2@t@Config *config;
   GArray *array;       /* array of number of leaves on each local subtree */
   gint total_leaves;   /* total number of leaves in the tree (sum of array) */
   gint q, r, m;        /* distribution variables */
   gint current_index;  /* number of already checked array entries */
   gint current_lcount; /* number of already checked leaves */
   VsgPRTreeKey2@t@ last_subtree_id; /* key of the last local subtree */
+  VsgPRTreeKey2@t@ last_virtleaf_id; /* only for virtual leaf dist */
 };
 
-static gint contiguous_dist (VsgPRTree2@t@NodeInfo *node_info,
-                             ContiguousDistData *cda)
+static inline gint contiguous_dist_data_dest (ContiguousDistData *cdd)
+{
+  if (cdd->current_lcount >= cdd->m && cdd->q > 0)
+    return (cdd->current_lcount - cdd->r) / cdd->q;
+
+  return cdd->current_lcount / (cdd->q + 1);
+
+}
+
+static gint _contiguous_dist (VsgPRTree2@t@NodeInfo *node_info,
+                             ContiguousDistData *cdd)
 {
   if (VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info))
     {
-      gint ret = 0;
-
-      if (cda->current_lcount >= cda->m && cda->q > 0)
-        ret = (cda->current_lcount - cda->r) / cda->q;
-      else
-        ret = cda->current_lcount / (cda->q + 1);
+      gint ret = contiguous_dist_data_dest (cdd);
 
       if (node_info->point_count == 0)
         return ret;
 
-      cda->current_lcount ++;
+      cdd->current_lcount ++;
 
-      if (! vsg_prtree_key2@t@_is_ancestor (&cda->last_subtree_id,
+      if (! vsg_prtree_key2@t@_is_ancestor (&cdd->last_subtree_id,
                                             &node_info->id))
         {
           VsgPRTree2@t@NodeInfo *ancestor = node_info;
@@ -3166,8 +3200,8 @@ static gint contiguous_dist (VsgPRTree2@t@NodeInfo *node_info,
                  VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (ancestor->father_info))
             ancestor = ancestor->father_info;
 
-          cda->current_index ++;
-          vsg_prtree_key2@t@_copy (&cda->last_subtree_id, &ancestor->id);
+          cdd->current_index ++;
+          vsg_prtree_key2@t@_copy (&cdd->last_subtree_id, &ancestor->id);
         }
 
 /*       g_printerr ("%d: sending node ", rk); */
@@ -3179,13 +3213,155 @@ static gint contiguous_dist (VsgPRTree2@t@NodeInfo *node_info,
 
   g_assert (VSG_PRTREE2@T@_NODE_INFO_IS_REMOTE (node_info));
 
-  cda->current_lcount += g_array_index (cda->array, gint, cda->current_index);
-  cda->current_index ++;
+  cdd->current_lcount += g_array_index (cdd->array, gint, cdd->current_index);
+  cdd->current_index ++;
 
   return -1;
 }
 
+static inline VsgPRTreeKey2@t@ *
+_search_virtual_leaf (VsgPRTree2@t@NodeInfo *node_info,
+                      VsgPRTree2@t@Config *config)
+{
+  VsgPRTree2@t@NodeInfo *father_info = node_info->father_info;
+
+  /* go back in ancestry while father is a virtual leaf */
+  while (father_info != NULL &&
+         PRTREE2@T@_NODE_INFO_CALL_NF_ISLEAF (father_info, config))
+    {
+      node_info = father_info;
+      father_info = node_info->father_info;
+    }
+
+  /* return higher virtual leaf in the ancestry */
+  return &node_info->id;
+}
+
 static const VsgPRTreeKey2@t@ _dummy_key = {0, 0, 255};
+
+static gint _contiguous_dist_virtual_leaf (VsgPRTree2@t@NodeInfo *node_info,
+                                           ContiguousDistData *cdd)
+{
+  if (VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info))
+    {
+      gint ret;
+
+      if (node_info->point_count == 0)
+        return contiguous_dist_data_dest (cdd);
+
+      if (vsg_prtree_key2@t@_equals (&cdd->last_virtleaf_id, &_dummy_key))
+        {
+          /* no leaf was already registered, find the higher virtual leaf */
+          VsgPRTreeKey2@t@ *k = _search_virtual_leaf (node_info, cdd->config);
+          vsg_prtree_key2@t@_copy (&cdd->last_virtleaf_id, k);
+
+          return contiguous_dist_data_dest (cdd);
+        }
+
+      /* we are inside an already registered virtual leaf */
+      if (vsg_prtree_key2@t@_is_ancestor (&cdd->last_virtleaf_id,
+                                          &node_info->id))
+        return contiguous_dist_data_dest (cdd);
+
+      /* changing to a new virtual leaf: recompute new destination */
+      cdd->current_lcount ++;
+      ret = contiguous_dist_data_dest (cdd);
+      /* register new virtual leaf */
+      vsg_prtree_key2@t@_copy (&cdd->last_virtleaf_id,
+                               _search_virtual_leaf (node_info, cdd->config));
+
+      if (! vsg_prtree_key2@t@_is_ancestor (&cdd->last_subtree_id,
+                                            &node_info->id))
+        {
+          VsgPRTree2@t@NodeInfo *ancestor = node_info;
+
+          while (ancestor->father_info &&
+                 VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (ancestor->father_info))
+            ancestor = ancestor->father_info;
+
+          cdd->current_index ++;
+          vsg_prtree_key2@t@_copy (&cdd->last_subtree_id, &ancestor->id);
+        }
+
+/*       g_printerr ("%d: sending node ", rk); */
+/*       vsg_vector2@t@_write (&node_info->center, stderr); */
+/*       g_printerr (" to %d\n", ret); */
+
+      return ret;
+    }
+
+  g_assert (VSG_PRTREE2@T@_NODE_INFO_IS_REMOTE (node_info));
+
+  cdd->current_lcount += g_array_index (cdd->array, gint, cdd->current_index);
+  cdd->current_index ++;
+
+  return -1;
+}
+
+typedef gint (*ContiguousDistFunc) (VsgPRTree2@t@NodeInfo *node_info,
+                                    ContiguousDistData *cdd);
+
+static void
+_distribute_contiguous_leaves_internal (VsgPRTree2@t@ *tree,
+                                        VsgPRTree2@t@Func leaves_count,
+                                        ContiguousDistFunc contiguous_dist)
+{
+  MPI_Comm comm;
+  ContiguousDistData cdd;
+  LocalNFLeafCountData lnflcd;
+  GArray *reduced;
+  gint i, sz;
+
+  g_return_if_fail (tree != NULL);
+
+  lnflcd.config = &tree->config;
+  lnflcd.array = g_array_sized_new (FALSE, FALSE, sizeof (gint), 1024);
+  comm = tree->config.parallel_config.communicator;
+  
+/*   MPI_Comm_rank (comm, &rk); */
+  MPI_Comm_size (comm, &sz);
+
+  /* accumulate number of local leaves in the local subtrees' roots */
+  vsg_prtree2@t@_traverse (tree, G_PRE_ORDER,
+                           leaves_count,
+                           &lnflcd);
+
+  /* prepare reduced for storing the results of the Allreduce */
+  reduced = g_array_sized_new (FALSE, TRUE, sizeof (gint), lnflcd.array->len);
+  reduced = g_array_set_size (reduced, lnflcd.array->len);
+
+  MPI_Allreduce (lnflcd.array->data, reduced->data, lnflcd.array->len, MPI_INT,
+                 MPI_MAX, comm);
+
+/*   g_printerr ("%d: contiguous allreduce size=%d\n", rk, array->len); */
+
+  g_array_free (lnflcd.array, TRUE);
+
+  cdd.config = &tree->config;
+  cdd.array = reduced;
+  cdd.total_leaves = 0;
+  for (i=0; i<reduced->len; i++)
+    cdd.total_leaves += g_array_index (reduced, gint, i);
+
+  if (cdd.total_leaves > 0)
+    {
+      cdd.q = cdd.total_leaves / sz;
+      cdd.r = cdd.total_leaves % sz;
+      cdd.m = (cdd.q+1) * cdd.r;
+      cdd.current_lcount = 0;
+      cdd.current_index = 0;
+      cdd.last_subtree_id = _dummy_key;
+      cdd.last_virtleaf_id = _dummy_key;
+
+      vsg_prtree2@t@_distribute_nodes (tree,
+                                       (VsgPRTree2@t@DistributionFunc) contiguous_dist,
+                                       &cdd);
+
+/*   g_printerr ("%d : reduced-len=%d current-index=%d\n", rk, reduced->len, cdd.current_index); */
+    }
+
+  g_array_free (reduced, TRUE);
+}
 
 /**
  * vsg_prtree2@t@_distribute_contiguous_leaves:
@@ -3205,58 +3381,18 @@ static const VsgPRTreeKey2@t@ _dummy_key = {0, 0, 255};
  */
 void vsg_prtree2@t@_distribute_contiguous_leaves (VsgPRTree2@t@ *tree)
 {
-  MPI_Comm comm;
-  ContiguousDistData cda;
-  GArray *array;
-  GArray *reduced;
-  gint i, sz;
+  VsgPRTree2@t@Func leaves_count = (VsgPRTree2@t@Func) _local_leaves_count;
+  ContiguousDistFunc contiguous_dist = _contiguous_dist;
 
-  g_return_if_fail (tree != NULL);
-
-  array = g_array_sized_new (FALSE, FALSE, sizeof (gint), 1024);
-  comm = tree->config.parallel_config.communicator;
-  
-/*   MPI_Comm_rank (comm, &rk); */
-  MPI_Comm_size (comm, &sz);
-
-  /* accumulate number of local leaves in the local subtrees' roots */
-  vsg_prtree2@t@_traverse (tree, G_PRE_ORDER,
-                           (VsgPRTree2@t@Func) _local_leaves_count,
-                           array);
-
-  /* prepare reduced for storing the results of the Allreduce */
-  reduced = g_array_sized_new (FALSE, TRUE, sizeof (gint), array->len);
-  reduced = g_array_set_size (reduced, array->len);
-
-  MPI_Allreduce (array->data, reduced->data, array->len, MPI_INT, MPI_MAX,
-                 comm);
-
-/*   g_printerr ("%d: contiguous allreduce size=%d\n", rk, array->len); */
-
-  g_array_free (array, TRUE);
-
-  cda.array = reduced;
-  cda.total_leaves = 0;
-  for (i=0; i<reduced->len; i++)
-    cda.total_leaves += g_array_index (reduced, gint, i);
-
-  if (cda.total_leaves > 0)
+  if (! vsg_prtree2@t@_nf_isleaf_is_default (tree))
     {
-      cda.q = cda.total_leaves / sz;
-      cda.r = cda.total_leaves % sz;
-      cda.m = (cda.q+1) * cda.r;
-      cda.current_lcount = 0;
-      cda.current_index = 0;
-      cda.last_subtree_id = _dummy_key;
-
-      vsg_prtree2@t@_distribute_nodes (tree,
-                                       (VsgPRTree2@t@DistributionFunc) contiguous_dist,
-                                       &cda);
-
-/*   g_printerr ("%d : reduced-len=%d current-index=%d\n", rk, reduced->len, cda.current_index); */
+      leaves_count = (VsgPRTree2@t@Func) _local_nf_leaves_count;
+      contiguous_dist = _contiguous_dist_virtual_leaf;
     }
 
-  g_array_free (reduced, TRUE);
+  _distribute_contiguous_leaves_internal (tree, leaves_count, contiguous_dist);
+
+
 }
 
 typedef struct _ScatterData ScatterData;

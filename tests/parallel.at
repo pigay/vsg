@@ -75,13 +75,16 @@ AT_CHECK([mpiexec -n 8 prtree2paranftrav --hilbert --np 100], 0)
 
 # check parallel virtual maxbox. Only with 2 or 4 procs on a regular grid since
 # it's uneasy to check with irregular distributions
-AT_CHECK([mpiexec -n 2 prtree2virt-maxbox], 0)
+AT_CHECK([mpiexec -n 2 prtree2virt-maxbox --mpi], 0)
 AT_CHECK([mpiexec -n 2 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --np 16], 0)
 AT_CHECK([mpiexec -n 2 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --np 16 --expect-far-count 0], 0)
+AT_CHECK([mpiexec -n 3 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --np 16 --expect-far-count 0], 0)
 AT_CHECK([mpiexec -n 4 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --np 16 --expect-far-count 0], 0)
 AT_CHECK([mpiexec -n 2 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --np 64 --expect-far-counts 12,66], 0)
+AT_CHECK([mpiexec -n 3 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --np 64 --expect-far-counts 6,25,47], 0)
 AT_CHECK([mpiexec -n 4 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --np 64 --expect-far-counts 0,12,27,39], 0)
 AT_CHECK([mpiexec -n 2 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --np 256 --expect-far-counts 222,414], 0)
+AT_CHECK([mpiexec -n 3 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --np 256 --expect-far-counts 123,218,295], 0)
 AT_CHECK([mpiexec -n 4 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --np 256 --expect-far-counts 78,144,174,240], 0)
 AT_CLEANUP
 

@@ -14,6 +14,7 @@
 static gint rk = 0, sz = 1;
 
 static gboolean _verbose = FALSE;
+static gboolean _write = FALSE;
 static gboolean _do_check = TRUE;
 static gboolean _mpi = FALSE;
 
@@ -432,6 +433,12 @@ void _check_pt_count (Pt *pt, const glong *ref)
 gboolean _nf_isleaf_virtual_maxbox (const VsgPRTree2dNodeInfo *node_info,
                                     gpointer virtual_maxbox)
 {
+  /* shared nodes shouldn't be considered as virtual leaves in this case
+   * because point_count is only a local count. For example, a shared node
+   * without any local child would be considered as a virtual leaf whatever is
+   * its global point_count */
+  if (VSG_PRTREE2D_NODE_INFO_IS_SHARED (node_info)) return FALSE;
+
   return node_info->point_count <= * ((guint *) virtual_maxbox);
 }
 
@@ -519,6 +526,10 @@ void parse_args (int argc, char **argv)
       else if (g_strncasecmp (arg, "--no-check", 9) == 0)
         {
           _do_check = FALSE;
+        }
+      else if (g_strncasecmp (arg, "--write", 7) == 0)
+        {
+          _write = TRUE;
         }
       else if (g_strncasecmp (arg, "-v", 2) == 0 ||
                g_strncasecmp (arg, "--verbose", 9) == 0)
@@ -689,7 +700,7 @@ gint main (gint argc, gchar ** argv)
 	{
 	  test_printerr ("points[%d]: ", i);
 	  vsg_vector2d_write (g_ptr_array_index (points_array, i), stderr);
-	  test_printerr ("\n");
+	  g_printerr ("\n");
 	}
 
       vsg_prtree2d_insert_point (tree, g_ptr_array_index (points_array, i));
@@ -708,6 +719,21 @@ gint main (gint argc, gchar ** argv)
     }
 #endif
 
+  if (_write)
+    {
+      gchar fn[128];
+      FILE *f;
+
+      g_sprintf (fn, "tree-%03d.txt", rk);
+      f = fopen (fn, "w");
+      vsg_prtree2d_write (tree, f);
+      fclose (f);
+      g_sprintf (fn, "treeref-%03d.txt", rk);
+      f = fopen (fn, "w");
+      vsg_prtree2d_write (treeref, f);
+      fclose (f);
+    }
+
   /* compute neaf/far interactions for treeref */
   _far_count = 0;
   _do_upward_pass (treeref);
@@ -725,14 +751,25 @@ gint main (gint argc, gchar ** argv)
                                    &ret);
   vsg_prtree2d_traverse (tree, G_PRE_ORDER, (VsgPRTree2dFunc) _down, NULL);
 
+  /* migrate points back to processor 0 before checking */
+  vsg_prtree2d_distribute_concentrate (tree, 0);
+  vsg_prtree2d_distribute_concentrate (treeref, 0);
+
   /* check results */
   for (i=0; i<points_array->len; i++)
     {
       Pt *pt = g_ptr_array_index (points_array, i);
+      /* FIXME: what if pointsref and points are no longer in the same order? */
       Pt *ptref = g_ptr_array_index (pointsref_array, i);
 
       if (pt->count != ptref->count)
-        test_printerr ("error pt[%d]=%d ptref[%d]=%d\n", i, pt->count, i, ptref->count);
+        {
+          test_printerr ("error pt[");
+          vsg_vector2d_write (&pt->vector, stderr);
+          g_printerr ("]=%ld ptref[", pt->count);
+          vsg_vector2d_write (&ptref->vector, stderr);
+          g_printerr ("]=%ld\n", ptref->count);
+        }
       else if (_verbose)
         test_printerr ("correct comparison %d (count=%d)\n", i, pt->count);
     }

@@ -484,6 +484,11 @@ static gboolean _default_nf_isleaf (const VsgPRTree2@t@NodeInfo *node_info,
   return node_info->isleaf;
 }
 
+gboolean vsg_prtree2@t@_nf_isleaf_is_default (VsgPRTree2@t@ *tree)
+{
+  return tree->config.nf_isleaf == _default_nf_isleaf;
+}
+
 /*-------------------------------------------------------------------*/
 /* typedefs and structure doc */
 /*-------------------------------------------------------------------*/
