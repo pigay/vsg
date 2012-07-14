@@ -771,7 +771,13 @@ gint main (gint argc, gchar ** argv)
           g_printerr ("]=%ld\n", ptref->count);
         }
       else if (_verbose)
-        test_printerr ("correct comparison %d (count=%d)\n", i, pt->count);
+        {
+          test_printerr ("correct comparison [");
+          vsg_vector2d_write (&pt->vector, stderr);
+          g_printerr ("]=%ld ptref[", pt->count);
+          vsg_vector2d_write (&ptref->vector, stderr);
+          g_printerr ("]=%ld\n", ptref->count);
+        }
     }
 
   if ((_expect_far_count >= 0) && (_expect_far_count != _far_count))
