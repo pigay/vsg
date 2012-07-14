@@ -84,8 +84,8 @@ vsgloc3 vsg_prtree_key3@t@_loc3 (VsgPRTreeKey3@t@ *key,
 
 vsgloc3 vsg_prtree_key3@t@_child (VsgPRTreeKey3@t@ *key);
 
-gboolean vsg_prtree_key3@t@_equals (VsgPRTreeKey3@t@ *one,
-                                    VsgPRTreeKey3@t@ *other);
+gboolean vsg_prtree_key3@t@_equals (const VsgPRTreeKey3@t@ *one,
+                                    const VsgPRTreeKey3@t@ *other);
 
 void vsg_prtree_key3@t@_copy (VsgPRTreeKey3@t@ *dst, VsgPRTreeKey3@t@ *src);
 

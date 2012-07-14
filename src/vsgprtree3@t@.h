@@ -85,6 +85,9 @@ typedef @type@ (*VsgPoint3@t@DistDataFunc) (const VsgPoint3 one,
 typedef void (*VsgPRTree3@t@Func) (const VsgPRTree3@t@NodeInfo *node_info,
                                    gpointer user_data);
 
+typedef gboolean (*VsgPRTree3@t@NFIsleafFunc) (const VsgPRTree3@t@NodeInfo *node_info,
+                                               gpointer user_data);
+
 /* structures */
 struct _VsgPRTree3@t@NodeInfo {
 

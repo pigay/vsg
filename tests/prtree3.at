@@ -19,7 +19,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-AT_TESTED([prtreekey3 prtree3pt prtree3nftrav prtree3mv])
+AT_TESTED([prtreekey3 prtree3pt prtree3nftrav prtree3mv prtree3virt-maxbox])
 
 AT_SETUP(VsgPRTreeKey3d operations)
 AT_CHECK(prtreekey3, 0)
@@ -39,6 +39,12 @@ AT_CLEANUP
 
 AT_SETUP(VsgPRTree3d near/far traversals)
 AT_CHECK(prtree3nftrav, 0)
+AT_CHECK(prtree3virt-maxbox, 0)
+AT_CHECK(prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 64, 0)
+AT_CHECK(prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 64 --expect-far-count 0, 0)
+AT_CHECK(prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 512 --expect-far-count 1548, 0)
+AT_CHECK(prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 4096 --expect-far-count 28224, 0)
+AT_CHECK(prtree3virt-maxbox --virtual-maxbox 64 --maxbox 1 --np 4096 --expect-far-count 1548, 0)
 AT_CLEANUP
 
 AT_SETUP(VsgPRTree3d Hilbert curve ordering traversal)

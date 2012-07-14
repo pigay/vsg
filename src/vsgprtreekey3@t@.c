@@ -493,8 +493,8 @@ gboolean vsg_prtree_key3@t@_ancestor_order_unsafe (VsgPRTreeKey3@t@ *key,
  *
  * Returns: #TRUE when @one and @other are identical
  */
-gboolean vsg_prtree_key3@t@_equals (VsgPRTreeKey3@t@ *one,
-                                    VsgPRTreeKey3@t@ *other)
+gboolean vsg_prtree_key3@t@_equals (const VsgPRTreeKey3@t@ *one,
+                                    const VsgPRTreeKey3@t@ *other)
 {
 /*   return memcmp (one, other, sizeof (VsgPRTreeKey3@t@)) == 0; */
   return one->depth == other->depth && one->x == other->x &&

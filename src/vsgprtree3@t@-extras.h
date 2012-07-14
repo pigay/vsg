@@ -40,6 +40,10 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
                                    VsgPRTree3@t@InteractionFunc near_func,
                                    gpointer user_data);
 
+void vsg_prtree3@t@_set_nf_isleaf (VsgPRTree3@t@ *prtree3@t@,
+                                   VsgPRTree3@t@NFIsleafFunc isleaf,
+                                   gpointer user_data);
+
 void vsg_prtree3@t@_set_children_order_hilbert (VsgPRTree3@t@ *prtree3@t@);
 void vsg_prtree3@t@_set_children_order_default (VsgPRTree3@t@ *prtree3@t@);
 

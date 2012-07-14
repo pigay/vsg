@@ -19,7 +19,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-AT_TESTED([commbuffer prtree2parallel prtree2paradist prtree2paranftrav prtree2mv prtree3mv prtree2virt-maxbox])
+AT_TESTED([commbuffer prtree2parallel prtree2paradist prtree2paranftrav prtree2mv prtree3mv prtree2virt-maxbox prtree3virt-maxbox])
 
 AT_SETUP(Vsg basic parallel features)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
@@ -133,4 +133,18 @@ AT_CHECK([mpiexec -n 4 prtree3paranftrav --hilbert --np 20], 0)
 AT_CHECK([mpiexec -n 5 prtree3paranftrav --hilbert --np 20], 0)
 AT_CHECK([mpiexec -n 8 prtree3paranftrav --hilbert --np 100], 0)
 AT_CHECK([mpiexec -n 8 prtree3paranftrav --hilbert --np 1000], 0)
+AT_CHECK([mpiexec -n 2 prtree3virt-maxbox --mpi], 0)
+AT_CHECK([mpiexec -n 2 prtree3virt-maxbox --mpi --virtual-maxbox 8 --maxbox 1 --np 64], 0)
+AT_CHECK([mpiexec -n 2 prtree3virt-maxbox --mpi --virtual-maxbox 8 --maxbox 1 --np 64 --expect-far-count 0,0], 0)
+AT_CHECK([mpiexec -n 3 prtree3virt-maxbox --mpi --virtual-maxbox 8 --maxbox 1 --np 64 --expect-far-count 0], 0)
+AT_CHECK([mpiexec -n 4 prtree3virt-maxbox --mpi --virtual-maxbox 8 --maxbox 1 --np 64 --expect-far-count 0], 0)
+AT_CHECK([mpiexec -n 2 prtree3virt-maxbox --mpi --virtual-maxbox 8 --maxbox 1 --np 512 --expect-far-counts 312,1236], 0)
+AT_CHECK([mpiexec -n 3 prtree3virt-maxbox --mpi --virtual-maxbox 8 --maxbox 1 --np 512 --expect-far-counts 124,512,912], 0)
+AT_CHECK([mpiexec -n 4 prtree3virt-maxbox --mpi --virtual-maxbox 8 --maxbox 1 --np 512 --expect-far-counts 48,264,510,726], 0)
+AT_CHECK([mpiexec -n 2 prtree3virt-maxbox --mpi --virtual-maxbox 8 --maxbox 1 --np 4096 --expect-far-counts 10692,17532], 0)
+AT_CHECK([mpiexec -n 3 prtree3virt-maxbox --mpi --virtual-maxbox 8 --maxbox 1 --np 4096 --expect-far-counts 5737,9815,12672], 0)
+AT_CHECK([mpiexec -n 4 prtree3virt-maxbox --mpi --virtual-maxbox 8 --maxbox 1 --np 4096 --expect-far-counts 4068,6624,7488,10044], 0)
+AT_CHECK([mpiexec -n 2 prtree3virt-maxbox --mpi --virtual-maxbox 64 --maxbox 1 --np 4096 --expect-far-counts 312,1236], 0)
+AT_CHECK([mpiexec -n 3 prtree3virt-maxbox --mpi --virtual-maxbox 64 --maxbox 1 --np 4096 --expect-far-counts 124,512,912], 0)
+AT_CHECK([mpiexec -n 4 prtree3virt-maxbox --mpi --virtual-maxbox 64 --maxbox 1 --np 4096 --expect-far-counts 48,264,510,726], 0)
 AT_CLEANUP

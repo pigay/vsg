@@ -339,7 +339,8 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig3@t@ *nfc,
     vsg_prtree3@t@_nf_check_receive (nfc, MPI_ANY_TAG, FALSE);
 #endif
 
-  if (PRTREE3@T@NODE_ISINT (one) && PRTREE3@T@NODE_ISINT (other))
+  if (PRTREE3@T@_NODE_INFO_NF_ISINT (one_info, &nfc->tree->config) &&
+      PRTREE3@T@_NODE_INFO_NF_ISINT (other_info, &nfc->tree->config))
     {
 #ifdef VSG_HAVE_MPI
       if (nfc->sz > 1) vsg_prtree3@t@_nf_check_send (nfc);
@@ -366,7 +367,6 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig3@t@ *nfc,
               VsgPRTree3@t@Node *other_child =
                 PRTREE3@T@NODE_CHILD(other, j);
               VsgPRTree3@t@NodeInfo other_child_info;
-              gboolean far_done = TRUE;
 
 #ifdef VSG_HAVE_MPI
               if (PRTREE3@T@NODE_IS_REMOTE (other_child)) continue;
@@ -460,7 +460,7 @@ vsg_prtree3@t@node_near_far_traversal (VsgNFConfig3@t@ *nfc,
       if (nfc->near_func)
         {
           /* reflexive near interaction on node */
-          nfc->near_func (&node_info, &node_info, nfc->user_data);
+          recursive_near_func (node, &node_info, node, &node_info, nfc);
         }
     }
   else
@@ -632,6 +632,16 @@ static void hilbert3_order (gpointer node_key, gint *children,
     }
 }
 
+static gboolean _default_nf_isleaf (const VsgPRTree3@t@NodeInfo *node_info,
+                                    gpointer user_data)
+{
+  return node_info->isleaf;
+}
+
+gboolean vsg_prtree3@t@_nf_isleaf_is_default (VsgPRTree3@t@ *tree)
+{
+  return tree->config.nf_isleaf == _default_nf_isleaf;
+}
 
 /*-------------------------------------------------------------------*/
 /* typedefs and structure doc */
@@ -764,6 +774,35 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
 
   vsg_packed_msg_trace ("leave 1 [nf parallel_end]");
 #endif
+}
+
+/**
+ * vsg_prtree3@t@_set_nf_isleaf:
+ * @prtree3@t@: a #VsgPRTree3@t@
+ * @isleaf: a #VsgPRTree3@t@NFIsleafFunc
+ * @user_data: user data to be passed to @isleaf
+ *
+ * sets the Near/Far "virtual isleaf" predicate to @isleaf. The default
+ * behaviour is to use the real tree structure.
+ *
+ * This allows to simulate tree leaves that are larger than the real ones. One
+ * could make an internal node to be considered as a leaf for the NF traversal
+ * (for example if it contains a feature that prevent the NF algorithm to be
+ * accurate past some tree depth).
+ */
+void vsg_prtree3@t@_set_nf_isleaf (VsgPRTree3@t@ *prtree3@t@,
+                                   VsgPRTree3@t@NFIsleafFunc isleaf,
+                                   gpointer user_data)
+{
+  VsgPRTree3@t@Config *config;
+#ifdef VSG_CHECK_PARAMS
+  g_return_if_fail (prtree3@t@ != NULL);
+#endif
+
+  config = &prtree3@t@->config;
+
+  config->nf_isleaf = (isleaf != NULL) ? isleaf : _default_nf_isleaf;
+  config->nf_isleaf_data = user_data;
 }
 
 /**

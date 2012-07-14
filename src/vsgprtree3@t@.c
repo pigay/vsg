@@ -1603,6 +1603,8 @@ vsg_prtree3@t@_new_full (const VsgVector3@t@ *lbound,
     max_point = PRTREE3@T@LEAF_MAXSIZE;
   prtree3@t@->config.max_point = max_point;
 
+  vsg_prtree3@t@_set_nf_isleaf (prtree3@t@, NULL, NULL);
+
   prtree3@t@->config.remote_depth_dirty = TRUE;
 
   return prtree3@t@;
@@ -1668,6 +1670,8 @@ VsgPRTree3@t@ *vsg_prtree3@t@_clone (VsgPRTree3@t@ *prtree3@t@)
   res->config.tolerance = prtree3@t@->config.tolerance;
 
   res->config.max_point = prtree3@t@->config.max_point;
+  res->config.nf_isleaf = prtree3@t@->config.nf_isleaf;
+  res->config.nf_isleaf_data = prtree3@t@->config.nf_isleaf_data;
 
   res->config.children_order = prtree3@t@->config.children_order;
   res->config.children_order_data = prtree3@t@->config.children_order_data;

@@ -147,6 +147,21 @@ VSG_PARALLEL_STATUS_IS_SHARED (node->parallel_status) \
 VSG_PARALLEL_STATUS_PROC (node->parallel_status) \
 )
 
+#define PRTREE3@T@_NODE_INFO_CALL_NF_ISLEAF(node_info, config) ( \
+  (config)->nf_isleaf ((node_info), (config)->nf_isleaf_data) \
+)
+
+#define PRTREE3@T@_NODE_INFO_NF_ISLEAF(node_info,config) ( \
+  (node_info)->isleaf || \
+  (! VSG_PRTREE3@T@_NODE_INFO_IS_SHARED (node_info) && \
+   (config)->nf_isleaf ((node_info), (config)->nf_isleaf_data)) \
+)
+
+#define PRTREE3@T@_NODE_INFO_NF_ISINT(node_info,config) ( \
+  ! PRTREE3@T@_NODE_INFO_NF_ISLEAF (node_info, config) \
+)
+
+
 struct _VsgPRTree3@t@Config {
 
   /* localization methods */
@@ -162,6 +177,9 @@ struct _VsgPRTree3@t@Config {
 
   /* config */
   guint max_point;
+
+  VsgPRTree3@t@NFIsleafFunc nf_isleaf;
+  gpointer nf_isleaf_data;
 
   /* spatial tolerance */
   @type@ tolerance;
@@ -311,6 +329,7 @@ void vsg_prtree3@t@node_recursive_near_func (VsgPRTree3@t@Node *one,
                                              VsgPRTree3@t@NodeInfo *other_info,
                                              VsgNFConfig3@t@ *nfc);
 
+gboolean vsg_prtree3@t@_nf_isleaf_is_default (VsgPRTree3@t@ *tree);
 
 G_END_DECLS;
 
