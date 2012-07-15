@@ -646,7 +646,7 @@ void vsg_matrix3@t@_write (const VsgMatrix3@t@ *mat, FILE * file)
  * vsg_matrix3@t@_print:
  * @mat: a #VsgMatrix3@t@
  *
- * Writes @mat components to %stdout.
+ * Writes @mat components to stdout.
  */
 void vsg_matrix3@t@_print (const VsgMatrix3@t@ *mat)
 {

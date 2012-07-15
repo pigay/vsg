@@ -709,7 +709,7 @@ void vsg_quaternion@t@_write (const VsgQuaternion@t@ *quat,
  * vsg_quaternion@t@_print:
  * @quat: a #VsgQuaternion@t@
  *
- * Writes @quat in %stdout.
+ * Writes @quat in stdout.
  */
 void vsg_quaternion@t@_print (const VsgQuaternion@t@ *quat)
 {

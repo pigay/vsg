@@ -101,7 +101,7 @@ void vsgprtree_key2@t@_init ()
 /**
  * VSG_MPI_TYPE_PRTREE_KEY2@T@:
  *
- * The #MPI_Datatype associated to #VsgPrtreeKey2@t@.
+ * The #MPI_Datatype associated to #VsgPRTreeKey2@t@.
  */
 
 MPI_Datatype vsg_prtree_key2@t@_get_mpi_type (void)

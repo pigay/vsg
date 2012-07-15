@@ -467,7 +467,7 @@ void vsg_vector3@t@_copy@alt_t@ (const VsgVector3@t@ *src,
  *
  * Tests if @vec is at the origin.
  *
- * Returns: %true if @vec is origin, %false otherwise
+ * Returns: %TRUE if @vec is origin, %FALSE otherwise
  */
 gboolean vsg_vector3@t@_is_zero (const VsgVector3@t@ *vec)
 {
@@ -510,7 +510,7 @@ void vsg_vector3@t@_write (const VsgVector3@t@ *vec, FILE *file)
  * vsg_vector3@t@_print:
  * @vec: a #VsgVector3@t@
  *
- * Writes @vec coordinates to %stdout.
+ * Writes @vec coordinates to stdout.
  */
 void vsg_vector3@t@_print (const VsgVector3@t@ *vec)
 {

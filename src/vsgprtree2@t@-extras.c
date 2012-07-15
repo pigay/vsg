@@ -508,7 +508,7 @@ gboolean vsg_prtree2@t@_nf_isleaf_is_default (VsgPRTree2@t@ *tree)
  * @id: the key representing this node in the tree hierarchy.
  * @parallel_status: parallel status of this node.
  *
- * A structure provided to expose a #VsgPrtree2@t@ node during a traversal
+ * A structure provided to expose a #VsgPRTree2@t@ node during a traversal
  * process. Since @user_data and @children_user_data are a user controlled
  * feature (set by the vsg_prtree2@t@_set_node_data() function), it's up to
  * the user himself to decide if it's safe to modify these fields or not

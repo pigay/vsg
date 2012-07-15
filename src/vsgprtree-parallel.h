@@ -169,13 +169,13 @@ struct _VsgParallelVTable {
 
 /**
  * VsgPRTreeParallelConfig:
- * @point: a #VsgParallelVTable for #Vsgpoint
- * @region:  a #VsgParallelVTable for #VsgRegion
+ * @point: a #VsgParallelVTable for VsgPoint*
+ * @region:  a #VsgParallelVTable for VsgRegion*
  * @node_data:  a #VsgParallelVTable for node's user data.
  * @communicator:  a #MPI_Comm. WARNING: Only available when
  * VSG_HAVE_MPI is defined.
  *
- * a configuration for parallel operations on #VsgPRTree**. 
+ * a configuration for parallel operations on VsgPRTree**. 
  */
 struct _VsgPRTreeParallelConfig {
   VsgParallelVTable point;

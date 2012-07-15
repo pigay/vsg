@@ -844,7 +844,7 @@ void vsg_matrix4@t@_write (const VsgMatrix4@t@ *mat, FILE *file)
  * vsg_matrix4@t@_print:
  * @mat: a #VsgMatrix4@t@
  *
- * Writes @mat components to %stdout.
+ * Writes @mat components to stdout.
  */
 void vsg_matrix4@t@_print(const VsgMatrix4@t@ *mat)
 {

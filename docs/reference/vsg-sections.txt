@@ -889,6 +889,7 @@ vsg_matrix3d_print
 <SUBSECTION Standard>
 vsg_matrix3d_get_type
 vsg_matrix3d_get_mpi_type
+vsg_matrix3d_set_inline
 </SECTION>
 
 <SECTION>
@@ -928,6 +929,7 @@ vsg_matrix3f_print
 <SUBSECTION Standard>
 vsg_matrix3f_get_type
 vsg_matrix3f_get_mpi_type
+vsg_matrix3f_set_inline
 </SECTION>
 
 <SECTION>
@@ -975,6 +977,7 @@ vsg_matrix4d_print
 <SUBSECTION Standard>
 vsg_matrix4d_get_type
 vsg_matrix4d_get_mpi_type
+vsg_matrix4d_set_inline
 </SECTION>
 
 <SECTION>
@@ -1022,6 +1025,7 @@ vsg_matrix4f_print
 <SUBSECTION Standard>
 vsg_matrix4f_get_type
 vsg_matrix4f_get_mpi_type
+vsg_matrix4f_set_inline
 </SECTION>
 
 <SECTION>

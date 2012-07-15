@@ -1560,7 +1560,7 @@ GType vsg_prtree3@t@_get_type (void)
  * @point_locfunc: the #VsgPoint3 localization function
  * @point_distfunc: the #VsgPoint3 distance function
  * @region_locfunc: the #VsgRegion3 localization function
- * @max_point: maximum number of #VsgPoint to be stored in a VsgPRTree3@t@ Leaf
+ * @max_point: maximum number of #VsgPoint3 to be stored in a VsgPRTree3@t@ Leaf
  *
  * Allocates a new instance of #VsgPRTree3@t@. Specifying a @lax_point value of 0
  * means taking library default.
@@ -1615,7 +1615,7 @@ vsg_prtree3@t@_new_full (const VsgVector3@t@ *lbound,
  * @lbound: lower limit for coordinates of #VsgPoint3 to be stored
  * @ubound: upper limit for coordinates of #VsgPoint3 to be stored
  * @region_locfunc: the #VsgRegion3 localization function
- * @maxpoint: maximum number of #VsgPoint to be stored in a VsgPRTree3@t@ Leaf
+ * @maxpoint: maximum number of #VsgPoint3 to be stored in a VsgPRTree3@t@ Leaf
  *
  * Convenience macro that calls #vsg_prtree3@t@_new_full ().
  */
@@ -1643,7 +1643,7 @@ void vsg_prtree3@t@_free (VsgPRTree3@t@ *prtree3@t@)
  * @prtree3@t@: a #VsgPRTree3@t@
  *
  * Copies @prtree3@t@ into a newly allocated #VsgPRTree3@t@. All references
- * to #VsgPoint@3@ and #VsgRegion3 from @prtree3@t@ are copied into the
+ * to #VsgPoint3 and #VsgRegion3 from @prtree3@t@ are copied into the
  * new tree.
  *
  * Returns: a copy of @prtree3@t@.
@@ -1714,7 +1714,7 @@ VsgPRTree3@t@ *vsg_prtree3@t@_clone (VsgPRTree3@t@ *prtree3@t@)
  * @prtree3@t@: a #VsgPRTree3@t@.
  * @locfunc: the localization function.
  *
- * Configure @prtree3@t@ for marshalling its VsgPoint3@t@ localization.
+ * Configure @prtree3@t@ for marshalling its #VsgPoint3 localization.
  */
 void
 vsg_prtree3@t@_set_point_loc (VsgPRTree3@t@ *prtree3@t@,
@@ -1735,7 +1735,7 @@ vsg_prtree3@t@_set_point_loc (VsgPRTree3@t@ *prtree3@t@,
  * @locfunc: the localization function.
  * @locdata: the data passed to @locfunc.
  *
- * Configure @prtree3@t@ for marshalling its VsgPoint3@t@ localization.
+ * Configure @prtree3@t@ for marshalling its #VsgPoint3 localization.
  */
 void
 vsg_prtree3@t@_set_point_loc_with_data (VsgPRTree3@t@ *prtree3@t@,
@@ -1757,7 +1757,7 @@ vsg_prtree3@t@_set_point_loc_with_data (VsgPRTree3@t@ *prtree3@t@,
  * @prtree3@t@: a #VsgPRTree3@t@.
  * @locfunc: the localization function.
  *
- * Configure @prtree3@t@ for marshalling its VsgRegion3@t@ localization.
+ * Configure @prtree3@t@ for marshalling its #VsgRegion3 localization.
  */
 void vsg_prtree3@t@_set_region_loc (VsgPRTree3@t@ *prtree3@t@,
                                     VsgRegion3@t@LocFunc locfunc)
@@ -1777,7 +1777,7 @@ void vsg_prtree3@t@_set_region_loc (VsgPRTree3@t@ *prtree3@t@,
  * @locfunc: the localization function.
  * @locdata: the data passed to @locfunc.
  *
- * Configure @prtree3@t@ for marshalling its VsgRegion3@t@ localization.
+ * Configure @prtree3@t@ for marshalling its #VsgRegion3 localization.
  */
 void vsg_prtree3@t@_set_region_loc_with_data (VsgPRTree3@t@ *prtree3@t@,
                                               VsgRegion3@t@LocDataFunc locfunc,
@@ -2100,7 +2100,7 @@ guint vsg_prtree3@t@_region_count (const VsgPRTree3@t@ *prtree3@t@)
  * vsg_prtree3@t@_bounds_extend:
  * @prtree3@t@: a #VsgPRTree3@t@
  * @point: a #VsgPoint3
- * @extk: a #VsgPRTreeKey3
+ * @extk: a #VsgPRTreeKey3@t@
  *
  * Extends @prtree3@t@ bounds in order to allow @point to be inside the box.
  * @extk is the key the old root node in the new tree.
@@ -2494,7 +2494,7 @@ vsg_prtree3@t@_foreach_point_custom (VsgPRTree3@t@ *prtree3@t@,
 /**
  * vsg_prtree3@t@_insert_region:
  * @prtree3@t@: a #VsgPRTree3@t@
- * @region: a #VsgRegion
+ * @region: a #VsgRegion3
  *
  *  Inserts @region in @prtree3@t@ lists.
  */
@@ -2548,7 +2548,7 @@ void vsg_prtree3@t@_insert_region (VsgPRTree3@t@ *prtree3@t@,
 /**
  * vsg_prtree3@t@_remove_region:
  * @prtree3@t@: a #VsgPRTree3@t@
- * @region: a #VsgRegion
+ * @region: a #VsgRegion3
  *
  * Removes specified @region from @prtree3@t@ lists.
  *

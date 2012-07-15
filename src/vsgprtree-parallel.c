@@ -233,7 +233,7 @@ void vsg_parallel_vtable_set (VsgParallelVTable *vtable,
  * @node_data: VTable config for node_data
  * 
  * A convenience function that can be used to configure a
- * #VsgParallelConfig.
+ * #VsgPRTreeParallelConfig.
  */
 void vsg_prtree_parallel_config_set (VsgPRTreeParallelConfig *config,
                                      VsgParallelVTable *point,
@@ -251,7 +251,7 @@ void vsg_prtree_parallel_config_set (VsgPRTreeParallelConfig *config,
  * @point: VTable config for point data
  * 
  * A convenience function that can be used to configure a
- * #VsgParallelConfig.
+ * #VsgPRTreeParallelConfig.
  */
 void vsg_prtree_parallel_config_set_point (VsgPRTreeParallelConfig *config,
                                            VsgParallelVTable *point)
@@ -266,7 +266,7 @@ void vsg_prtree_parallel_config_set_point (VsgPRTreeParallelConfig *config,
  * @region:  VTable config for region data
  * 
  * A convenience function that can be used to configure a
- * #VsgParallelConfig.
+ * #VsgPRTreeParallelConfig.
  */
 void vsg_prtree_parallel_config_set_region (VsgPRTreeParallelConfig *config,
                                             VsgParallelVTable *region)
@@ -281,7 +281,7 @@ void vsg_prtree_parallel_config_set_region (VsgPRTreeParallelConfig *config,
  * @node_data: VTable config for node_data
  * 
  * A convenience function that can be used to configure a
- * #VsgParallelConfig.
+ * #VsgPRTreeParallelConfig.
  */
 void vsg_prtree_parallel_config_set_node_data (VsgPRTreeParallelConfig *config,
                                                VsgParallelVTable *node_data)
@@ -297,7 +297,7 @@ void vsg_prtree_parallel_config_set_node_data (VsgPRTreeParallelConfig *config,
  * @communicator: the #MPI_Communicator that shares this particular PRTree
  * 
  * A convenience function that can be used to configure a
- * #VsgParallelConfig.
+ * #VsgPRTreeParallelConfig.
  *
  * Note: this function is available only when #VSG_HAVE_MPI is set.
  */

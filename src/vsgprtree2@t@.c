@@ -1482,7 +1482,7 @@ gboolean _vsg_prtree2@t@_check_user_data_model (VsgPRTree2@t@ *tree)
 /**
  * VSG_TYPE_PRTREE2@T@:
  *
- * The #GBoxed #GType associated to #VsgPrtree2@t@.
+ * The #GBoxed #GType associated to #VsgPRTree2@t@.
  */
 
 /**
@@ -1532,7 +1532,7 @@ GType vsg_prtree2@t@_get_type (void)
   if (!prtree2@t@_type)
     {
       prtree2@t@_type =
-        g_boxed_type_register_static ("VsgPrtree2@t@",
+        g_boxed_type_register_static ("VsgPRTree2@t@",
                                       (GBoxedCopyFunc) vsg_prtree2@t@_clone,
                                       (GBoxedFreeFunc) vsg_prtree2@t@_free);
 
@@ -1548,7 +1548,7 @@ GType vsg_prtree2@t@_get_type (void)
  * @point_locfunc: the #VsgPoint2 localization function
  * @point_distfunc: the #VsgPoint2 distance function
  * @region_locfunc: the #VsgRegion2 localization function
- * @max_point: maximum number of #VsgPoint to be stored in a VsgPRTree2@t@ Leaf
+ * @max_point: maximum number of #VsgPoint2 to be stored in a VsgPRTree2@t@ Leaf
  *
  * Allocates a new instance of #VsgPRTree2@t@. Specifying a @lax_point value of 0
  * means taking library default.
@@ -1603,7 +1603,7 @@ vsg_prtree2@t@_new_full (const VsgVector2@t@ *lbound,
  * @lbound: lower limit for coordinates of #VsgPoint2 to be stored
  * @ubound: upper limit for coordinates of #VsgPoint2 to be stored
  * @region_locfunc: the #VsgRegion2 localization function
- * @maxpoint: maximum number of #VsgPoint to be stored in a VsgPRTree2@t@ Leaf
+ * @maxpoint: maximum number of #VsgPoint2 to be stored in a VsgPRTree2@t@ Leaf
  *
  * Convenience macro that calls #vsg_prtree2@t@_new_full ().
  */
@@ -1631,7 +1631,7 @@ void vsg_prtree2@t@_free (VsgPRTree2@t@ *prtree2@t@)
  * @prtree2@t@: a #VsgPRTree2@t@
  *
  * Copies @prtree2@t@ into a newly allocated #VsgPRTree2@t@. All references
- * to #VsgPoint@2@ and #VsgRegion2 from @prtree2@t@ are copied into the
+ * to #VsgPoint2 and #VsgRegion2 from @prtree2@t@ are copied into the
  * new tree.
  *
  * Returns: a copy of @prtree2@t@.
@@ -1702,7 +1702,7 @@ VsgPRTree2@t@ *vsg_prtree2@t@_clone (VsgPRTree2@t@ *prtree2@t@)
  * @prtree2@t@: a #VsgPRTree2@t@.
  * @locfunc: the localization function.
  *
- * Configure @prtree2@t@ for marshalling its VsgPoint2@t@ localization.
+ * Configure @prtree2@t@ for marshalling its #VsgPoint2 localization.
  */
 void
 vsg_prtree2@t@_set_point_loc (VsgPRTree2@t@ *prtree2@t@,
@@ -1723,7 +1723,7 @@ vsg_prtree2@t@_set_point_loc (VsgPRTree2@t@ *prtree2@t@,
  * @locfunc: the localization function.
  * @locdata: the data passed to @locfunc.
  *
- * Configure @prtree2@t@ for marshalling its VsgPoint2@t@ localization.
+ * Configure @prtree2@t@ for marshalling its #VsgPoint2 localization.
  */
 void
 vsg_prtree2@t@_set_point_loc_with_data (VsgPRTree2@t@ *prtree2@t@,
@@ -1745,7 +1745,7 @@ vsg_prtree2@t@_set_point_loc_with_data (VsgPRTree2@t@ *prtree2@t@,
  * @prtree2@t@: a #VsgPRTree2@t@.
  * @locfunc: the localization function.
  *
- * Configure @prtree2@t@ for marshalling its VsgRegion2@t@ localization.
+ * Configure @prtree2@t@ for marshalling its #VsgRegion2 localization.
  */
 void vsg_prtree2@t@_set_region_loc (VsgPRTree2@t@ *prtree2@t@,
                                     VsgRegion2@t@LocFunc locfunc)
@@ -1765,7 +1765,7 @@ void vsg_prtree2@t@_set_region_loc (VsgPRTree2@t@ *prtree2@t@,
  * @locfunc: the localization function.
  * @locdata: the data passed to @locfunc.
  *
- * Configure @prtree2@t@ for marshalling its VsgRegion2@t@ localization.
+ * Configure @prtree2@t@ for marshalling its #VsgRegion2 localization.
  */
 void vsg_prtree2@t@_set_region_loc_with_data (VsgPRTree2@t@ *prtree2@t@,
                                               VsgRegion2@t@LocDataFunc locfunc,
@@ -2477,7 +2477,7 @@ vsg_prtree2@t@_foreach_point_custom (VsgPRTree2@t@ *prtree2@t@,
 /**
  * vsg_prtree2@t@_insert_region:
  * @prtree2@t@: a #VsgPRTree2@t@
- * @region: a #VsgRegion
+ * @region: a #VsgRegion2
  *
  *  Inserts @region in @prtree2@t@ lists.
  */
@@ -2531,7 +2531,7 @@ void vsg_prtree2@t@_insert_region (VsgPRTree2@t@ *prtree2@t@,
 /**
  * vsg_prtree2@t@_remove_region:
  * @prtree2@t@: a #VsgPRTree2@t@
- * @region: a #VsgRegion
+ * @region: a #VsgRegion2
  *
  * Removes specified @region from @prtree2@t@ lists.
  *
@@ -2670,7 +2670,7 @@ VsgRegion2 vsg_prtree2@t@_find_deep_region (VsgPRTree2@t@ *prtree2@t@,
  * vsg_prtree2@t@_traverse:
  * @prtree2@t@: a #VsgPRTree2@t@.
  * @order: traverse order.
- * @func: a #VsgPrtree2@t@Func.
+ * @func: a #VsgPRTree2@t@Func.
  * @user_data: a #gpointer data to be apssed to @func.
  *
  * Performs a traversal of @prtree2@t@, executing @func on each of its nodes
@@ -2691,7 +2691,7 @@ void vsg_prtree2@t@_traverse (VsgPRTree2@t@ *prtree2@t@,
  * @prtree2@t@: a #VsgPRTree2@t@.
  * @order: traverse order.
  * @selector: a #VsgRegion2
- * @func: a #VsgPrtree2@t@Func.
+ * @func: a #VsgPRTree2@t@Func.
  * @user_data: a #gpointer data to be apssed to @func.
  *
  * Performs a traversal of @prtree2@t@, executing @func on each of its nodes

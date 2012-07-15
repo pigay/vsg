@@ -232,7 +232,9 @@
       <xi:include href="xml/vsgprtreekey2f.xml"/>
       <xi:include href="xml/vsgprtree2f.xml"/>
       <xi:include href="xml/vsgprtree3-common.xml"/>
+      <xi:include href="xml/vsgprtreekey3d.xml"/>
       <xi:include href="xml/vsgprtree3d.xml"/>
+      <xi:include href="xml/vsgprtreekey3f.xml"/>
       <xi:include href="xml/vsgprtree3f.xml"/>
   </chapter>
 
