@@ -667,6 +667,7 @@ VsgRegion3dLocDataFunc
 VsgPoint3dDistDataFunc
 
 VsgPRTree3dFunc
+VsgPRTree3dNFIsleafFunc
 VsgPRTree3dFarInteractionFunc
 VsgPRTree3dInteractionFunc
 
@@ -711,6 +712,7 @@ vsg_prtree3d_near_far_traversal
 vsg_prtree3d_traverse_custom
 vsg_prtree3d_traverse
 
+vsg_prtree3d_set_nf_isleaf
 vsg_prtree3d_set_children_order_hilbert
 vsg_prtree3d_set_children_order_default
 
@@ -782,6 +784,7 @@ VsgRegion3fLocDataFunc
 VsgPoint3fDistDataFunc
 
 VsgPRTree3fFunc
+VsgPRTree3fNFIsleafFunc
 VsgPRTree3fFarInteractionFunc
 VsgPRTree3fInteractionFunc
 
@@ -826,6 +829,7 @@ vsg_prtree3f_near_far_traversal
 vsg_prtree3f_traverse_custom
 vsg_prtree3f_traverse
 
+vsg_prtree3f_set_nf_isleaf
 vsg_prtree3f_set_children_order_hilbert
 vsg_prtree3f_set_children_order_default
 
