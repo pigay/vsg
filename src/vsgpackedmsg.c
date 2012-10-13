@@ -100,15 +100,23 @@ static inline void _trace_file_open ()
 {
   if (_trace_file == NULL)
     {
-      gint rk, sz;
+      gint initted, rk, sz;
       gchar filename[256];
       GTimeVal now;
       const gchar *trace_dir = g_getenv ("VSG_PACKED_MSG_TRACE_DIR");
       gchar *trace_path;
 
-      MPI_Comm_rank (MPI_COMM_WORLD, &rk);
-      MPI_Comm_size (MPI_COMM_WORLD, &sz);
-
+      MPI_Initialized (&initted);
+      if (initted != 0)
+        {
+          MPI_Comm_rank (MPI_COMM_WORLD, &rk);
+          MPI_Comm_size (MPI_COMM_WORLD, &sz);
+        }
+      else
+        {
+          rk = 0;
+          sz = 1;
+        }
       _msgid = rk+1;
       _msgid_incr = sz;
 
