@@ -28,15 +28,23 @@ then
     fi
 
     AC_PATH_PROGS(MPICC, mpicc hcc mpcc mpcc_r mpxlc, none, ${MPIPATH})
-    AC_PATH_PROGS(MPICXX, mpic++ mpiCC mpCC hcp, none, ${MPIPATH})
+    AC_PATH_PROGS(MPICXX, mpic++ mpicxx mpiCC mpCC hcp, none, ${MPIPATH})
 
     AC_MSG_CHECKING([for MPI wrapper compilers])
-    if test ! "${MPICC}" = "none" -a ! "${MPICXX}" = "none"
+    if test "${MPICC}" != "none" -o "${MPICXX}" != "none"
     then
        AC_MSG_RESULT([found])
        # ok, so we have a wrapper compiler...
+
+       if test "${MPICC}" = "none"
+       then
+          mpicompiler=${MPICXX}
+       else
+          mpicompiler=${MPICC}
+       fi
+
        AC_MSG_CHECKING([for MPI compiler style])
-       if test ! "`${MPICC} -showme 2>&1 | grep lmpi`" = ""
+       if test ! "`${mpicompiler} -showme 2>&1 | grep lmpi`" = ""
        then
           # when used with showme, LAM doesn't actually do anything
           # so the files referenced don't have to exist...
@@ -44,7 +52,7 @@ then
 
           mpi_c_compile="`${MPICC} -showme -c USELESS.c`"
           mpi_cxx_compile="`${MPICXX} -showme -c USELESS.cc`"
-          mpi_link="`${MPICC} -showme USELESS.o -o USELESS`"
+          mpi_link="`${mpicompiler} -showme USELESS.o -o USELESS`"
 
           # remove compiler name
           mpi_c_compile="`echo ${mpi_c_compile} | cut -d' ' -f2-`"
@@ -64,13 +72,13 @@ then
           MPI_LIBS="${mpi_link}"
           MPI_STATUS="using wrapper flags"
 
-       elif test ! "`${MPICC} -show 2>&1 | grep lmpi`" = ""
+       elif test ! "`${mpicompiler} -show 2>&1 | grep lmpi`" = ""
        then
           AC_MSG_RESULT([MPICH])
 
           mpi_c_compile="`${MPICC} -compile_info`"
           mpi_cxx_compile="`${MPICXX} -compile_info`"
-          mpi_link="`${MPICC} -link_info`"
+          mpi_link="`${mpicompiler} -link_info`"
 
           # remove compiler name
           mpi_c_compile="`echo ${mpi_c_compile} | cut -d' ' -f2-`"
