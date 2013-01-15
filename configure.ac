@@ -99,6 +99,11 @@ AC_ARG_ENABLE(msg-trace,
               [turns on MPI message trace])],
               [AC_DEFINE(VSG_PACKED_MSG_TRACE, 1, [turns on MPI packed message trace (for debugging prurpose only)])])
 
+AC_ARG_ENABLE(timings,
+              [AC_HELP_STRING([--enable-timings],
+              [turns on some timing messages])],
+              [AC_DEFINE(VSG_TIMING_OUTPUT, 1, [turns on some timing messages])])
+
 
 dnl Checks for programs.
 AC_PROG_CC

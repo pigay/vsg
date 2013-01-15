@@ -25,6 +25,8 @@
 
 #include "vsgprtree3@t@-private.h"
 
+#include "vsgtiming.h"
+
 /* axis flags */
 #define _X VSG_LOC3_X
 #define _Y VSG_LOC3_Y
@@ -735,6 +737,10 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
   g_return_if_fail (prtree3@t@ != NULL);
 #endif
 
+  VSG_TIMING_START (nf);
+
+  VSG_TIMING_START (nf_traversal);
+
 #ifdef VSG_HAVE_MPI
   vsg_packed_msg_trace ("enter 1 [nf traversal]");
 
@@ -759,7 +765,11 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
                                          prtree3@t@->node,
                                          NULL, 0, TRUE);
 
+  VSG_TIMING_END (nf_traversal, stderr);
+
 #ifdef VSG_HAVE_MPI
+  VSG_TIMING_START (nf_parallel_end);
+
   vsg_packed_msg_trace ("leave 1 [nf traversal]");
   vsg_packed_msg_trace ("enter 1 [nf parallel_end]");
 
@@ -773,7 +783,11 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
   vsg_nf_config3@t@_clean (&nfc);
 
   vsg_packed_msg_trace ("leave 1 [nf parallel_end]");
+
+  VSG_TIMING_END (nf_parallel_end, stderr);
 #endif
+
+  VSG_TIMING_END (nf, stderr);
 }
 
 /**

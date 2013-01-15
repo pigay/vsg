@@ -21,7 +21,8 @@ endif
 
 # common files
 libvsg_common_headers = $(parallel_headers) vsgprtree-common.h \
-vsgprtree2-common.h vsgprtree3-common.h vsgmpi.h vsgprtree-parallel.h
+vsgprtree2-common.h vsgprtree3-common.h vsgmpi.h vsgprtree-parallel.h \
+vsgtiming.h
 libvsg_common_noinst_headers = $(parallel_private_headers)
 
 libvsg_duplicated_sources = $(parallel_sources) vsgprtree-parallel.c
