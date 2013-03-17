@@ -751,9 +751,14 @@ gint main (gint argc, gchar ** argv)
                                    &ret);
   vsg_prtree2d_traverse (tree, G_PRE_ORDER, (VsgPRTree2dFunc) _down, NULL);
 
-  /* migrate points back to processor 0 before checking */
-  vsg_prtree2d_distribute_concentrate (tree, 0);
-  vsg_prtree2d_distribute_concentrate (treeref, 0);
+#ifdef VSG_HAVE_MPI
+  if (_mpi)
+    {
+      /* migrate points back to processor 0 before checking */
+      vsg_prtree2d_distribute_concentrate (tree, 0);
+      vsg_prtree2d_distribute_concentrate (treeref, 0);
+    }
+#endif
 
   /* check results */
   for (i=0; i<points_array->len; i++)
