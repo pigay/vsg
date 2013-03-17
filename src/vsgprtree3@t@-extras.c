@@ -737,9 +737,9 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
   g_return_if_fail (prtree3@t@ != NULL);
 #endif
 
-  VSG_TIMING_START (nf);
+  VSG_TIMING_START (nf, prtree3@t@->config.parallel_config.communicator);
 
-  VSG_TIMING_START (nf_traversal);
+  VSG_TIMING_START (nf_traversal, prtree3@t@->config.parallel_config.communicator);
 
 #ifdef VSG_HAVE_MPI
   vsg_packed_msg_trace ("enter 1 [nf traversal]");
@@ -768,7 +768,7 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
   VSG_TIMING_END (nf_traversal, stderr);
 
 #ifdef VSG_HAVE_MPI
-  VSG_TIMING_START (nf_parallel_end);
+  VSG_TIMING_START (nf_parallel_end, prtree3@t@->config.parallel_config.communicator);
 
   vsg_packed_msg_trace ("leave 1 [nf traversal]");
   vsg_packed_msg_trace ("enter 1 [nf parallel_end]");

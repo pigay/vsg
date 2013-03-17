@@ -30,22 +30,22 @@ G_BEGIN_DECLS;
 
 #ifdef VSG_HAVE_MPI
 
-#define _VSG_TIMING_PREFIX(key)                                 \
-  gint key ##_rk;                                               \
-  MPI_Comm_rank(MPI_COMM_WORLD, &key ##_rk);                    \
+#define _VSG_TIMING_PREFIX(key, communicator)                           \
+  gint key ##_rk = 0;                                                   \
+  if ((communicator) != MPI_COMM_NULL) MPI_Comm_rank((communicator), &key ##_rk); \
   g_sprintf( key ## _timing_prefix, "%d: ", key ## _rk);
 
 #else
 
-#define _VSG_TIMING_PREFIX(key)                 \
+#define _VSG_TIMING_PREFIX(key, communicator)                \
   g_sprintf( key ## _timing_prefix, "%d: ", 0);
 
 #endif /* VSG_HAVE_MPI */
 
-#define VSG_TIMING_START(key) {\
+#define VSG_TIMING_START(key, communicator) { \
   GTimer *vsg_timer_ ## key = g_timer_new (); \
   gchar key ## _timing_prefix[10]; \
-  _VSG_TIMING_PREFIX (key);
+  _VSG_TIMING_PREFIX (key, (communicator));
 
 #define VSG_TIMING_END(key, file)                                       \
   if (g_getenv ("VSG_TIMING_SUPPRESS_OUPUT") == NULL)                                              \
