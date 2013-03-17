@@ -38,13 +38,13 @@ AT_CHECK(prtree3clone, 0)
 AT_CLEANUP
 
 AT_SETUP(VsgPRTree3d near/far traversals)
-AT_CHECK(prtree3nftrav, 0)
-AT_CHECK(prtree3virt-maxbox, 0)
-AT_CHECK(prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 64, 0)
-AT_CHECK(prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 64 --expect-far-count 0, 0)
-AT_CHECK(prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 512 --expect-far-count 1548, 0)
-AT_CHECK(prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 4096 --expect-far-count 28224, 0)
-AT_CHECK(prtree3virt-maxbox --virtual-maxbox 64 --maxbox 1 --np 4096 --expect-far-count 1548, 0)
+AT_CHECK(env VSG_TIMING_SUPPRESS_OUPUT=1 prtree3nftrav, 0)
+AT_CHECK(env VSG_TIMING_SUPPRESS_OUPUT=1 prtree3virt-maxbox, 0)
+AT_CHECK(env VSG_TIMING_SUPPRESS_OUPUT=1 prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 64, 0)
+AT_CHECK(env VSG_TIMING_SUPPRESS_OUPUT=1 prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 64 --expect-far-count 0, 0)
+AT_CHECK(env VSG_TIMING_SUPPRESS_OUPUT=1 prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 512 --expect-far-count 1548, 0)
+AT_CHECK(env VSG_TIMING_SUPPRESS_OUPUT=1 prtree3virt-maxbox --virtual-maxbox 8 --maxbox 1 --np 4096 --expect-far-count 28224, 0)
+AT_CHECK(env VSG_TIMING_SUPPRESS_OUPUT=1 prtree3virt-maxbox --virtual-maxbox 64 --maxbox 1 --np 4096 --expect-far-count 1548, 0)
 AT_CLEANUP
 
 AT_SETUP(VsgPRTree3d Hilbert curve ordering traversal)
