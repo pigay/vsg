@@ -113,9 +113,9 @@ static inline void vsg_prtree_key3@t@_sever (VsgPRTreeKey3@t@ *key, guint8 size,
 {
   @key_type@ mask = VSG_PRTREE_KEY3@T@_INDEX_MASK (size-1);
 
-  result->x &= mask;
-  result->y &= mask;
-  result->z &= mask;
+  result->x = key->x & mask;
+  result->y = key->y & mask;
+  result->z = key->z & mask;
   result->depth = size;
 }
 
