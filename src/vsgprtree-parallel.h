@@ -267,6 +267,9 @@ void
 vsg_prtree_parallel_config_set_communicator (VsgPRTreeParallelConfig *config,
                                              MPI_Comm communicator);
 
+MPI_Comm
+vsg_prtree_parallel_config_get_communicator (VsgPRTreeParallelConfig *config);
+
 #endif
 
 G_END_DECLS;

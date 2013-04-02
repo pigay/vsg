@@ -309,5 +309,21 @@ vsg_prtree_parallel_config_set_communicator (VsgPRTreeParallelConfig *config,
     config->communicator = communicator;
 }
 
+/**
+ * vsg_prtree_parallel_config_get_communicator:
+ * @config: a #VsgPRTreeParallelConfig
+ * 
+ *
+ * Returns the #MPI_Communicator that shares this particular PRTree
+ */
+MPI_Comm
+vsg_prtree_parallel_config_get_communicator (VsgPRTreeParallelConfig *config)
+{
+  if (config != NULL)
+    return config->communicator;
+
+  return NULL;
+}
+
 #endif
 

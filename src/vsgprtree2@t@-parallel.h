@@ -35,6 +35,9 @@ void vsg_prtree2@t@_set_parallel (VsgPRTree2@t@ *tree,
 void vsg_prtree2@t@_get_parallel (VsgPRTree2@t@ *tree,
                                   VsgPRTreeParallelConfig *pconfig);
 
+MPI_Comm
+vsg_prtree2@t@_get_communicator (VsgPRTree2@t@ *tree);
+
 void vsg_prtree2@t@_migrate_flush (VsgPRTree2@t@ *tree);
 
 void vsg_prtree2@t@_distribute_nodes (VsgPRTree2@t@ *tree,

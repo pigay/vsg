@@ -518,6 +518,22 @@ void vsg_prtree3@t@_get_parallel (VsgPRTree3@t@ *tree,
           sizeof (VsgPRTreeParallelConfig));
 }
 
+
+/**
+ * vsg_prtree3@t@_get_communicator:
+ * 
+ *
+ * Returns the #MPI_Communicator that shares this particular PRTree
+ */
+MPI_Comm
+vsg_prtree3@t@_get_communicator (VsgPRTree3@t@ *tree)
+{
+  g_return_val_if_fail (tree != NULL, NULL);
+
+  return vsg_prtree_parallel_config_get_communicator (&tree->config.parallel_config);
+}
+
+
 /* selector function used in traverse_custom_internal to avoid
    traversing all local nodes */
 static vsgrloc3 _selector_skip_local_nodes (VsgRegion3 *selector,
@@ -2494,13 +2510,9 @@ static void _traverse_check_remote_neighbours (VsgPRTree3@t@Node *node,
       VsgPRTree3@t@NodeInfo *ref_info = data->ref_info;
       guint8 node_depth;
 
-     if (data->procs[proc]) return;
+      if (data->procs[proc]) return;
 
-/*       gint rk; */
-
-/*       MPI_Comm_rank (MPI_COMM_WORLD, &rk); */
-
-       node_depth = node_info->id.depth;
+      node_depth = node_info->id.depth;
 
       if (node_depth <= ref_info->id.depth)
         {
