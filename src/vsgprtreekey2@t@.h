@@ -97,6 +97,9 @@ gboolean vsg_prtree_key2@t@_is_neighbour (VsgPRTreeKey2@t@ *one,
 gboolean vsg_prtree_key2@t@_is_ancestor (VsgPRTreeKey2@t@ *ancestor,
                                          VsgPRTreeKey2@t@ *child);
 
+@key_type@ vsg_prtree_key2@t@_deepest_distance (VsgPRTreeKey2@t@ *one,
+                                                VsgPRTreeKey2@t@ *other);
+
 static inline void vsg_prtree_key2@t@_truncate (VsgPRTreeKey2@t@ *key,
                                                 guint8 offset,
                                                 VsgPRTreeKey2@t@ *result)

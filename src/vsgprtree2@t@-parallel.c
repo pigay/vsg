@@ -2518,10 +2518,10 @@ static void _traverse_check_remote_neighbours (VsgPRTree2@t@Node *node,
                   PRTREE2@T@NODE_LEAF (node).remote_depth > 0)
                 {
                   /* check for mindepth */
-                  VsgPRTreeKey2@t@ clamped_ref;
+                  VsgPRTreeKey2@t@ truncated_ref;
                   guint8 mindepth;
                   guint8 shift;
-                  guint8 height;
+                  @key_type@ dist;
 
                   /* use remote depth to avoid unwanted fw sends */
                   mindepth = node_info->depth +
@@ -2531,19 +2531,12 @@ static void _traverse_check_remote_neighbours (VsgPRTree2@t@Node *node,
                   mindepth = MIN (mindepth, data->ref_info->depth);
 
                   shift = ref_info->id.depth - mindepth;
-                  height = mindepth - node_info->depth;
 
-                  vsg_prtree_key2@t@_truncate (&ref_info->id, shift, &clamped_ref);
+                  vsg_prtree_key2@t@_truncate (&ref_info->id, shift, &truncated_ref);
 
-                  vsg_prtree_key2@t@_sever (&clamped_ref, height, &clamped_ref);
+                  dist = vsg_prtree_key2@t@_deepest_distance (&truncated_ref, &node_info->id);
 
-                  if (_key_coord_dist (ref_id->x, node_info->id.x,
-                                       clamped_ref.x, height) > 3)
-                    return;
-
-                  if (_key_coord_dist (ref_id->y, node_info->id.y,
-                                       clamped_ref.y, height) > 3)
-                    return;
+                  if (dist > 2) return;
                 }
             }
         }
