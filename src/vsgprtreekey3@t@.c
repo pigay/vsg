@@ -139,21 +139,31 @@ static void _key_copy (VsgPRTreeKey3@t@ *dst, VsgPRTreeKey3@t@ *src)
   memcpy (dst, src, sizeof (VsgPRTreeKey3@t@));
 }
 
+static inline @key_type@ _key_coord_scale_up (@key_type@ kc, guint8 offset)
+{
+  return kc << offset;
+}
+
 static void _key_scale_up (VsgPRTreeKey3@t@ *key, guint8 offset,
                            VsgPRTreeKey3@t@ *result)
 {
-  result->x = key->x << offset;
-  result->y = key->y << offset;
-  result->z = key->z << offset;
+  result->x = _key_coord_scale_up (key->x, offset);
+  result->y = _key_coord_scale_up (key->y, offset);
+  result->z = _key_coord_scale_up (key->z, offset);
   result->depth = key->depth + offset;
+}
+
+static inline @key_type@ _key_coord_scale_down (@key_type@ kc, guint8 offset)
+{
+  return kc >> offset;
 }
 
 static void _key_scale_down (VsgPRTreeKey3@t@ *key, guint8 offset,
                              VsgPRTreeKey3@t@ *result)
 {
-  result->x = key->x >> offset;
-  result->y = key->y >> offset;
-  result->z = key->z >> offset;
+  result->x = _key_coord_scale_down (key->x, offset);
+  result->y = _key_coord_scale_down (key->y, offset);
+  result->z = _key_coord_scale_down (key->z, offset);
   result->depth = (guint8) MAX (0, ((gint8) key->depth) - offset);
 }
 
@@ -404,7 +414,7 @@ static inline @key_type@ _key3@t@_distance (VsgPRTreeKey3@t@ *one,
  * @one : a VsgPRTreeKey3@t@.
  * @other : a VsgPRTreeKey3@t@.
  *
- * Computes the maximum distance (on both x and y coordinates) between two
+ * Computes the maximum distance (on x, y and z coordinates) between two
  * keys @one and other. The result is set in the scale of the shallowest key.
  * For example if @one is shallower than @other and
  * vsg_prtree_key3@t@_distance() returns "d", the two nodes are separated by "d"
@@ -574,3 +584,64 @@ gboolean vsg_prtree_key3@t@_is_ancestor (VsgPRTreeKey3@t@ *ancestor,
     ancestor->z == _child->z;
 }
 
+static inline @key_type@ _key_clamped_coord_dist (@key_type@ one, @key_type@ other,
+                                                  @key_type@ clamped, guint8 height)
+{
+  @key_type@ tmp = _key_coord_scale_down (one, height);
+
+  if (other == tmp)
+    {
+      /* g_printerr ("tmp=other\n"); */
+      return 0;
+    }
+
+  if (other > tmp)
+    {
+      /* g_printerr ("tmp<other h=%d tmp=%d cl=%d\n", height, tmp, clamped); */
+      return ((other-tmp) << height) - clamped;
+    }
+
+  /* g_printerr ("tmp>other: h=%d tmp=%d cl=%d\n", height, tmp, clamped); */
+  return ((tmp-other-1) << height) + 1 + clamped;
+}
+
+/**
+ * vsg_prtree_key3@t@_deepest_distance:
+ * @one : a VsgPRTreeKey3@t@.
+ * @other : a VsgPRTreeKey3@t@.
+ *
+ * Computes the maximum distance (on any of x, y and z coordinates) between two
+ * keys @one and other. As opposed to vsg_prtree_key3@t@_distance(), the result is set in the scale of the deepest key.
+ *
+ * Returns: the distance between @one and @other.
+ */
+@key_type@ vsg_prtree_key3@t@_deepest_distance (VsgPRTreeKey3@t@ *one,
+                                                VsgPRTreeKey3@t@ *other)
+{
+  guint8 clamp_height;
+  @key_type@ dx, dy, dz;
+  VsgPRTreeKey3@t@ clamped;
+
+  /* make sure @one holds the deepest of both keys */
+  if (one->depth < other->depth)
+    {
+      VsgPRTreeKey3@t@ *tmp;
+
+      tmp = one;
+      one = other;
+      other = tmp;
+    }
+
+  clamp_height = one->depth - other->depth;
+  vsg_prtree_key3@t@_sever (one, clamp_height, &clamped);
+
+  dx = _key_clamped_coord_dist (one->x, other->x, clamped.x, clamp_height);
+  dy = _key_clamped_coord_dist (one->y, other->y, clamped.y, clamp_height);
+  dz = _key_clamped_coord_dist (one->z, other->z, clamped.z, clamp_height);
+
+  /* g_printerr ("%d %ld-%ld / %d %ld\n", clamp_height, one->x, other->x, clamped.x, dx); */
+  /* g_printerr ("%d %ld-%ld / %d %ld\n", clamp_height, one->y, other->y, clamped.y, dy); */
+  /* g_printerr ("%d %ld-%ld / %d %ld\n", clamp_height, one->z, other->z, clamped.z, dz); */
+
+  return MAX (MAX (dx, dy), dz);
+}

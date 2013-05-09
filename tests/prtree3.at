@@ -19,10 +19,11 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-AT_TESTED([prtreekey3 prtree3pt prtree3nftrav prtree3mv prtree3virt-maxbox])
+AT_TESTED([prtreekey3 prtreekey3deepdist prtree3pt prtree3nftrav prtree3mv prtree3virt-maxbox])
 
 AT_SETUP(VsgPRTreeKey3d operations)
 AT_CHECK(prtreekey3, 0)
+AT_CHECK(prtreekey3deepdist, 0)
 AT_CLEANUP
 
 AT_SETUP(VsgPRTree3d point operations)
