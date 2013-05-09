@@ -84,3 +84,6 @@ vsgprtreekey2d.c
 vsgmatrix4f.h
 vsgd-inline.h
 vsgprtreekey2d.h
+vsgmt.c
+vsgmt.h
+vsgtiming.h
