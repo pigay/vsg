@@ -22,6 +22,9 @@ vsgmatrix4d
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### SECTION Image ##### -->
+
+
 <!-- ##### STRUCT VsgMatrix4d ##### -->
 <para>
 
@@ -43,14 +46,14 @@ vsgmatrix4d
 
 
 
-<!-- ##### FUNCTION VSG_MATRIX4D_COMP ##### -->
+<!-- ##### MACRO VSG_MATRIX4D_COMP ##### -->
 <para>
 
 </para>
 
-@Varargs: 
-@Param2: 
-@Param3: 
+@mat: 
+@i: 
+@j: 
 @Returns: 
 
 

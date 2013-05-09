@@ -22,6 +22,9 @@ vsgmatrix3d
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### SECTION Image ##### -->
+
+
 <!-- ##### STRUCT VsgMatrix3d ##### -->
 <para>
 
@@ -43,14 +46,14 @@ vsgmatrix3d
 
 
 
-<!-- ##### FUNCTION VSG_MATRIX3D_COMP ##### -->
+<!-- ##### MACRO VSG_MATRIX3D_COMP ##### -->
 <para>
 
 </para>
 
-@Varargs: 
-@Param2: 
-@Param3: 
+@mat: 
+@i: 
+@j: 
 @Returns: 
 
 

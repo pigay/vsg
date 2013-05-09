@@ -22,6 +22,9 @@ vsgprtree3d
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### SECTION Image ##### -->
+
+
 <!-- ##### STRUCT VsgPRTree3d ##### -->
 <para>
 
@@ -151,6 +154,16 @@ vsgprtree3d
 @user_data: 
 
 
+<!-- ##### USER_FUNCTION VsgPRTree3dNFIsleafFunc ##### -->
+<para>
+
+</para>
+
+@node_info: 
+@user_data: 
+@Returns: 
+
+
 <!-- ##### USER_FUNCTION VsgPRTree3dFarInteractionFunc ##### -->
 <para>
 
@@ -171,7 +184,7 @@ vsgprtree3d
 @user_data: 
 
 
-<!-- ##### FUNCTION VsgPRTree3dDistributionFunc ##### -->
+<!-- ##### USER_FUNCTION VsgPRTree3dDistributionFunc ##### -->
 <para>
 
 </para>
@@ -548,6 +561,16 @@ vsgprtree3d
 @prtree3d: 
 @order: 
 @func: 
+@user_data: 
+
+
+<!-- ##### FUNCTION vsg_prtree3d_set_nf_isleaf ##### -->
+<para>
+
+</para>
+
+@prtree3d: 
+@isleaf: 
 @user_data: 
 
 
