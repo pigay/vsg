@@ -33,12 +33,23 @@ typedef void (*VsgPRTree3@t@FarInteractionFunc) (VsgPRTree3@t@NodeInfo *one_info
                                                  VsgPRTree3@t@NodeInfo *other_info,
                                                  gpointer user_data);
 
+typedef gboolean (*VsgPRTree3@t@SemifarInteractionFunc) (VsgPRTree3@t@NodeInfo *one_info,
+                                                         VsgPRTree3@t@NodeInfo *other_info,
+                                                         gpointer user_data);
+
 /* public functions */
 void
 vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
                                    VsgPRTree3@t@FarInteractionFunc far_func,
                                    VsgPRTree3@t@InteractionFunc near_func,
                                    gpointer user_data);
+
+void
+vsg_prtree3@t@_near_far_traversal_full (VsgPRTree3@t@ *prtree3@t@,
+                                        VsgPRTree3@t@FarInteractionFunc far_func,
+                                        VsgPRTree3@t@InteractionFunc near_func,
+                                        VsgPRTree3@t@SemifarInteractionFunc semifar_func,
+                                        gpointer user_data);
 
 void vsg_prtree3@t@_set_nf_isleaf (VsgPRTree3@t@ *prtree3@t@,
                                    VsgPRTree3@t@NFIsleafFunc isleaf,

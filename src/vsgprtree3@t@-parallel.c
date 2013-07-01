@@ -1448,6 +1448,7 @@ void vsg_nf_config3@t@_init (VsgNFConfig3@t@ *nfc,
                              VsgPRTree3@t@ *tree,
                              VsgPRTree3@t@FarInteractionFunc far_func,
                              VsgPRTree3@t@InteractionFunc near_func,
+                             VsgPRTree3@t@SemifarInteractionFunc semifar_func,
                              gpointer user_data)
 {
   MPI_Comm comm = tree->config.parallel_config.communicator;
@@ -1456,6 +1457,7 @@ void vsg_nf_config3@t@_init (VsgNFConfig3@t@ *nfc,
 
   nfc->far_func = far_func;
   nfc->near_func = near_func;
+  nfc->semifar_func = semifar_func;
   nfc->user_data = user_data;
 
   vsg_packed_msg_init (&nfc->recv, comm);
