@@ -219,6 +219,7 @@ struct _VsgNFConfig3@t@
   VsgPRTree3@t@FarInteractionFunc far_func;
   VsgPRTree3@t@InteractionFunc near_func;
   VsgPRTree3@t@SemifarInteractionFunc semifar_func;
+  guint semifar_threshold;
   gpointer user_data;
 
   /* parallel data */
@@ -298,6 +299,7 @@ void vsg_nf_config3@t@_init (VsgNFConfig3@t@ *nfc,
                              VsgPRTree3@t@FarInteractionFunc far_func,
                              VsgPRTree3@t@InteractionFunc near_func,
                              VsgPRTree3@t@SemifarInteractionFunc semifar_func,
+                             guint semifar_threshold,
                              gpointer user_data);
 
 void vsg_nf_config3@t@_tmp_alloc (VsgNFConfig3@t@ *nfc,

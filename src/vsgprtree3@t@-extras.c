@@ -240,16 +240,27 @@ static gboolean _check_and_execute_semifar_func (VsgNFConfig3@t@ *nfc,
                                                  VsgPRTree3@t@NodeInfo *other_info)
 {
   @key_type@ dist;
+  guint point_nb;
 
-  /* semifar_func missing */
+  /* semifar_func missing: fallback to near_func */
   if (nfc->semifar_func == NULL) return FALSE;
 
-  /* really neighbour nodes */
+  /* really neighbour nodes: fallback to near_func */
   dist = vsg_prtree_key3@t@_deepest_distance (&one_info->id, &other_info->id);
   if (dist < 2) return FALSE;
 
-  /* call semifar_func (can return FALSE if it chose not to run for these nodes */
-  return nfc->semifar_func (one_info, other_info, nfc->user_data);
+  /* point number below threshold: fallback to near_func */
+  point_nb = one_info->point_count;
+  if (other_info->depth > one_info->depth) point_nb = other_info->point_count;
+  if (point_nb < nfc->semifar_threshold) return FALSE;
+
+  /* avoid empty nodes */
+  if (one_info->point_count == 0 || other_info->point_count == 0) return FALSE;
+
+  /* call semifar_func */
+  nfc->semifar_func (one_info, other_info, nfc->user_data);
+
+  return TRUE;
 }
 
 static void recursive_near_func (VsgPRTree3@t@Node *one,
@@ -752,7 +763,7 @@ vsg_prtree3@t@_near_far_traversal (VsgPRTree3@t@ *prtree3@t@,
                                    VsgPRTree3@t@InteractionFunc near_func,
                                    gpointer user_data)
 {
-  vsg_prtree3@t@_near_far_traversal_full (prtree3@t@, far_func, near_func, NULL, user_data);
+  vsg_prtree3@t@_near_far_traversal_full (prtree3@t@, far_func, near_func, NULL, G_MAXUINT, user_data);
 }
 
 void
@@ -760,6 +771,7 @@ vsg_prtree3@t@_near_far_traversal_full (VsgPRTree3@t@ *prtree3@t@,
                                         VsgPRTree3@t@FarInteractionFunc far_func,
                                         VsgPRTree3@t@InteractionFunc near_func,
                                         VsgPRTree3@t@SemifarInteractionFunc semifar_func,
+                                        guint semifar_threshold,
                                         gpointer user_data)
 {
   VsgNFConfig3@t@ nfc;
@@ -775,7 +787,7 @@ vsg_prtree3@t@_near_far_traversal_full (VsgPRTree3@t@ *prtree3@t@,
 #ifdef VSG_HAVE_MPI
   vsg_packed_msg_trace ("enter 1 [nf traversal]");
 
-  vsg_nf_config3@t@_init (&nfc, prtree3@t@, far_func, near_func, semifar_func, user_data);
+  vsg_nf_config3@t@_init (&nfc, prtree3@t@, far_func, near_func, semifar_func, semifar_threshold, user_data);
 
   vsg_nf_config3@t@_tmp_alloc (&nfc, &prtree3@t@->config);
 
@@ -789,6 +801,7 @@ vsg_prtree3@t@_near_far_traversal_full (VsgPRTree3@t@ *prtree3@t@,
   nfc.far_func = far_func;
   nfc.near_func = near_func;
   nfc.semifar_func = semifar_func;
+  nfc.semifar_threshold = semifar_threshold;
   nfc.user_data = user_data;
 
 #endif
