@@ -1316,8 +1316,9 @@ struct _WaitingVisitor {
   VsgPRTree3@t@Node *node;
   VsgPRTreeKey3@t@ id;
   WaitingVisitor *next;
-  gint8 flag;
   gint src;
+  gint8 flag;
+  guint8 semifar_threshold_height;
   gboolean fake_leaf;
 };
 
@@ -1356,7 +1357,8 @@ static WaitingVisitor *_waiting_visitor_alloc ()
 static WaitingVisitor *_waiting_visitor_new (VsgPRTree3@t@Node *node,
                                              VsgPRTreeKey3@t@ *id,
                                              gboolean fake_leaf,
-                                             gint src)
+                                             gint src,
+                                             gint8 semifar_threshold_depth)
 {
 #if _USE_G_SLICES
   WaitingVisitor *wv = g_slice_new (WaitingVisitor);
@@ -1369,6 +1371,7 @@ static WaitingVisitor *_waiting_visitor_new (VsgPRTree3@t@Node *node,
   wv->next = NULL;
   wv->src = src;
   wv->flag = 0;
+  wv->semifar_threshold_height = semifar_threshold_depth;
   wv->fake_leaf = fake_leaf;
 
   return wv;
@@ -1707,28 +1710,52 @@ static gint _pack_subtree (VsgPRTree3@t@Node *node, VsgPRTreeKey3@t@ *id,
   return ret;
 }
 
+static gint _pack_tree (VsgPRTree3@t@Node *node, VsgPRTreeKey3@t@ *id,
+                        NodePackData *npd, guint8 semifar_threshold_height,
+                        gboolean recursive)
+{
+  gint ret = 1;
+
+  vsg_packed_msg_send_append (npd->pt_fpd.msg, id, 1,
+                              VSG_MPI_TYPE_PRTREE_KEY3@T@);
+  vsg_packed_msg_send_append (npd->pt_fpd.msg, &semifar_threshold_height, 1,
+                              MPI_UNSIGNED_CHAR);
+  _node_pack (node, npd);
+
+  if (recursive && PRTREE3@T@NODE_ISINT (node))
+    {
+      gint i;
+
+      for (i=0; i<8; i++)
+        {
+          VsgPRTreeKey3@t@ child_id;
+          vsg_prtree_key3@t@_build_child (id, i, &child_id);
+
+          ret += _pack_subtree (PRTREE3@T@NODE_CHILD (node, i), &child_id, npd);
+        }
+    }
+
+  return ret;
+}
+
 static void _do_send_forward_node (VsgNFConfig3@t@ *nfc,
                                    VsgNFProcMsg *nfpm,
                                    VsgPRTree3@t@Node *node,
                                    VsgPRTreeKey3@t@ *id,
                                    gint proc,
-                                   gboolean pack_subtree)
+                                   gboolean pack_subtree,
+                                   guint8 semifar_threshold_height)
 {
   gint sent = 0;
   VsgPackedMsg *msg = &nfpm->send_pm;
   NodePackData npd =
     NPD_VISIT_FORWARD (&nfc->tree->config.parallel_config, msg);
 
+  /* g_printerr ("%d : pack with semifar height=%u depth=%d\n", nfc->rk, semifar_threshold_height, id->depth); */
+
   msg->position = 0;
 
-  if (pack_subtree)
-    sent += _pack_subtree (node, id, &npd);
-  else
-    {
-      vsg_packed_msg_send_append (msg, id, 1, VSG_MPI_TYPE_PRTREE_KEY3@T@);
-      _node_pack (node, &npd);
-      sent = 1;
-    }
+  sent += _pack_tree (node, id, &npd, semifar_threshold_height, pack_subtree);
 
   _nf_msg_isend (msg, proc, VISIT_FORWARD_TAG, &nfc->procs_requests[proc]);
 
@@ -1746,7 +1773,7 @@ static void _send_pending_forward_node (VsgNFConfig3@t@ *nfc,
   nfpm->forward_pending = g_slist_next (nfpm->forward_pending);
   g_slist_free_1 (first);
 
-  _do_send_forward_node (nfc, nfpm, wv->node, &wv->id, proc, wv->fake_leaf);
+  _do_send_forward_node (nfc, nfpm, wv->node, &wv->id, proc, wv->fake_leaf, wv->semifar_threshold_height);
 
   _waiting_visitor_free (wv);
 
@@ -1867,7 +1894,8 @@ static void _send_pending_backward_node (VsgNFConfig3@t@ *nfc,
 static void _propose_node_forward (VsgNFConfig3@t@ *nfc,
                                    gint proc,
                                    VsgPRTree3@t@Node *node,
-                                   VsgPRTreeKey3@t@ *id, gboolean fake_leaf)
+                                   VsgPRTreeKey3@t@ *id, gboolean fake_leaf,
+                                   guint8 semifar_threshold_height)
 {
   gint flag;
   VsgNFProcMsg *nfpm;
@@ -1878,21 +1906,13 @@ static void _propose_node_forward (VsgNFConfig3@t@ *nfc,
 
   if (flag && nfpm->backward_pending == NULL)
     {
-      _do_send_forward_node (nfc, nfpm, node, id, proc, fake_leaf);
-
-/*       g_printerr ("%d : propose fw direct to %d - ", nfc->rk, proc); */
-/*       vsg_prtree_key3@t@_write (id, stderr); */
-/*       g_printerr ("\n"); */
+      _do_send_forward_node (nfc, nfpm, node, id, proc, fake_leaf, semifar_threshold_height);
     }
   else
     {
-      WaitingVisitor *wv = _waiting_visitor_new (node, id, fake_leaf, proc);
+      WaitingVisitor *wv = _waiting_visitor_new (node, id, fake_leaf, proc, semifar_threshold_height);
 
       nfpm->forward_pending = g_slist_append (nfpm->forward_pending, wv);
-
-/*       g_printerr ("%d : propose fw delay to %d - ", nfc->rk, proc); */
-/*       vsg_prtree_key3@t@_write (id, stderr); */
-/*       g_printerr ("\n"); */
 
       if (flag)
         {
@@ -1946,8 +1966,30 @@ struct _NIAndFuncs {
   VsgPRTree3@t@NodeInfo ref_info;
   VsgNFConfig3@t@ *nfc;
   VsgPRTreeKey3@t@ *ref_ancestry_ids;
+  guint8 semifar_threshold_height;
   gint8 done_flag;
 };
+
+static gboolean _check_ancestor_semifar (VsgPRTree3@t@NodeInfo *ref_info,
+                                         VsgPRTree3@t@NodeInfo *node_info,
+                                         guint8 semifar_threshold_height)
+{
+  @key_type@ dist;
+  guint8 h;
+
+  /* really neighbour nodes: fallback to near_func */
+  dist = vsg_prtree_key3@t@_deepest_distance (&node_info->id, &ref_info->id);
+  if (dist < 2) return FALSE;
+
+  /* here, ref_info is always deeper than node_info */
+  g_assert (ref_info->depth >= node_info->depth);
+  h = ref_info->depth - node_info->depth;
+
+  h = MIN (h, semifar_threshold_height);
+
+  /* if dist >= 2^h+1, semifar_func was already applied somewhere in the ancestry */
+  return dist >= ((1 << h) + 1);
+}
 
 /*
  * computes near/far interactions for a visiting node during a tree traversal.
@@ -1958,9 +2000,6 @@ static void _traverse_visiting_nf (VsgPRTree3@t@Node *node,
 {
   VsgPRTree3@t@NodeInfo *ref_info = &niaf->ref_info;
   guint8 node_depth;
-/*       gint rk; */
-
-/*       MPI_Comm_rank (MPI_COMM_WORLD, &rk); */
 
   node_depth = node_info->id.depth;
 
@@ -1976,11 +2015,17 @@ static void _traverse_visiting_nf (VsgPRTree3@t@Node *node,
             {
               VsgPRTree3@t@NodeInfo info;
               WaitingVisitor *wv;
-/*         g_printerr ("%d : near interaction [", rk); */
-/*         vsg_prtree_key3@t@_write (&ref_info->id, stderr); */
-/*         g_printerr ("] ["); */
-/*         vsg_prtree_key3@t@_write (&node_info->id, stderr); */
-/*         g_printerr ("]\n"); */
+
+              /* skip interactions that were already taken in account with
+               * a semifar_func somewhere in "ref" ancestry
+               */
+              if (niaf->nfc->semifar_func &&
+                  _check_ancestor_semifar (ref_info, node_info,
+                                           niaf->semifar_threshold_height))
+                {
+                  g_printerr ("%d : skipping semifar by ancestry\n", niaf->nfc->rk);
+                  return;
+                }
 
               if (ref_info->point_count > 0)
                 vsg_prtree3@t@node_recursive_near_func (niaf->ref->node,
@@ -2012,12 +2057,6 @@ static void _traverse_visiting_nf (VsgPRTree3@t@Node *node,
                PRTREE3@T@NODE_IS_LOCAL (node) &&
                node_info->point_count != 0)
         {
-/*         g_printerr ("%d : far interaction [", rk); */
-/*         vsg_prtree_key3@t@_write (&ref_info->id, stderr); */
-/*         g_printerr ("] ["); */
-/*         vsg_prtree_key3@t@_write (&node_info->id, stderr); */
-/*         g_printerr ("]\n"); */
-
           niaf->nfc->far_func (ref_info, node_info, niaf->nfc->user_data);
           niaf->done_flag |= 1<<1;
         }
@@ -2113,6 +2152,7 @@ static gboolean _compute_visiting_node (VsgNFConfig3@t@ *nfc,
 
   niaf.ref = wv;
   niaf.nfc = nfc;
+  niaf.semifar_threshold_height = wv->semifar_threshold_height;
 
   _vsg_prtree3@t@node_get_info (wv->node, &niaf.ref_info, NULL, 0);
   memcpy (&niaf.ref_info.id, &wv->id, sizeof (VsgPRTreeKey3@t@));
@@ -2317,22 +2357,25 @@ gboolean vsg_prtree3@t@_nf_check_receive (VsgNFConfig3@t@ *nfc, gint tag,
           WaitingVisitor *root = NULL;
           WaitingVisitor *parent = NULL;
           NodePackData npd = NPD_VISIT_FORWARD (pc, &nfc->recv);
+          guint8 semifar_threshold_height;
 
           do {
             vsg_packed_msg_recv_read (&nfc->recv, &id, 1,
                                       VSG_MPI_TYPE_PRTREE_KEY3@T@);
 
-/*           g_printerr ("%d : fw recv from %d - ", nfc->rk, */
-/*                       status.MPI_SOURCE); */
-/*           vsg_prtree_key3@t@_write (&id, stderr); */
-/*           g_printerr ("\n"); */
-/*         fflush (stderr); */
+            if (root == NULL)
+              vsg_packed_msg_recv_read (&nfc->recv, &semifar_threshold_height, 1,
+                                        MPI_UNSIGNED_CHAR);
+            else semifar_threshold_height = 0;
 
             node = _new_visiting_node (nfc->tree, &id, status.MPI_SOURCE);
 
-            wv = _waiting_visitor_new (node, &id, FALSE, status.MPI_SOURCE);
+            wv = _waiting_visitor_new (node, &id, FALSE, status.MPI_SOURCE,
+                                       semifar_threshold_height);
 
             _node_unpack (node, &npd);
+
+            /* g_printerr ("%d : unpack with semifar height=%u depth=%d\n", nfc->rk, semifar_threshold_height, id.depth); */
 
             if (root == NULL) root = wv;
             if (parent == NULL) parent = wv;
@@ -2501,6 +2544,20 @@ static inline @key_type@ _key_coord_dist (@key_type@ ref, @key_type@ node,
 }
 
 /*
+ * compute which ancestry level exceeds semifar_threshold.
+ */
+static guint8 _semifar_threshold_height (VsgPRTree3@t@NodeInfo *node_info, VsgNFConfig3@t@ *nfc)
+{
+  if (node_info == NULL) return 0;
+
+  if (VSG_PRTREE3@T@_NODE_INFO_IS_SHARED (node_info)) return 0;
+
+  if (node_info->point_count >= nfc->semifar_threshold) return 0;
+
+  return _semifar_threshold_height (node_info->father_info, nfc) + 1;
+}
+
+/*
  * used in vsg_prtree3@t@_traverse to register which processors a node is to
  * be sent to for a near/far interaction.
  */
@@ -2559,7 +2616,12 @@ static void _traverse_check_remote_neighbours (VsgPRTree3@t@Node *node,
         if (ref_info->point_count == 0) return;
 
       _propose_node_forward (data->nfc, proc, data->ref_node,
-                             &data->ref_info->id, data->fake_leaf);
+                             &data->ref_info->id, data->fake_leaf,
+                             _semifar_threshold_height (data->ref_info, data->nfc));
+
+      /* g_printerr ("%d : semifar height: %u depth=%d\n", data->nfc->rk, */
+      /*             _semifar_threshold_height (data->ref_info, data->nfc), */
+      /*             data->ref_info->id.depth); */
 
       data->procs[proc] = TRUE;
       data->sent = TRUE;

@@ -240,7 +240,6 @@ static gboolean _check_and_execute_semifar_func (VsgNFConfig3@t@ *nfc,
                                                  VsgPRTree3@t@NodeInfo *other_info)
 {
   @key_type@ dist;
-  guint point_nb;
 
   /* semifar_func missing: fallback to near_func */
   if (nfc->semifar_func == NULL) return FALSE;
@@ -249,10 +248,21 @@ static gboolean _check_and_execute_semifar_func (VsgNFConfig3@t@ *nfc,
   dist = vsg_prtree_key3@t@_deepest_distance (&one_info->id, &other_info->id);
   if (dist < 2) return FALSE;
 
-  /* point number below threshold: fallback to near_func */
-  point_nb = one_info->point_count;
-  if (other_info->depth > one_info->depth) point_nb = other_info->point_count;
-  if (point_nb < nfc->semifar_threshold) return FALSE;
+  /* point number below threshold: fallback to near_func
+   * Shared nodes use always semifar if possible
+   */
+  if (other_info->depth > one_info->depth)
+    {
+      if (!VSG_PRTREE3@T@_NODE_INFO_IS_SHARED (other_info) &&
+          other_info->point_count < nfc->semifar_threshold)
+        return FALSE;
+    }
+  else
+    {
+      if (!VSG_PRTREE3@T@_NODE_INFO_IS_SHARED (one_info) &&
+          one_info->point_count < nfc->semifar_threshold)
+        return FALSE;
+    }
 
   /* avoid empty nodes */
   if (one_info->point_count == 0 || other_info->point_count == 0) return FALSE;
