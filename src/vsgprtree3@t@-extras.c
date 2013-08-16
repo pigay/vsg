@@ -246,26 +246,63 @@ static gboolean _check_and_execute_semifar_func (VsgNFConfig3@t@ *nfc,
 
   /* really neighbour nodes: fallback to near_func */
   dist = vsg_prtree_key3@t@_deepest_distance (&one_info->id, &other_info->id);
+  /* g_printerr ("%d : local semifar one[%#lx %#lx %#lx %d] ? other[%#lx %#lx %#lx %d] dist=%d\n", */
+  /*             nfc->rk, */
+  /*             one_info->id.x, one_info->id.y, one_info->id.z, one_info->depth, */
+  /*             other_info->id.x, other_info->id.y, other_info->id.z, other_info->depth, */
+  /*             dist); */
   if (dist < 2) return FALSE;
 
-  /* point number below threshold: fallback to near_func
-   * Shared nodes use always semifar if possible
-   */
+  /* Shared nodes use always semifar if possible */
   if (other_info->depth > one_info->depth)
     {
-      if (!VSG_PRTREE3@T@_NODE_INFO_IS_SHARED (other_info) &&
-          other_info->point_count < nfc->semifar_threshold)
-        return FALSE;
+  /* g_printerr ("%d : local semifar one[%#lx %#lx %#lx %d] < other[%#lx %#lx %#lx %d]\n", */
+  /*             nfc->rk, */
+  /*             one_info->id.x, one_info->id.y, one_info->id.z, one_info->depth, */
+  /*             other_info->id.x, other_info->id.y, other_info->id.z, other_info->depth); */
+
+
+      if (one_info->point_count == 0) return FALSE;
+
+      if (VSG_PRTREE3@T@_NODE_INFO_IS_SHARED (other_info))
+        {
+          /* if one_info is a visiting node, then semifar was already applied
+           * in source proc.
+           */
+          if (VSG_PRTREE3@T@_NODE_INFO_IS_REMOTE (one_info))
+            return TRUE;
+        }
+      else
+        {
+          /* point number below threshold: fallback to near_func */
+          if (other_info->point_count < nfc->semifar_threshold)
+            return FALSE;
+        }
     }
   else
     {
-      if (!VSG_PRTREE3@T@_NODE_INFO_IS_SHARED (one_info) &&
-          one_info->point_count < nfc->semifar_threshold)
-        return FALSE;
-    }
+  /* g_printerr ("%d : local semifar one[%#lx %#lx %#lx %d] > other[%#lx %#lx %#lx %d]\n", */
+  /*             nfc->rk, */
+  /*             one_info->id.x, one_info->id.y, one_info->id.z, one_info->depth, */
+  /*             other_info->id.x, other_info->id.y, other_info->id.z, other_info->depth); */
 
-  /* avoid empty nodes */
-  if (one_info->point_count == 0 || other_info->point_count == 0) return FALSE;
+      if (other_info->point_count == 0) return FALSE;
+
+      if (VSG_PRTREE3@T@_NODE_INFO_IS_SHARED (one_info))
+        {
+          /* if other_info is a visiting node, then semifar was already applied
+           * in source proc.
+           */
+          if (VSG_PRTREE3@T@_NODE_INFO_IS_REMOTE (other_info))
+            return TRUE;
+        }
+      else
+        {
+          /* point number below threshold: fallback to near_func */
+          if (one_info->point_count < nfc->semifar_threshold)
+            return FALSE;
+        }
+    }
 
   /* call semifar_func */
   nfc->semifar_func (one_info, other_info, nfc->user_data);

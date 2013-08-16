@@ -1358,7 +1358,7 @@ static WaitingVisitor *_waiting_visitor_new (VsgPRTree3@t@Node *node,
                                              VsgPRTreeKey3@t@ *id,
                                              gboolean fake_leaf,
                                              gint src,
-                                             gint8 semifar_threshold_depth)
+                                             gint8 semifar_threshold_height)
 {
 #if _USE_G_SLICES
   WaitingVisitor *wv = g_slice_new (WaitingVisitor);
@@ -1371,7 +1371,7 @@ static WaitingVisitor *_waiting_visitor_new (VsgPRTree3@t@Node *node,
   wv->next = NULL;
   wv->src = src;
   wv->flag = 0;
-  wv->semifar_threshold_height = semifar_threshold_depth;
+  wv->semifar_threshold_height = semifar_threshold_height;
   wv->fake_leaf = fake_leaf;
 
   return wv;
@@ -1833,6 +1833,7 @@ static void _do_send_backward_node (VsgNFConfig3@t@ *nfc,
       nfpm->dropped_visitors = 0;
     }
 
+  /* g_printerr ("%d : bw node 0x%lx 0x%lx 0x%lx\n", nfc->rk, wv->id.x, wv->id.y, wv->id.z); */
   _pack_wv_and_destroy (msg, wv, &npd, &nfc->tree->config);
 
   _nf_msg_isend (msg, proc, VISIT_BACKWARD_TAG, &nfc->procs_requests[proc]);
@@ -1977,9 +1978,11 @@ static gboolean _check_ancestor_semifar (VsgPRTree3@t@NodeInfo *ref_info,
   @key_type@ dist;
   guint8 h;
 
-  /* really neighbour nodes: fallback to near_func */
-  dist = vsg_prtree_key3@t@_deepest_distance (&node_info->id, &ref_info->id);
-  if (dist < 2) return FALSE;
+  /*
+   * dist<=2: call near_func, will handle semifar if needed
+   */
+  dist = vsg_prtree_key3@t@_deepest_distance (&ref_info->id, &node_info->id);
+  if (dist <= 2) return FALSE;
 
   /* here, ref_info is always deeper than node_info */
   g_assert (ref_info->depth >= node_info->depth);
@@ -1987,8 +1990,8 @@ static gboolean _check_ancestor_semifar (VsgPRTree3@t@NodeInfo *ref_info,
 
   h = MIN (h, semifar_threshold_height);
 
-  /* if dist >= 2^h+1, semifar_func was already applied somewhere in the ancestry */
-  return dist >= ((1 << h) + 1);
+  /* if dist > 2^h, semifar_func was already applied somewhere in the ancestry */
+  return dist > 1 << h;
 }
 
 /*
@@ -2008,7 +2011,32 @@ static void _traverse_visiting_nf (VsgPRTree3@t@Node *node,
       VsgPRTreeKey3@t@ *ref_id = &niaf->ref_ancestry_ids[node_depth];
       if (vsg_prtree_key3@t@_is_neighbour (ref_id, &node_info->id))
         {
-          if (!ref_info->isleaf || node->point_count == 0) return;
+          if (node->point_count == 0) return;
+
+          if (!ref_info->isleaf && niaf->semifar_threshold_height == 0)
+            {
+              if (PRTREE3@T@NODE_ISLEAF (node) &&
+                  niaf->nfc->semifar_func != NULL)
+                {
+                  @key_type@ dist;
+                  dist = vsg_prtree_key3@t@_deepest_distance (&ref_info->id, &node_info->id);
+
+                  /* g_printerr ("%d : visitor near ref[%#@kmod@x %#@kmod@x %#@kmod@x %d] node[%#lx %#lx %#lx %d] dist=%@kmod@d " */
+                  /*             "th_height=%d\n", */
+                  /*             niaf->nfc->rk, */
+                  /*             ref_info->id.x, ref_info->id.y, ref_info->id.z, ref_info->depth, */
+                  /*             node_info->id.x, node_info->id.y, node_info->id.z, node_info->depth, */
+                  /*             dist, niaf->semifar_threshold_height); */
+
+                  if (dist == 2)
+                    {
+                      niaf->nfc->semifar_func (&niaf->ref_info, node_info, niaf->nfc->user_data);
+                      niaf->done_flag |= 1;
+                    }
+                }
+
+              return;
+            }
 
           if (PRTREE3@T@NODE_ISLEAF (node) ||
               node_depth == ref_info->id.depth)
@@ -2023,7 +2051,13 @@ static void _traverse_visiting_nf (VsgPRTree3@t@Node *node,
                   _check_ancestor_semifar (ref_info, node_info,
                                            niaf->semifar_threshold_height))
                 {
-                  g_printerr ("%d : skipping semifar by ancestry\n", niaf->nfc->rk);
+                  /* g_printerr ("%d : skipping semifar by ancestry ref[%#@kmod@x %#@kmod@x %#@kmod@x %d] node[%#lx %#lx %#lx %d] dist=%d " */
+                  /*             "th_height=%d\n", */
+                  /*             niaf->nfc->rk, */
+                  /*             ref_info->id.x, ref_info->id.y, ref_info->id.z, ref_info->depth, */
+                  /*             node_info->id.x, node_info->id.y, node_info->id.z, node_info->depth, */
+                  /*             vsg_prtree_key3@t@_deepest_distance (&ref_info->id, &node_info->id), */
+                  /*             niaf->semifar_threshold_height); */
                   return;
                 }
 
@@ -2375,7 +2409,7 @@ gboolean vsg_prtree3@t@_nf_check_receive (VsgNFConfig3@t@ *nfc, gint tag,
 
             _node_unpack (node, &npd);
 
-            /* g_printerr ("%d : unpack with semifar height=%u depth=%d\n", nfc->rk, semifar_threshold_height, id.depth); */
+            /* g_printerr ("%d : unpack [%#@kmod@x %#@kmod@x %#@kmod@x %d] with semifar height=%u depth=%d\n", nfc->rk, id.x, id.y, id.z, id.depth, semifar_threshold_height, id.depth); */
 
             if (root == NULL) root = wv;
             if (parent == NULL) parent = wv;
@@ -2427,6 +2461,9 @@ gboolean vsg_prtree3@t@_nf_check_receive (VsgNFConfig3@t@ *nfc, gint tag,
             }
 
           node = vsg_prtree3@t@node_key_lookup (nfc->tree->node, id);
+
+          /* g_printerr ("%d : bw node recv %#@kmod@x %#@kmod@x %#@kmod@x d=%d\n", nfc->rk, id.x, id.y, id.z, id.depth); */
+          /* g_printerr ("%d : bw node recv %g %g %g\n", nfc->rk, node->center.x, node->center.y, node->center.z); */
 
 /*         g_printerr ("%d(%d) : bw recv from %d - ", nfc->rk, getpid (), */
 /*                     status.MPI_SOURCE); */
