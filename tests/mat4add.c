@@ -56,7 +56,7 @@ gint main (gint argc, gchar ** argv)
   gint ret = 0;
   VsgMatrix4d v, w, res, ref;
 
-  if (argc > 1 && g_strncasecmp (argv[1], "--version", 9) == 0)
+  if (argc > 1 && g_ascii_strncasecmp (argv[1], "--version", 9) == 0)
     {
       g_print ("%s\n", PACKAGE_VERSION);
       return 0;

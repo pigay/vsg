@@ -349,14 +349,14 @@ gint main (gint argc, gchar ** argv)
   MPI_Comm_size (MPI_COMM_WORLD, &sz);
   MPI_Comm_rank (MPI_COMM_WORLD, &rk);
 
-  if (argc > 1 && g_strncasecmp (argv[1], "--version", 9) == 0)
+  if (argc > 1 && g_ascii_strncasecmp (argv[1], "--version", 9) == 0)
     {
       if (rk == 0)
         g_print ("%s\n", PACKAGE_VERSION);
       return 0;
     }
 
-  if (argc > 1 && g_strncasecmp (argv[1], "--write", 7) == 0)
+  if (argc > 1 && g_ascii_strncasecmp (argv[1], "--write", 7) == 0)
     {
       _do_write = TRUE;
     }

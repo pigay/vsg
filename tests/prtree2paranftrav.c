@@ -847,16 +847,16 @@ void parse_args (int argc, char **argv)
               g_printerr ("Invalid distribution function name \"%s\"\n", arg);
             }
 	}
-      else if (g_strncasecmp (arg, "--hilbert", 9) == 0)
+      else if (g_ascii_strncasecmp (arg, "--hilbert", 9) == 0)
         {
           _hilbert = TRUE;
         }
-      else if (g_strncasecmp (arg, "--write", 7) == 0)
+      else if (g_ascii_strncasecmp (arg, "--write", 7) == 0)
         {
           _do_write = TRUE;
         }
-      else if (g_strncasecmp (arg, "-v", 2) == 0 ||
-               g_strncasecmp (arg, "--verbose", 9) == 0)
+      else if (g_ascii_strncasecmp (arg, "-v", 2) == 0 ||
+               g_ascii_strncasecmp (arg, "--verbose", 9) == 0)
         {
           _verbose = TRUE;
         }

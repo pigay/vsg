@@ -38,7 +38,7 @@ gint main (gint argc, gchar ** argv)
   VsgVector2d v, res, ref;
   gdouble w;
 
-  if (argc > 1 && g_strncasecmp (argv[1], "--version", 9) == 0)
+  if (argc > 1 && g_ascii_strncasecmp (argv[1], "--version", 9) == 0)
     {
       g_print ("%s\n", PACKAGE_VERSION);
       return 0;

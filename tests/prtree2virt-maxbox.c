@@ -516,23 +516,23 @@ void parse_args (int argc, char **argv)
               test_printerr ("Invalid fill function name \"%s\"\n", arg);
             }
 	}
-      else if (g_strncasecmp (arg, "--np", 4) == 0)
+      else if (g_ascii_strncasecmp (arg, "--np", 4) == 0)
         {
 	  iarg ++;
 	  arg = (iarg<argc) ? argv[iarg] : NULL;
 
 	  _npoints = atoi (arg);
         }
-      else if (g_strncasecmp (arg, "--no-check", 9) == 0)
+      else if (g_ascii_strncasecmp (arg, "--no-check", 9) == 0)
         {
           _do_check = FALSE;
         }
-      else if (g_strncasecmp (arg, "--write", 7) == 0)
+      else if (g_ascii_strncasecmp (arg, "--write", 7) == 0)
         {
           _write = TRUE;
         }
-      else if (g_strncasecmp (arg, "-v", 2) == 0 ||
-               g_strncasecmp (arg, "--verbose", 9) == 0)
+      else if (g_ascii_strncasecmp (arg, "-v", 2) == 0 ||
+               g_ascii_strncasecmp (arg, "--verbose", 9) == 0)
         {
           _verbose = TRUE;
         }
@@ -541,7 +541,7 @@ void parse_args (int argc, char **argv)
 	  g_printerr ("%s version %s\n", argv[0], PACKAGE_VERSION);
 	  exit (0);
 	}
-      else if (g_strncasecmp (arg, "--mpi", 5) == 0)
+      else if (g_ascii_strncasecmp (arg, "--mpi", 5) == 0)
         {
           _mpi = TRUE;
         }

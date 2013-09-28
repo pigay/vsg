@@ -519,28 +519,28 @@ void parse_args (int argc, char **argv)
 	  else
 	    g_printerr ("Invalid random seed (--seed %s)\n", arg);
 	}
-      else if (g_strncasecmp (arg, "--no-regions", 12) == 0)
+      else if (g_ascii_strncasecmp (arg, "--no-regions", 12) == 0)
         {
           _put_regions = FALSE;
         }
-      else if (g_strncasecmp (arg, "--no-dist", 9) == 0)
+      else if (g_ascii_strncasecmp (arg, "--no-dist", 9) == 0)
         {
           _do_contiguous = FALSE;
         }
-      else if (g_strncasecmp (arg, "--hilbert", 9) == 0)
+      else if (g_ascii_strncasecmp (arg, "--hilbert", 9) == 0)
         {
           _hilbert = TRUE;
         }
-      else if (g_strncasecmp (arg, "--scatter", 9) == 0)
+      else if (g_ascii_strncasecmp (arg, "--scatter", 9) == 0)
         {
           _scatter_before = TRUE;
         }
-      else if (g_strncasecmp (arg, "--write", 7) == 0)
+      else if (g_ascii_strncasecmp (arg, "--write", 7) == 0)
         {
           _do_write = TRUE;
         }
-      else if (g_strncasecmp (arg, "-v", 2) == 0 ||
-               g_strncasecmp (arg, "--verbose", 9) == 0)
+      else if (g_ascii_strncasecmp (arg, "-v", 2) == 0 ||
+               g_ascii_strncasecmp (arg, "--verbose", 9) == 0)
         {
           _verbose = TRUE;
         }

@@ -113,7 +113,7 @@ void parse_args (int argc, char **argv)
       arg = argv[iarg];
 
       if (g_ascii_strncasecmp (arg, "-v", 2) == 0 ||
-               g_strncasecmp (arg, "--verbose", 9) == 0)
+               g_ascii_strncasecmp (arg, "--verbose", 9) == 0)
         {
           _verbose = TRUE;
         }

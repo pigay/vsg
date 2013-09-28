@@ -13,7 +13,7 @@ gint main (gint argc, gchar ** argv)
 
   vsg_init_gdouble ();
 
-  if (argc > 1 && g_strncasecmp (argv[1], "--version", 9) == 0)
+  if (argc > 1 && g_ascii_strncasecmp (argv[1], "--version", 9) == 0)
     {
       if (mytid == 0)
         g_print ("%s\n", PACKAGE_VERSION);
@@ -71,7 +71,7 @@ gint main (gint argc, gchar ** argv)
             g_printerr (").\n");
           }
 
-        if (g_strncasecmp (ra, "a", 1) != 0)
+        if (g_ascii_strncasecmp (ra, "a", 1) != 0)
           {
             g_printerr ("%d: character msg (from %d) error %s (should be %s).\n",
                         mytid, i, ra, "a");

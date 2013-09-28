@@ -314,28 +314,28 @@ void parse_args (int argc, char **argv)
               test_printerr ("Invalid fill function name \"%s\"\n", arg);
             }
 	}
-      else if (g_strncasecmp (arg, "--np", 4) == 0)
+      else if (g_ascii_strncasecmp (arg, "--np", 4) == 0)
         {
 	  iarg ++;
 	  arg = (iarg<argc) ? argv[iarg] : NULL;
 
 	  _npoints = atoi (arg);
         }
-      else if (g_strncasecmp (arg, "--write", 7) == 0)
+      else if (g_ascii_strncasecmp (arg, "--write", 7) == 0)
         {
           _do_write = TRUE;
         }
-      else if (g_strncasecmp (arg, "--no-check", 9) == 0)
+      else if (g_ascii_strncasecmp (arg, "--no-check", 9) == 0)
         {
           _do_check = FALSE;
         }
-      else if (g_strncasecmp (arg, "-v", 2) == 0 ||
-               g_strncasecmp (arg, "--verbose", 9) == 0)
+      else if (g_ascii_strncasecmp (arg, "-v", 2) == 0 ||
+               g_ascii_strncasecmp (arg, "--verbose", 9) == 0)
         {
           _verbose = TRUE;
         }
-      else if (g_strncasecmp (arg, "-t", 2) == 0 ||
-               g_strncasecmp (arg, "--time", 6) == 0)
+      else if (g_ascii_strncasecmp (arg, "-t", 2) == 0 ||
+               g_ascii_strncasecmp (arg, "--time", 6) == 0)
         {
           _time = TRUE;
         }
@@ -344,7 +344,7 @@ void parse_args (int argc, char **argv)
 	  test_printerr ("%s version %s\n", argv[0], PACKAGE_VERSION);
 	  exit (0);
 	}
-      else if (g_strncasecmp (arg, "--mpi", 5) == 0)
+      else if (g_ascii_strncasecmp (arg, "--mpi", 5) == 0)
         {
           _mpi = TRUE;
         }
@@ -490,7 +490,7 @@ gint main (gint argc, gchar ** argv)
   chkstr = g_checksum_get_string (checksum);
   chkstrref = g_checksum_get_string (checksumref);
 
-  if (_do_check && g_strcasecmp (chkstr, chkstrref) != 0)
+  if (_do_check && g_ascii_strcasecmp (chkstr, chkstrref) != 0)
     {
 
       test_printerr ("Tree checksums difference found\n");
