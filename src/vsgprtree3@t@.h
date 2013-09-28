@@ -140,6 +140,8 @@ void vsg_prtree3@t@_free (VsgPRTree3@t@ *prtree3@t@);
 
 VsgPRTree3@t@ *vsg_prtree3@t@_clone (VsgPRTree3@t@ *prtree3@t@);
 
+guint vsg_prtree3@t@_get_max_point (VsgPRTree3@t@ *prtree3@t@);
+
 void
 vsg_prtree3@t@_set_point_loc (VsgPRTree3@t@ *prtree3@t@,
                               VsgPoint3@t@LocFunc locfunc);

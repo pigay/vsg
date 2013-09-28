@@ -141,6 +141,8 @@ void vsg_prtree2@t@_free (VsgPRTree2@t@ *prtree2@t@);
 
 VsgPRTree2@t@ *vsg_prtree2@t@_clone (VsgPRTree2@t@ *prtree2@t@);
 
+guint vsg_prtree2@t@_get_max_point (VsgPRTree2@t@ *prtree2@t@);
+
 void
 vsg_prtree2@t@_set_point_loc (VsgPRTree2@t@ *prtree2@t@,
                               VsgPoint2@t@LocFunc locfunc);

@@ -1697,6 +1697,16 @@ VsgPRTree2@t@ *vsg_prtree2@t@_clone (VsgPRTree2@t@ *prtree2@t@)
   return res;
 }
 
+guint vsg_prtree2@t@_get_max_point (VsgPRTree2@t@ *prtree2@t@)
+{
+#ifdef VSG_CHECK_PARAMS
+  g_return_val_if_fail (prtree2@t@ != NULL, 0);
+#endif
+
+  return prtree2@t@->config.max_point;
+}
+
+
 /**
  * vsg_prtree2@t@_set_point_loc:
  * @prtree2@t@: a #VsgPRTree2@t@.
