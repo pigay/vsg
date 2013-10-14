@@ -167,6 +167,81 @@ VsgPRTree2@t@Node *vsg_prtree2@t@node_key_lookup (VsgPRTree2@t@Node *node,
   return vsg_prtree2@t@node_key_lookup (child, key);
 }
 
+static gboolean _check_and_execute_semifar_func (VsgNFConfig2@t@ *nfc,
+                                                 VsgPRTree2@t@NodeInfo *one_info,
+                                                 VsgPRTree2@t@NodeInfo *other_info)
+{
+  @key_type@ dist;
+
+  /* semifar_func missing: fallback to near_func */
+  if (nfc->semifar_func == NULL) return FALSE;
+
+  /* really neighbour nodes: fallback to near_func */
+  dist = vsg_prtree_key2@t@_deepest_distance (&one_info->id, &other_info->id);
+  /* g_printerr ("%d : local semifar one[%#lx %#lx %d] ? other[%#lx %#lx %d] dist=%d\n", */
+  /*             nfc->rk, */
+  /*             one_info->id.x, one_info->id.y, one_info->depth, */
+  /*             other_info->id.x, other_info->id.y, other_info->depth, */
+  /*             dist); */
+  if (dist < 2) return FALSE;
+
+  /* Shared nodes use always semifar if possible */
+  if (other_info->depth > one_info->depth)
+    {
+  /* g_printerr ("%d : local semifar one[%#lx %#lx %d] < other[%#lx %#lx %d]\n", */
+  /*             nfc->rk, */
+  /*             one_info->id.x, one_info->id.y, one_info->depth, */
+  /*             other_info->id.x, other_info->id.y, other_info->depth); */
+
+
+      if (one_info->point_count == 0) return FALSE;
+
+      if (VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (other_info))
+        {
+          /* if one_info is a visiting node, then semifar was already applied
+           * in source proc.
+           */
+          if (VSG_PRTREE2@T@_NODE_INFO_IS_REMOTE (one_info))
+            return TRUE;
+        }
+      else
+        {
+          /* point number below threshold: fallback to near_func */
+          if (other_info->point_count < nfc->semifar_threshold)
+            return FALSE;
+        }
+    }
+  else
+    {
+  /* g_printerr ("%d : local semifar one[%#lx %#lx %d] > other[%#lx %#lx %d]\n", */
+  /*             nfc->rk, */
+  /*             one_info->id.x, one_info->id.y, one_info->depth, */
+  /*             other_info->id.x, other_info->id.y, other_info->depth); */
+
+      if (other_info->point_count == 0) return FALSE;
+
+      if (VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (one_info))
+        {
+          /* if other_info is a visiting node, then semifar was already applied
+           * in source proc.
+           */
+          if (VSG_PRTREE2@T@_NODE_INFO_IS_REMOTE (other_info))
+            return TRUE;
+        }
+      else
+        {
+          /* point number below threshold: fallback to near_func */
+          if (one_info->point_count < nfc->semifar_threshold)
+            return FALSE;
+        }
+    }
+
+  /* call semifar_func */
+  nfc->semifar_func (one_info, other_info, nfc->user_data);
+
+  return TRUE;
+}
+
 static void recursive_near_func (VsgPRTree2@t@Node *one,
                                  VsgPRTree2@t@NodeInfo *one_info,
                                  VsgPRTree2@t@Node *other,
@@ -179,6 +254,10 @@ static void recursive_near_func (VsgPRTree2@t@Node *one,
   if (nfc->sz > 1)
     vsg_prtree2@t@_nf_check_receive (nfc, MPI_ANY_TAG, FALSE);
 #endif
+
+  /* try to execute semifar function instead of near_func, if possible */
+  if (_check_and_execute_semifar_func (nfc, one_info, other_info))
+    return;
 
   if (PRTREE2@T@NODE_ISINT (one))
     {
@@ -575,6 +654,17 @@ vsg_prtree2@t@_near_far_traversal (VsgPRTree2@t@ *prtree2@t@,
                                    VsgPRTree2@t@InteractionFunc near_func,
                                    gpointer user_data)
 {
+  vsg_prtree2@t@_near_far_traversal_full (prtree2@t@, far_func, near_func, NULL, G_MAXUINT, user_data);
+}
+
+void
+vsg_prtree2@t@_near_far_traversal_full (VsgPRTree2@t@ *prtree2@t@,
+                                        VsgPRTree2@t@FarInteractionFunc far_func,
+                                        VsgPRTree2@t@InteractionFunc near_func,
+                                        VsgPRTree2@t@SemifarInteractionFunc semifar_func,
+                                        guint semifar_threshold,
+                                        gpointer user_data)
+{
   VsgNFConfig2@t@ nfc;
 
 #ifdef VSG_CHECK_PARAMS
@@ -584,7 +674,7 @@ vsg_prtree2@t@_near_far_traversal (VsgPRTree2@t@ *prtree2@t@,
 #ifdef VSG_HAVE_MPI
   vsg_packed_msg_trace ("enter 1 [nf traversal]");
 
-  vsg_nf_config2@t@_init (&nfc, prtree2@t@, far_func, near_func, user_data);
+  vsg_nf_config2@t@_init (&nfc, prtree2@t@, far_func, near_func, semifar_func, semifar_threshold, user_data);
 
   vsg_nf_config2@t@_tmp_alloc (&nfc, &prtree2@t@->config);
 
@@ -597,6 +687,8 @@ vsg_prtree2@t@_near_far_traversal (VsgPRTree2@t@ *prtree2@t@,
   nfc.tree = prtree2@t@;
   nfc.far_func = far_func;
   nfc.near_func = near_func;
+  nfc.semifar_func = semifar_func;
+  nfc.semifar_threshold = semifar_threshold;
   nfc.user_data = user_data;
 
 #endif
