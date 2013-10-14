@@ -5,9 +5,9 @@ AC_ARG_WITH(mpi,
             [  --with-mpi=MPIPATH        Build against MPI library (enabled)], ,
             with_mpi="yes")
 
-#MPI_CFLAGS=
+MPI_CFLAGS=
 #MPI_CXXFLAGS=
-#MPI_LIBS=
+MPI_LIBS=
 MPI_ENABLED=0
 
 if test "${with_mpi}" != "no"
