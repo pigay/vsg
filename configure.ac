@@ -11,7 +11,7 @@ dnl Process this file with autoconf to produce a configure script.
 # set vsg_binary_age _and_ vsg_interface_age to 0.
 #
 m4_define([vsg_major_version], [0])
-m4_define([vsg_minor_version], [3])
+m4_define([vsg_minor_version], [4])
 m4_define([vsg_micro_version], [0])
 m4_define([vsg_interface_age], [0])
 m4_define([vsg_binary_age],
