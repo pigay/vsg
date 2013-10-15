@@ -12,7 +12,7 @@ dnl Process this file with autoconf to produce a configure script.
 #
 m4_define([vsg_major_version], [0])
 m4_define([vsg_minor_version], [3])
-m4_define([vsg_micro_version], [0])
+m4_define([vsg_micro_version], [1])
 m4_define([vsg_interface_age], [0])
 m4_define([vsg_binary_age],
           [m4_eval(100 * vsg_minor_version + vsg_micro_version)])
