@@ -1725,7 +1725,7 @@ static gint _pack_tree (VsgPRTree2@t@Node *node, VsgPRTreeKey2@t@ *id,
     {
       gint i;
 
-      for (i=0; i<8; i++)
+      for (i=0; i<4; i++)
         {
           VsgPRTreeKey2@t@ child_id;
           vsg_prtree_key2@t@_build_child (id, i, &child_id);
