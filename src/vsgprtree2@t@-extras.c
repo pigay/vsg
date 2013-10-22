@@ -200,12 +200,14 @@ static gboolean _check_and_execute_semifar_func (VsgNFConfig2@t@ *nfc,
 
       if (one_info->point_count == 0) return FALSE;
 
+      // *** ???
       if (VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (other_info))
         {
           /* if one_info is a visiting node, then semifar was already applied
            * in source proc.
            */
-          if (VSG_PRTREE2@T@_NODE_INFO_IS_REMOTE (one_info))
+          // *** PRIVATE-REMOTE
+          if (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_REMOTE (one_info))
             return TRUE;
         }
       else
@@ -224,12 +226,14 @@ static gboolean _check_and_execute_semifar_func (VsgNFConfig2@t@ *nfc,
 
       if (other_info->point_count == 0) return FALSE;
 
+      // *** ???
       if (VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (one_info))
         {
           /* if other_info is a visiting node, then semifar was already applied
            * in source proc.
            */
-          if (VSG_PRTREE2@T@_NODE_INFO_IS_REMOTE (other_info))
+          // *** PRIVATE-REMOTE
+          if (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_REMOTE (other_info))
             return TRUE;
         }
       else
@@ -271,6 +275,7 @@ static void recursive_near_func (VsgPRTree2@t@Node *one,
           VsgPRTree2@t@NodeInfo one_child_info;
 
 #ifdef VSG_HAVE_MPI
+          // *** *-REMOTE
           if (PRTREE2@T@NODE_IS_REMOTE (one_child)) continue;
 #endif
 
@@ -289,6 +294,7 @@ static void recursive_near_func (VsgPRTree2@t@Node *one,
           VsgPRTree2@t@NodeInfo other_child_info;
 
 #ifdef VSG_HAVE_MPI
+          // *** *-REMOTE
           if (PRTREE2@T@NODE_IS_REMOTE (other_child)) continue;
 #endif
 
@@ -319,8 +325,9 @@ void vsg_prtree2@t@node_recursive_near_func (VsgPRTree2@t@Node *one,
 }
 
 #ifdef VSG_HAVE_MPI
+// *** PRIVATE-LOCAL
 #define _NODE_IS_EMPTY(node) ( \
- (node)->point_count == 0 && PRTREE2@T@NODE_IS_LOCAL (node) \
+ (node)->point_count == 0 && PRTREE2@T@NODE_IS_PRIVATE_LOCAL (node)     \
 )
 #else
 #define _NODE_IS_EMPTY(node) ( \
@@ -365,7 +372,8 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
           VsgPRTree2@t@NodeInfo one_child_info;
 
 #ifdef VSG_HAVE_MPI
-          if (PRTREE2@T@NODE_IS_REMOTE (one_child)) continue;
+          // *** PRIVATE-REMOTE
+          if (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (one_child)) continue;
 #endif
 
           _vsg_prtree2@t@node_get_info (one_child, &one_child_info,
@@ -381,7 +389,8 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
               VsgPRTree2@t@NodeInfo other_child_info;
 
 #ifdef VSG_HAVE_MPI
-              if (PRTREE2@T@NODE_IS_REMOTE (other_child)) continue;
+              // *** PRIVATE-REMOTE
+              if (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (other_child)) continue;
 #endif
 
               _vsg_prtree2@t@node_get_info (other_child,
@@ -402,6 +411,7 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
 #ifdef VSG_HAVE_MPI
                       /* in parallel, only one of the processors has to do a
                          shared/shared far interaction */
+                      // *** SHARED-* && SHARED-*
                       if (PRTREE2@T@NODE_IS_SHARED (one_child) &&
                           PRTREE2@T@NODE_IS_SHARED (other_child) &&
                           PRTREE2@T@NODE_PROC (one_child) != nfc->rk)
@@ -416,8 +426,7 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
                                      nfc->user_data);
                     }
                 }
-              else
-                {
+              else                {
                   gint8 newx = _SUB_INTERACTION (i, j, x, _X);
                   gint8 newy = _SUB_INTERACTION (i, j, y, _Y);
 
@@ -452,7 +461,9 @@ vsg_prtree2@t@node_near_far_traversal (VsgNFConfig2@t@ *nfc,
   VsgPRTree2@t@NodeInfo node_info;
 
 #ifdef VSG_HAVE_MPI
-  if (PRTREE2@T@NODE_IS_REMOTE (node)) return;
+  // *** PRIVATE-REMOTE
+  if (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (node)) return;
+
 #endif
   if (_NODE_IS_EMPTY (node)) return;
 
@@ -489,7 +500,8 @@ vsg_prtree2@t@node_near_far_traversal (VsgNFConfig2@t@ *nfc,
           VsgPRTree2@t@NodeInfo one_child_info;
 
 #ifdef VSG_HAVE_MPI
-          if (PRTREE2@T@NODE_IS_REMOTE (one_child)) continue;
+          // *** PRIVATE-REMOTE
+          if (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (one_child)) continue;
 #endif
 
           _vsg_prtree2@t@node_get_info (one_child, &one_child_info,
@@ -502,7 +514,8 @@ vsg_prtree2@t@node_near_far_traversal (VsgNFConfig2@t@ *nfc,
               gint8 x, y;
 
 #ifdef VSG_HAVE_MPI
-              if (PRTREE2@T@NODE_IS_REMOTE (other_child)) continue;
+              // *** PRIVATE-REMOTE
+              if (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (other_child)) continue;
 #endif
 
               x = _AXIS_DIFF (i, j, _X);

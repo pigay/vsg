@@ -342,9 +342,9 @@ void _far (VsgPRTree3dNodeInfo *one_info,
     ((NodeCounter *) one_info->user_data)->in_count;
 
   if ((one_info->point_count == 0 &&
-       VSG_PRTREE3D_NODE_INFO_IS_LOCAL (one_info)) ||
+       VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_LOCAL (one_info)) ||
       (other_info->point_count == 0 &&
-       VSG_PRTREE3D_NODE_INFO_IS_LOCAL (other_info)))
+       VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_LOCAL (other_info)))
     g_printerr ("%d : unnecessary far call\n", rk);
 
   _far_count ++;
@@ -352,7 +352,7 @@ void _far (VsgPRTree3dNodeInfo *one_info,
 
 void _up (VsgPRTree3dNodeInfo *node_info, gpointer data)
 {
-  if (! VSG_PRTREE3D_NODE_INFO_IS_REMOTE (node_info))
+  if (! VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       if (node_info->isleaf)
         {
@@ -382,7 +382,7 @@ gboolean _nf_isleaf_virtual_maxbox (const VsgPRTree3dNodeInfo *node_info,
 
 void _zero (VsgPRTree3dNodeInfo *node_info, gpointer data)
 {
-  if (! VSG_PRTREE3D_NODE_INFO_IS_REMOTE (node_info))
+  if (! VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       ((NodeCounter *) node_info->user_data)->in_count = 0;
       ((NodeCounter *) node_info->user_data)->out_count = 0;
@@ -410,7 +410,7 @@ void _down (VsgPRTree3dNodeInfo *node_info, gpointer data)
 {
   glong count;
 
-  if (VSG_PRTREE3D_NODE_INFO_IS_REMOTE (node_info)) return;
+  if (VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (node_info)) return;
 
   if (node_info->father_info)
     {
@@ -440,9 +440,9 @@ gboolean _nf_isleaf_virtual_maxbox (const VsgPRTree3dNodeInfo *node_info,
                                     gpointer virtual_maxbox)
 {
   /* shared nodes shouldn't be considered as virtual leaves in this case
-   * because point_count is only a local count. For example, a shared node
+   * because point_count is only a local count. For example, a shared-remote node
    * without any local child would be considered as a virtual leaf whatever is
-   * its global point_count */
+   * its global point_count. Which is bad. */
   if (VSG_PRTREE3D_NODE_INFO_IS_SHARED (node_info)) return FALSE;
 
   return node_info->point_count <= * ((guint *) virtual_maxbox);

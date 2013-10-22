@@ -143,6 +143,26 @@ VSG_PARALLEL_STATUS_IS_LOCAL (node->parallel_status) \
 VSG_PARALLEL_STATUS_IS_SHARED (node->parallel_status) \
 )
 
+#define PRTREE3@T@NODE_IS_PRIVATE(node) ( \
+VSG_PARALLEL_STATUS_IS_PRIVATE (node->parallel_status) \
+)
+
+#define PRTREE3@T@NODE_IS_PRIVATE_LOCAL(node) ( \
+VSG_PARALLEL_STATUS_IS_PRIVATE_LOCAL (node->parallel_status) \
+)
+
+#define PRTREE3@T@NODE_IS_SHARED_LOCAL(node) ( \
+VSG_PARALLEL_STATUS_IS_SHARED_LOCAL (node->parallel_status) \
+)
+
+#define PRTREE3@T@NODE_IS_PRIVATE_REMOTE(node) ( \
+VSG_PARALLEL_STATUS_IS_PRIVATE_REMOTE (node->parallel_status) \
+)
+
+#define PRTREE3@T@NODE_IS_SHARED_REMOTE(node) ( \
+VSG_PARALLEL_STATUS_IS_SHARED_REMOTE (node->parallel_status) \
+)
+
 #define PRTREE3@T@NODE_PROC(node) ( \
 VSG_PARALLEL_STATUS_PROC (node->parallel_status) \
 )

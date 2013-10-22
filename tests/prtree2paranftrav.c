@@ -281,7 +281,6 @@ static VsgPRTreeParallelConfig pconfig = {
   MPI_COMM_WORLD,
 };
 
-
 void _pt_write (Pt *pt, FILE *file)
 {
   gchar *color = "#00FF00";
@@ -319,7 +318,8 @@ void _traverse_bg_write (VsgPRTree2dNodeInfo *node_info, FILE *file)
   gdouble h = -node_info->lbound.y - y;
   const gchar *fill = "#FFFFFF";
 
-  if (! VSG_PRTREE2D_NODE_INFO_IS_REMOTE (node_info))
+  // *** != PRIVATE-REMOTE
+  if (! VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       fprintf (file, "<!-- %d: node ", rk);
       vsg_prtree_key2d_write (&node_info->id, file);
@@ -328,36 +328,52 @@ void _traverse_bg_write (VsgPRTree2dNodeInfo *node_info, FILE *file)
                   ((NodeCounter *) node_info->user_data)->out_count);
     }
 
-  if (!node_info->isleaf) return;
-
-  if (VSG_PRTREE2D_NODE_INFO_IS_REMOTE (node_info))
+  if (node_info->isleaf)
     {
-      gint proc = VSG_PRTREE2D_NODE_INFO_PROC (node_info) %
-        (sizeof (colors) / sizeof (gchar *));
-      fill = colors[proc];
-    }
 
-  fprintf (file, "<rect x=\"%g\" y=\"%g\" width=\"%g\" height=\"%g\" " \
-           "rx=\"0\" style=\"stroke-width:0.001;stroke:#000000; " \
-           "stroke-linejoin:miter; stroke-linecap:butt; fill:%s;\">\n",
-           x, y, w, h, fill);
-  fprintf (file, "<title>");
-  vsg_prtree_key2d_write (&node_info->id, file);
-  fprintf (file, "</title>\n");
+      // *** PRIVATE-REMOTE
+      if (VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
+        {
+          gint proc = VSG_PRTREE2D_NODE_INFO_PROC (node_info) %
+            (sizeof (colors) / sizeof (gchar *));
+          fill = colors[proc];
+        }
 
-  if (! VSG_PRTREE2D_NODE_INFO_IS_REMOTE (node_info))
-    {
-      fprintf (file, "<desc>in=%ld out=%ld</desc>\n",
-               ((NodeCounter *) node_info->user_data)->in_count,
-               ((NodeCounter *) node_info->user_data)->out_count);
+      fprintf (file, "<rect x=\"%g\" y=\"%g\" width=\"%g\" height=\"%g\" " \
+               "rx=\"0\" style=\"stroke-width:0.001;stroke:#000000; "   \
+               "stroke-linejoin:miter; stroke-linecap:butt; fill:%s;\">\n",
+               x, y, w, h, fill);
+      fprintf (file, "<title>");
+      vsg_prtree_key2d_write (&node_info->id, file);
+      fprintf (file, "</title>\n");
+
+      // *** != PRIVATE-REMOTE
+      if (! VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
+        {
+          fprintf (file, "<desc>in=%ld out=%ld</desc>\n",
+                   ((NodeCounter *) node_info->user_data)->in_count,
+                   ((NodeCounter *) node_info->user_data)->out_count);
+        }
+      else
+        {
+          fprintf (file, "<desc>proc=%d</desc>\n",
+                   VSG_PRTREE2D_NODE_INFO_PROC (node_info));
+        }
+
+      fprintf (file, "</rect>\n");
     }
   else
     {
-      fprintf (file, "<desc>proc=%d</desc>\n",
-               VSG_PRTREE2D_NODE_INFO_PROC (node_info));
+      // *** SHARED-REMOTE
+      if (VSG_PRTREE2D_NODE_INFO_IS_SHARED_REMOTE (node_info))
+        {
+          fprintf (file, "<circle cx=\"%g\" cy=\"%g\" r=\"%g\" "        \
+                   "style=\"stroke-width:0.001;stroke:#000000;fill:none;\">\n",
+                   x+w/2, y+h/2, MIN (w, h) / 2);
+          fprintf (file, "</circle>\n");
+        }
     }
 
-  fprintf (file, "</rect>\n");
 }
 
 /* gboolean _center_set = FALSE; */
@@ -365,7 +381,7 @@ void _traverse_bg_write (VsgPRTree2dNodeInfo *node_info, FILE *file)
 
 void _traverse_fg_write (VsgPRTree2dNodeInfo *node_info, FILE *file)
 {
-  fprintf (file, "<!-- %d: node ", rk);
+  fprintf (file, "<!-- %d: fg node ", rk);
   vsg_prtree_key2d_write (&node_info->id, file);
   fprintf (file, " -->\n");
   /* g_slist_foreach (node_info->point_list, (GFunc) _pt_write, file); */
@@ -562,7 +578,7 @@ void _tree_write (VsgPRTree2d *tree, gchar *prefix)
   fprintf (f, "<rect x=\"0\" y=\"0\" width=\"100%%\" height=\"100%%\" fill=\"white\"/>\n");
   fprintf (f, "<svg x=\"0\" y=\"0\" width=\"500px\" height=\"500px\" " \
            "viewBox=\"%g %g %g %g\">\n", x, y, w, h);
-  vsg_prtree2d_traverse (tree, G_PRE_ORDER,
+  vsg_prtree2d_traverse (tree, G_POST_ORDER,
                          (VsgPRTree2dFunc) _traverse_bg_write,
                          f);
 
@@ -584,7 +600,6 @@ void _tree_write (VsgPRTree2d *tree, gchar *prefix)
   fclose (f);
 
 }
-
 
 
 static void (*_distribute) (VsgPRTree2d *tree) =
@@ -1009,7 +1024,8 @@ void _near (VsgPRTree2dNodeInfo *one_info,
       (*err) ++;
     }
 
-  if (_do_write && VSG_PRTREE2D_NODE_INFO_IS_REMOTE (one_info))
+  // *** PRIVATE-REMOTE
+  if (_do_write && VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (one_info))
     {
       gchar fn[1024];
       FILE *f;
@@ -1045,13 +1061,15 @@ void _far (VsgPRTree2dNodeInfo *one_info,
   ((NodeCounter *) other_info->user_data)->out_count +=
     ((NodeCounter *) one_info->user_data)->in_count;
 
+  // *** PRIVATE-LOCAL
   if ((one_info->point_count == 0 &&
-       VSG_PRTREE2D_NODE_INFO_IS_LOCAL (one_info)) ||
+       VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_LOCAL (one_info)) ||
       (other_info->point_count == 0 &&
-       VSG_PRTREE2D_NODE_INFO_IS_LOCAL (other_info)))
+       VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_LOCAL (other_info)))
     g_printerr ("%d : unnecessary far call\n", rk);
 
-  if (_do_write && VSG_PRTREE2D_NODE_INFO_IS_REMOTE (one_info))
+  // *** PRIVATE-REMOTE
+  if (_do_write && VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (one_info))
     {
       gchar fn[1024];
       FILE *f;
@@ -1079,7 +1097,8 @@ void _far (VsgPRTree2dNodeInfo *one_info,
 
 void _up (VsgPRTree2dNodeInfo *node_info, gpointer data)
 {
-  if (! VSG_PRTREE2D_NODE_INFO_IS_REMOTE (node_info))
+  // *** != PRIVATE-REMOTE
+  if (! VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       if (node_info->isleaf)
         {
@@ -1106,7 +1125,8 @@ void _zero_pt (Pt *pt, gpointer data)
 
 void _zero (VsgPRTree2dNodeInfo *node_info, gpointer data)
 {
-  if (! VSG_PRTREE2D_NODE_INFO_IS_REMOTE (node_info))
+  // *** != PRIVATE-REMOTE
+  if (! VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       ((NodeCounter *) node_info->user_data)->in_count = 0;
       ((NodeCounter *) node_info->user_data)->out_count = 0;
@@ -1132,7 +1152,8 @@ void _down (VsgPRTree2dNodeInfo *node_info, gpointer data)
 {
   glong count;
 
-  if (VSG_PRTREE2D_NODE_INFO_IS_REMOTE (node_info)) return;
+  // *** PRIVATE-REMOTE
+  if (VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (node_info)) return;
 
   if (node_info->father_info)
     {

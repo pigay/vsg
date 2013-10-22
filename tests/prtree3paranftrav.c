@@ -289,7 +289,8 @@ static void _pt_write (Pt *pt, FILE *file)
 
 static void _traverse_bg_write (VsgPRTree3dNodeInfo *node_info, FILE *file)
 {
-  if (! VSG_PRTREE3D_NODE_INFO_IS_REMOTE (node_info))
+  // *** PRIVATE-REMOTE
+  if (! VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       gdouble x = node_info->center.x;
       gdouble y = node_info->center.y;
@@ -317,7 +318,8 @@ static void _traverse_fg_write (VsgPRTree3dNodeInfo *node_info, FILE *file)
 static void _traverse_count_local_nodes (VsgPRTree3dNodeInfo *node_info,
                                          gint *count)
 {
-  if (! VSG_PRTREE3D_NODE_INFO_IS_REMOTE (node_info))
+  // *** PRIVATE-REMOTE
+  if (! VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       (*count) ++;
     }
@@ -867,7 +869,7 @@ void _near (VsgPRTree3dNodeInfo *one_info,
       (*err) ++;
     }
 
-/*   if (_do_write && VSG_PRTREE3D_NODE_INFO_IS_REMOTE (one_info)) */
+/*   if (_do_write && VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (one_info)) */
 /*     { */
 /*       gchar fn[1024]; */
 /*       FILE *f; */
@@ -903,13 +905,14 @@ void _far (VsgPRTree3dNodeInfo *one_info,
   ((NodeCounter *) other_info->user_data)->out_count +=
     ((NodeCounter *) one_info->user_data)->in_count;
 
+  // *** PRIVATE-LOCAL
   if ((one_info->point_count == 0 &&
-       VSG_PRTREE3D_NODE_INFO_IS_LOCAL (one_info)) ||
+       VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_LOCAL (one_info)) ||
       (other_info->point_count == 0 &&
-       VSG_PRTREE3D_NODE_INFO_IS_LOCAL (other_info)))
+       VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_LOCAL (other_info)))
     g_printerr ("%d : unnecessary far call\n", rk);
 
-/*   if (_do_write && VSG_PRTREE3D_NODE_INFO_IS_REMOTE (one_info)) */
+/*   if (_do_write && VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (one_info)) */
 /*     { */
 /*       gchar fn[1024]; */
 /*       FILE *f; */
@@ -937,7 +940,8 @@ void _far (VsgPRTree3dNodeInfo *one_info,
 
 void _up (VsgPRTree3dNodeInfo *node_info, gpointer data)
 {
-  if (! VSG_PRTREE3D_NODE_INFO_IS_REMOTE (node_info))
+  // *** != PRIVATE-REMOTE
+  if (! VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       if (node_info->isleaf)
         {
@@ -964,7 +968,8 @@ void _zero_pt (Pt *pt, gpointer data)
 
 void _zero (VsgPRTree3dNodeInfo *node_info, gpointer data)
 {
-  if (! VSG_PRTREE3D_NODE_INFO_IS_REMOTE (node_info))
+  // *** != PRIVATE-REMOTE
+  if (! VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       ((NodeCounter *) node_info->user_data)->in_count = 0;
       ((NodeCounter *) node_info->user_data)->out_count = 0;
@@ -990,7 +995,8 @@ void _down (VsgPRTree3dNodeInfo *node_info, gpointer data)
 {
   glong count;
 
-  if (VSG_PRTREE3D_NODE_INFO_IS_REMOTE (node_info)) return;
+  // *** PRIVATE-REMOTE
+  if (VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (node_info)) return;
 
   if (node_info->father_info)
     {

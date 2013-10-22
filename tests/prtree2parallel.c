@@ -199,7 +199,8 @@ static void _traverse_bg_write (VsgPRTree2dNodeInfo *node_info, FILE *file)
 
   if (!node_info->isleaf) return;
 
-  if (VSG_PRTREE2D_NODE_INFO_IS_REMOTE (node_info))
+  // *** PRIVATE-REMOTE
+  if (VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     fill = "#ff0000";
 
   fprintf (file, "<rect x=\"%g\" y=\"%g\" width=\"%g\" height=\"%g\" " \
@@ -305,7 +306,8 @@ static void init_total_regions_count ()
 
 static void _local_regions_count (VsgPRTree2dNodeInfo *node_info, gint *cnt)
 {
-  if (VSG_PRTREE2D_NODE_INFO_IS_LOCAL (node_info) || rk == 0)
+  // *** PRIVATE-LOCAL
+  if (VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_LOCAL (node_info) || rk == 0)
     *cnt += g_slist_length (node_info->region_list);
 }
 

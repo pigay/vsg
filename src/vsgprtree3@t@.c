@@ -162,7 +162,8 @@ vsg_prtree3@t@node_alloc_no_data (const VsgVector3@t@ *lbound,
 
   ret->user_data = NULL;
 
-  ret->parallel_status.storage = VSG_PARALLEL_LOCAL;
+  // *** PRIVATE-LOCAL
+  ret->parallel_status.storage = VSG_PARALLEL_PRIVATE_LOCAL;
   ret->parallel_status.proc = 0;
 
   return ret;
@@ -205,7 +206,8 @@ static VsgPRTree3@t@Node *_leaf_alloc (const VsgVector3@t@ *lbound,
   VsgPRTree3@t@Node *node = vsg_prtree3@t@node_alloc_no_data (lbound, ubound);
 
 #ifdef VSG_HAVE_MPI
-  if (!VSG_PARALLEL_STATUS_IS_REMOTE (parallel_status))
+  // *** != PRIVATE-REMOTE
+  if (!VSG_PARALLEL_STATUS_IS_PRIVATE_REMOTE (parallel_status))
 #endif
     _node_alloc_data (node, &config->parallel_config);
 
@@ -281,7 +283,7 @@ static VsgPRTree3@t@Node *_int_alloc (const VsgVector3@t@ *lbound,
         {
           _prtree3@t@node_child_get_bounds (node, i, &lbound, &ubound);
           children[i] = _leaf_alloc (&lbound, &ubound,
-                                     vsg_parallel_status_local,
+                                     vsg_parallel_status_private_local,
                                      config);
         }
       else
@@ -293,9 +295,9 @@ static VsgPRTree3@t@Node *_int_alloc (const VsgVector3@t@ *lbound,
         }
     }
 
-  if (! PRTREE3@T@NODE_IS_LOCAL (child))
+  if (! PRTREE3@T@NODE_IS_PRIVATE_LOCAL (child))
     {
-      node->parallel_status = vsg_parallel_status_shared;
+      node->parallel_status = vsg_parallel_status_shared_local;
     }
 
   /* It is very important that new leaves are inserted once all calls to
@@ -479,7 +481,8 @@ vsg_prtree3@t@node_insert_point_list(VsgPRTree3@t@Node *node,
   guint len = 0;
 
 #ifdef VSG_HAVE_MPI
-  if (PRTREE3@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       /* store outgoing points into remote nodes as if they they were a leaf */
       PRTREE3@T@NODE_LEAF (node).point =
@@ -614,8 +617,9 @@ void vsg_prtree3@t@node_make_int (VsgPRTree3@t@Node *node,
 void vsg_prtree3@t@node_free (VsgPRTree3@t@Node *node,
                               const VsgPRTree3@t@Config *config)
 {
+  // *** PRIVATE-REMOTE
   if (PRTREE3@T@NODE_ISLEAF (node) ||
-      PRTREE3@T@NODE_IS_REMOTE (node))
+      PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       g_slist_free (PRTREE3@T@NODE_LEAF (node).point);
 
@@ -630,8 +634,9 @@ void vsg_prtree3@t@node_free (VsgPRTree3@t@Node *node,
 
   g_slist_free (node->region_list);
 
+  // *** PRIVATE-REMOTE
   if (config->parallel_config.node_data.destroy != NULL &&
-      ! PRTREE3@T@NODE_IS_REMOTE (node))
+      ! PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     config->parallel_config.node_data.destroy (node->user_data, TRUE,
                                                config->parallel_config.node_data.destroy_data);
 
@@ -643,8 +648,9 @@ static guint _prtree3@t@node_depth (const VsgPRTree3@t@Node *node)
   guint res = 0;
   vsgloc3 i;
 
+  // *** PRIVATE-REMOTE
   if (PRTREE3@T@NODE_ISLEAF (node) ||
-      PRTREE3@T@NODE_IS_REMOTE (node)) return 0;
+      PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node)) return 0;
 
   for (i=0; i<CN; i++)
     {
@@ -685,7 +691,8 @@ _prtree3@t@node_remove_point (VsgPRTree3@t@Node *node,
   gboolean ret = FALSE;
 
 #ifdef VSG_HAVE_MPI
-  if (PRTREE3@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       /* unable to remove a node located on another processor */
       return FALSE;
@@ -717,8 +724,9 @@ _prtree3@t@node_remove_point (VsgPRTree3@t@Node *node,
           /* flatten only if node is local. Shared nodes mean heterogenously
            * distributed children.
            */
+          // *** PRIVATE-LOCAL
           if (node->point_count <= config->max_point &&
-              PRTREE3@T@NODE_IS_LOCAL (node))
+              PRTREE3@T@NODE_IS_PRIVATE_LOCAL (node))
             _prtree3@t@node_flatten (node, config);
         }
     }
@@ -808,8 +816,9 @@ _prtree3@t@node_move_point (VsgPRTree3@t@Node *node,
   /* flatten only if node is local. Shared nodes mean heterogenously
    * distributed children.
    */
+  // *** PRIVATE-LOCAL
   if (node->point_count <= config->max_point &&
-      PRTREE3@T@NODE_IS_LOCAL (node))
+      PRTREE3@T@NODE_IS_PRIVATE_LOCAL (node))
     _prtree3@t@node_flatten (node, config);
 
   return EXTERIOR_MOVE;
@@ -831,7 +840,8 @@ static void _prtree3@t@node_write (VsgPRTree3@t@Node *node,
   _wtabs (file, 2*node_info->depth);
 
 #ifdef VSG_HAVE_MPI
-  if (PRTREE3@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       fprintf (file,
                "remote%d[(%@tcode@,%@tcode@,%@tcode@) (%@tcode@,%@tcode@,%@tcode@) id=(",
@@ -882,6 +892,7 @@ _prtree3@t@node_find_point (VsgPRTree3@t@Node *node,
                             const VsgPRTree3@t@Config *config)
 {
 #ifdef VSG_HAVE_MPI
+  // *** *-REMOTE
   if (PRTREE3@T@NODE_IS_REMOTE (node))
     {
       return NULL;
@@ -945,7 +956,8 @@ _prtree3@t@node_insert_region_list (VsgPRTree3@t@Node *node,
   guint len = g_slist_length (region_list);
 
 #ifdef VSG_HAVE_MPI
-  if (PRTREE3@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       /* store outgoing regions into remote nodes. */
       node->region_list = g_slist_concat (node->region_list, region_list);
@@ -980,6 +992,7 @@ _prtree3@t@node_insert_region_list (VsgPRTree3@t@Node *node,
               /* shared regions in shared nodes are stored to be notified
                * to *all* the processors.
                */
+              // *** SHARED-*
               if (shared_regions != NULL && PRTREE3@T@NODE_IS_SHARED (node))
                 *shared_regions = g_slist_concat (g_slist_copy (current),
                                                   *shared_regions);
@@ -1030,7 +1043,8 @@ _prtree3@t@node_remove_region (VsgPRTree3@t@Node *node,
   gboolean ret = FALSE;
 
 #ifdef VSG_HAVE_MPI
-  if (PRTREE3@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       /* unable to remove a region on a remote processor */
       return FALSE;
@@ -1088,7 +1102,8 @@ _prtree3@t@node_find_deep_region (VsgPRTree3@t@Node *node,
   VsgRegion3 result = NULL;
 
 #ifdef VSG_HAVE_MPI
-  if (PRTREE3@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     return NULL;
 #endif
 
@@ -1131,13 +1146,15 @@ _prtree3@t@node_update_user_data_vtable (VsgPRTree3@t@Node *node,
   if (old_vtable->destroy != NULL && node->user_data != NULL)
     old_vtable->destroy (node->user_data, TRUE, old_vtable->destroy_data);
 
-  if (new_vtable->alloc != NULL && ! PRTREE3@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (new_vtable->alloc != NULL && ! PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     node->user_data = new_vtable->alloc (TRUE, new_vtable->alloc_data);
   else
     node->user_data = NULL;
 
-
-  if (PRTREE3@T@NODE_ISINT (node))
+  // *** != PRIVATE-REMOTE
+  if (PRTREE3@T@NODE_ISINT (node) &&
+      ! PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       vsgloc3 i;
 
@@ -1186,7 +1203,8 @@ _prtree3@t@node_traverse_custom_internal (VsgPRTree3@t@Node *node,
   if (sel_func != NULL) locmask = sel_func (selector, &node_info, sel_data);
 
 #ifdef VSG_HAVE_MPI
-  if (PRTREE3@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       func (node, &node_info, user_data);
       return;
@@ -1261,7 +1279,8 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
   _vsg_prtree3@t@node_get_info (node, &node_info, father_info, child_number);
 
 #ifdef VSG_HAVE_MPI
-  if (PRTREE3@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (PRTREE3@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       func (&node_info, user_data);
       return;
@@ -1328,7 +1347,8 @@ static void _foreach_point_custom (const VsgPRTree3@t@NodeInfo *node_info,
   GSList *point_list = node_info->point_list;
 
 #ifdef VSG_HAVE_MPI
-  if (VSG_PRTREE3@T@_NODE_INFO_IS_REMOTE (node_info))
+  // *** PRIVATE-REMOTE
+  if (VSG_PRTREE3@T@_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     return;
 #endif
 
@@ -1349,7 +1369,8 @@ static void _foreach_region_custom (const VsgPRTree3@t@NodeInfo *node_info,
   GSList *region_list = node_info->region_list;
 
 #ifdef VSG_HAVE_MPI
-  if (VSG_PRTREE3@T@_NODE_INFO_IS_REMOTE (node_info))
+  // *** PRIVATE-REMOTE
+  if (VSG_PRTREE3@T@_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     return;
 #endif
 
@@ -1376,7 +1397,8 @@ static void _foreach_point (const VsgPRTree3@t@NodeInfo *node_info,
   GSList *point_list = node_info->point_list;
 
 #ifdef VSG_HAVE_MPI
-  if (VSG_PRTREE3@T@_NODE_INFO_IS_REMOTE (node_info))
+  // *** PRIVATE-REMOTE
+  if (VSG_PRTREE3@T@_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     return;
 #endif
 
@@ -1396,7 +1418,8 @@ static void _foreach_region (const VsgPRTree3@t@NodeInfo *node_info,
   GSList *region_list = node_info->region_list;
 
 #ifdef VSG_HAVE_MPI
-  if (VSG_PRTREE3@T@_NODE_INFO_IS_REMOTE (node_info))
+  // *** PRIVATE-REMOTE
+  if (VSG_PRTREE3@T@_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     return;
 #endif
 
@@ -1422,7 +1445,8 @@ _z_order_data (gpointer key, gint *children, gpointer *children_keys,
 static void _clone_parallel_status (const VsgPRTree3@t@NodeInfo *node_info,
                                     VsgPRTree3@t@Node *cloned)
 {
-  if (! VSG_PRTREE3@T@_NODE_INFO_IS_LOCAL (node_info))
+  // *** != PRIVATE-LOCAL
+  if (! VSG_PRTREE3@T@_NODE_INFO_IS_PRIVATE_LOCAL (node_info))
     {
       VsgPRTree3@t@Node *cloned_node;
 
@@ -1581,7 +1605,8 @@ vsg_prtree3@t@_new_full (const VsgVector3@t@ *lbound,
                          guint max_point)
 {
   VsgPRTree3@t@ *prtree3@t@;
-  VsgParallelStatus parallel_status = {VSG_PARALLEL_LOCAL, 0};
+  // *** PRIVATE_LOCAL
+  VsgParallelStatus parallel_status = {VSG_PARALLEL_PRIVATE_LOCAL, 0};
 
   g_return_val_if_fail (lbound != NULL, NULL);
   g_return_val_if_fail (ubound != NULL, NULL);
@@ -2177,9 +2202,10 @@ void vsg_prtree3@t@_bounds_extend (VsgPRTree3@t@ *prtree3@t@,
     }
 
   /*  take care of single leaf trees that must stay single leaf */
+  // *** PRIVATE-LOCAL
   if (PRTREE3@T@NODE_ISINT (prtree3@t@->node) &&
       prtree3@t@->node->point_count <= config->max_point &&
-      PRTREE3@T@NODE_IS_LOCAL (prtree3@t@->node))
+      PRTREE3@T@NODE_IS_PRIVATE_LOCAL (prtree3@t@->node))
     _prtree3@t@node_flatten (prtree3@t@->node, config);
 
 }

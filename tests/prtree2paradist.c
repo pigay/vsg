@@ -235,12 +235,14 @@ static void _traverse_bg_write (VsgPRTree2dNodeInfo *node_info, FILE *file)
 
   if (!node_info->isleaf) return;
 
-  if (VSG_PRTREE2D_NODE_INFO_IS_REMOTE (node_info))
+  // *** PRIVATE-REMOTE
+  if (VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       gint proc = VSG_PRTREE2D_NODE_INFO_PROC (node_info) %
         (sizeof (colors) / sizeof (gchar *));
       fill = colors[proc];
     }
+
   fprintf (file, "<rect x=\"%g\" y=\"%g\" width=\"%g\" height=\"%g\" " \
            "rx=\"0\" style=\"stroke:#000000; " \
            "stroke-linejoin:miter; stroke-linecap:butt; fill:%s;\"/>\n",
@@ -344,7 +346,8 @@ static void init_total_regions_count ()
 
 static void _local_regions_count (VsgPRTree2dNodeInfo *node_info, gint *cnt)
 {
-  if (VSG_PRTREE2D_NODE_INFO_IS_LOCAL (node_info) || rk == 0)
+  // *** PRIVATE-LOCAL
+  if (VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_LOCAL (node_info) || rk == 0)
     *cnt += g_slist_length (node_info->region_list);
 }
 
@@ -363,15 +366,14 @@ static gint check_regions_number (VsgPRTree2d *tree)
 
   if (total_regions != reference_total_regions)
     {
-      g_printerr ("%d: total regions mismatch : ref=%d verif=%d\n",
-                  rk, reference_total_regions, total_regions);
+      g_printerr ("%d: total regions mismatch : ref=%d verif=%d (local=%d)\n",
+                  rk, reference_total_regions, total_regions, local_regions);
 
       ret ++;
     }
 
   return ret;
 }
-
 
 static void random_fill (VsgPRTree2d *tree, guint np);
 
@@ -451,7 +453,8 @@ static void _traverse_check_local_counts (VsgPRTree2dNodeInfo *node_info,
 
   if (node_info->father_info == NULL) return;
 
-  if (! VSG_PRTREE2D_NODE_INFO_IS_REMOTE (node_info))
+  // *** PRIVATE-REMOTE
+  if (! VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       pcounts[0][node_info->depth-1] += node_info->point_count;
       pcounts[1][node_info->depth-1] += node_info->region_count;
@@ -483,6 +486,8 @@ static void _exterior_points (VsgPRTree2d *tree)
   vsg_prtree2d_insert_point (tree, pt);
   
   vsg_prtree2d_migrate_flush (tree);
+
+  if (_verbose) g_printerr ("%d: exterior points ok\n", rk);
 }
 
 static
@@ -565,8 +570,8 @@ static void _rg_dump (Circle *c, FILE *f)
 
 static void _traverse_rg_dump (VsgPRTree2dNodeInfo *node_info, FILE *file)
 {
-
-  if (rk == 0 || VSG_PRTREE2D_NODE_INFO_IS_LOCAL (node_info))
+  // *** PRIVATE-LOCAL
+  if (rk == 0 || VSG_PRTREE2D_NODE_INFO_IS_PRIVATE_LOCAL (node_info))
     g_slist_foreach (node_info->region_list, (GFunc) _rg_dump, file);
 }
 
@@ -643,6 +648,8 @@ gint main (gint argc, gchar ** argv)
 
   _fill (tree, _np);
 
+  _check_local_counts (tree);
+
   if (_verbose)
     {
       MPI_Barrier (MPI_COMM_WORLD);
@@ -674,8 +681,8 @@ gint main (gint argc, gchar ** argv)
           g_printerr ("%d: scatter nodes ok\n", rk);
         }
 
-      _write_regions (tree, "rg-scatter");
-      _tree_write (tree, "scatter-");
+      if (_do_write) _write_regions (tree, "rg-scatter");
+      if (_do_write) _tree_write (tree, "scatter-");
     }
 
   if (_do_contiguous)
@@ -699,13 +706,17 @@ gint main (gint argc, gchar ** argv)
           g_printerr ("%d: contiguous distribute ok\n", rk);
         }
 
-      _write_regions (tree, "rg-contiguous");
+      if (_do_write) _write_regions (tree, "rg-contiguous");
+      if (_do_write) _tree_write (tree, "contiguous-");
     }
 
-  _exterior_points (tree);
+/*   _exterior_points (tree); */
+
   vsg_prtree2d_distribute_contiguous_leaves (tree);
 
   _check_local_counts (tree);
+      ret += check_points_number (tree);
+      ret += check_regions_number (tree);
 
   if (_do_write)
     {

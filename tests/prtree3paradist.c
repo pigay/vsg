@@ -363,7 +363,8 @@ static void init_total_regions_count ()
 
 static void _local_regions_count (VsgPRTree3dNodeInfo *node_info, gint *cnt)
 {
-  if (VSG_PRTREE3D_NODE_INFO_IS_LOCAL (node_info) || rk == 0)
+  // *** PRIVATE-LOCAL
+  if (VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_LOCAL (node_info) || rk == 0)
     *cnt += g_slist_length (node_info->region_list);
 }
 
@@ -390,7 +391,6 @@ static gint check_regions_number (VsgPRTree3d *tree)
 
   return ret;
 }
-
 
 static void random_fill (VsgPRTree3d *tree, guint np);
 
@@ -474,7 +474,8 @@ static void _traverse_check_local_counts (VsgPRTree3dNodeInfo *node_info,
 
   if (node_info->father_info == NULL) return;
 
-  if (! VSG_PRTREE3D_NODE_INFO_IS_REMOTE (node_info))
+  // *** PRIVATE-REMOTE
+  if (! VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_REMOTE (node_info))
     {
       pcounts[0][node_info->depth-1] += node_info->point_count;
       pcounts[1][node_info->depth-1] += node_info->region_count;
@@ -507,6 +508,8 @@ static void _exterior_points (VsgPRTree3d *tree)
   vsg_prtree3d_insert_point (tree, pt);
   
   vsg_prtree3d_migrate_flush (tree);
+
+  if (_verbose) g_printerr ("%d: exterior points ok\n", rk);
 }
 
 static
@@ -590,8 +593,8 @@ static void _rg_dump (Sphere *c, FILE *f)
 
 static void _traverse_rg_dump (VsgPRTree3dNodeInfo *node_info, FILE *file)
 {
-
-  if (rk == 0 || VSG_PRTREE3D_NODE_INFO_IS_LOCAL (node_info))
+  // *** PRIVATE-LOCAL
+  if (rk == 0 || VSG_PRTREE3D_NODE_INFO_IS_PRIVATE_LOCAL (node_info))
     g_slist_foreach (node_info->region_list, (GFunc) _rg_dump, file);
 }
 
@@ -668,6 +671,8 @@ gint main (gint argc, gchar ** argv)
 
   _fill (tree, _np);
 
+  _check_local_counts (tree);
+
   if (_verbose)
     {
       MPI_Barrier (MPI_COMM_WORLD);
@@ -728,6 +733,7 @@ gint main (gint argc, gchar ** argv)
     }
 
   _exterior_points (tree);
+
   vsg_prtree3d_distribute_contiguous_leaves (tree);
 
   _check_local_counts (tree);

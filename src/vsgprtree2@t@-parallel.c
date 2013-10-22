@@ -286,7 +286,8 @@ static void _node_unpack (VsgPRTree2@t@Node *node, NodePackData *npd)
         }
       else
         {
-          g_assert (node->parallel_status.storage == VSG_PARALLEL_REMOTE);
+          // *** PRIVATE-REMOTE
+          g_assert (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (node));
         }
 
       if (npd->data_fpd.migrate->unpack != NULL)
@@ -433,7 +434,8 @@ void vsg_prtree2@t@_set_parallel (VsgPRTree2@t@ *tree,
           tree->node = vsg_prtree2@t@node_alloc_no_data (&bounds[0],
                                                          &bounds[1]);
 
-          tree->node->parallel_status.storage = VSG_PARALLEL_REMOTE;
+          // *** PRIVATE-REMOTE
+          tree->node->parallel_status.storage = VSG_PARALLEL_PRIVATE_REMOTE;
           tree->node->parallel_status.proc = 0;
         }
       else
@@ -544,7 +546,8 @@ static vsgrloc2 _selector_skip_local_nodes (VsgRegion2 *selector,
                                             VsgPRTree2@t@NodeInfo *node_info,
                                             gpointer data)
 {
-  if (VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info)) return 0x0;
+  // *** PRIVATE-LOCAL
+  if (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_LOCAL (node_info)) return 0x0;
 
   return VSG_RLOC2_MASK;
 }
@@ -562,7 +565,8 @@ static void _migrate_traverse_point_send (VsgPRTree2@t@Node *node,
                                           MigrateData *md)
 {
   /* check for points in remote nodes */
-  if (PRTREE2@T@NODE_IS_REMOTE (node) &&
+  // *** PRIVATE-REMOTE
+  if (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (node) &&
       node_info->parallel_status.proc != md->rk)
     {
       VsgPackedMsg *pm = 
@@ -581,7 +585,8 @@ static void _migrate_traverse_region_send (VsgPRTree2@t@Node *node,
                                            MigrateData *md)
 {
   /* check for regions in remote nodes */
-  if (PRTREE2@T@NODE_IS_REMOTE (node) &&
+  // *** PRIVATE-REMOTE
+  if (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (node) &&
       node_info->parallel_status.proc != md->rk)
     {
       VsgPackedMsg *pm = 
@@ -772,7 +777,8 @@ void vsg_prtree2@t@_migrate_flush (VsgPRTree2@t@ *tree)
           new_root = vsg_prtree2@t@node_alloc_no_data (&lbound, &ubound);
 
           /* exterior points are stored at proc 0 */
-          new_root->parallel_status.storage = VSG_PARALLEL_REMOTE;
+          // *** PRIVATE-REMOTE
+          new_root->parallel_status.storage = VSG_PARALLEL_PRIVATE_REMOTE;
           new_root->parallel_status.proc = 0;
 
           /* place old root inside new root tree */
@@ -897,14 +903,19 @@ static void _prtree2@t@node_fix_counts_local (VsgPRTree2@t@Node *node)
   node->region_count = rcnt + g_slist_length (node->region_list);
 }
 
-/* returns the number of the processor holding node and its subtree or a
- * negative value if @node is shared. In case of a negative value, it is built
- * from the number of the processor holding the first child of @node.
- */
-static gint _prtree2@t@node_get_children_proc (VsgPRTree2@t@Node *node)
+#define STATUS_CMP_REMOTE(one, other) (                          \
+(~ ((one).storage ^ (other).storage)) & VSG_PARALLEL_REMOTE_MASK \
+)
+
+#define STATUS_CMP_SHARED(one, other) (                          \
+(~ ((one).storage ^ (other).storage)) & VSG_PARALLEL_SHARED_MASK \
+)
+
+static void
+_prtree2@t@node_get_status_from_children (VsgPRTree2@t@Node *node,
+                                          VsgParallelStatus *status)
 {
   vsgloc2 i;
-  gint children_proc;
   VsgPRTree2@t@Node *children[CN];
 
   g_assert (PRTREE2@T@NODE_ISINT (node));
@@ -912,22 +923,35 @@ static gint _prtree2@t@node_get_children_proc (VsgPRTree2@t@Node *node)
   memcpy (children, PRTREE2@T@NODE_INT (node).children,
           CN * sizeof (VsgPRTree2@t@Node *));
 
-  if (PRTREE2@T@NODE_IS_SHARED (children[0]))
-    return -PRTREE2@T@NODE_PROC (children[0]) - 1;
-  else
-    children_proc =
-      PRTREE2@T@NODE_PROC (children[0]);
+  *status = children[0]->parallel_status;
+
+  if (VSG_PARALLEL_STATUS_IS_SHARED_LOCAL (*status))
+    return;
+
 
   for (i=1; i<CN; i++)
     {
-      gint proc =
-        PRTREE2@T@NODE_PROC (children[i]);
+      // remote+local
+      if (! STATUS_CMP_REMOTE (children[i]->parallel_status, *status))
+        {
+          status->storage = VSG_PARALLEL_SHARED_LOCAL;
+          return;
+        }
 
-      if (PRTREE2@T@NODE_IS_SHARED (children[i]) || proc != children_proc)
-        return -children_proc - 1;
+      // shared+private
+      if (! STATUS_CMP_SHARED (children[i]->parallel_status, *status))
+        {
+          status->storage |= VSG_PARALLEL_SHARED_MASK;
+
+          if (VSG_PARALLEL_STATUS_IS_LOCAL (*status)) return;
+        }
+      // both private-remote
+      else if (VSG_PARALLEL_STATUS_IS_PRIVATE_REMOTE (*status))
+        {
+          if (PRTREE2@T@NODE_PROC (children[i]) != status->proc)
+            status->storage |= VSG_PARALLEL_SHARED_MASK;
+        }
     }
-
-  return children_proc;
 }
 
 static void _flatten_remote (VsgPRTree2@t@Node *node,
@@ -973,7 +997,8 @@ static void _traverse_flatten_remote (VsgPRTree2@t@Node *node,
                                       VsgPRTree2@t@NodeInfo *node_info,
                                       const VsgPRTree2@t@Config *config)
 {
-  if (PRTREE2@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       _flatten_remote (node, config);
     }
@@ -994,32 +1019,38 @@ static void _traverse_distribute_nodes (VsgPRTree2@t@Node *node,
                                         VsgPRTree2@t@NodeInfo *node_info,
                                         DistributeData *dd)
 {
-  VsgParallelStorage old_storage = node->parallel_status.storage;
-  VsgParallelStorage new_storage;
-  gint dst;
+  VsgParallelStatus old_status = node->parallel_status;
+  VsgParallelStatus new_status;
 
   if (PRTREE2@T@NODE_ISLEAF (node))
     {
-      g_assert (old_storage != VSG_PARALLEL_SHARED);
+      gint dst;
+
+      // *** == PRIVATE
+      g_assert (VSG_PARALLEL_STATUS_IS_PRIVATE (old_status));
 
       dst = dd->func (node_info, dd->user_data);
 
       if (dst<0 || dst>=dd->sz) return; /* don't know: do nothing */
+
+      new_status.storage = (dst == dd->rk) ? VSG_PARALLEL_PRIVATE_LOCAL :
+        VSG_PARALLEL_PRIVATE_REMOTE;
+      new_status.proc = dst;
     }
   else
     {
-      dst = _prtree2@t@node_get_children_proc (node);
+      _prtree2@t@node_get_status_from_children (node, &new_status);
     }
 
-  if (dst < 0)
-    new_storage = VSG_PARALLEL_SHARED;
-  else
-    new_storage = (dst == dd->rk) ? VSG_PARALLEL_LOCAL : VSG_PARALLEL_REMOTE;
-
-  if (dst != dd->rk)
+  if (new_status.proc != dd->rk || (old_status.storage != new_status.storage))
     {
-      if (old_storage == VSG_PARALLEL_LOCAL)
+      // *** PRIVATE-LOCAL
+      if (old_status.storage == VSG_PARALLEL_PRIVATE_LOCAL)
         {
+          gint dst = new_status.proc;
+
+          if (VSG_PARALLEL_STATUS_IS_SHARED (new_status)) dst = - dst - 1;
+
           /* tell all processors about the migration. */
           _migrate_node_pack_header (node_info, dd->bcast, dst, dd->config);
 
@@ -1028,7 +1059,8 @@ static void _traverse_distribute_nodes (VsgPRTree2@t@Node *node,
 /*           g_printerr ("\n"); */
 
           /* choose between ptp communication or bcast */
-          if (new_storage == VSG_PARALLEL_SHARED)
+          // *** == SHARED
+          if (VSG_PARALLEL_STATUS_IS_SHARED (new_status))
             {
               VsgPackedMsg *msg = dd->bcast;
               NodePackData npd = NPD_MIGRATE (&(dd->config->parallel_config),
@@ -1039,7 +1071,8 @@ static void _traverse_distribute_nodes (VsgPRTree2@t@Node *node,
             }
           else
             {
-              VsgPackedMsg *msg = vsg_comm_buffer_get_send_buffer (dd->cb, dst);
+              VsgPackedMsg *msg =
+                vsg_comm_buffer_get_send_buffer (dd->cb, new_status.proc);
               NodePackData npd = NPD_MIGRATE (&(dd->config->parallel_config),
                                               msg);
 
@@ -1050,21 +1083,23 @@ static void _traverse_distribute_nodes (VsgPRTree2@t@Node *node,
 
     }
 
-  if (old_storage == VSG_PARALLEL_REMOTE) return; /* check migrations later */
+  // *** PRIVATE-REMOTE
+  if (old_status.storage == VSG_PARALLEL_PRIVATE_REMOTE)
+    return; /* check migrations later */
 
-  if (new_storage == VSG_PARALLEL_REMOTE)
+  // *** PRIVATE-REMOTE
+  if (new_status.storage == VSG_PARALLEL_PRIVATE_REMOTE)
     {
       _flatten_remote (node, dd->config);
     }
-  else if (new_storage == VSG_PARALLEL_SHARED)
+  // *** SHARED-*
+  else if (VSG_PARALLEL_STATUS_IS_SHARED (new_status))
     {
       _prtree2@t@node_fix_counts_local (node);
-      dst = -dst - 1;
     }
 
   /* update node's parallel status */
-  node->parallel_status.storage = new_storage;
-  node->parallel_status.proc = dst;
+  node->parallel_status = new_status;
 }
 
 /*
@@ -1083,12 +1118,13 @@ static void _node_insert_child (VsgPRTree2@t@Node *node,
   if (key.depth > 0)
     {
       vsgloc2 child = vsg_prtree_key2@t@_child (&key);
-      gint children_proc;
+      VsgParallelStatus new_status;
 
       if (PRTREE2@T@NODE_ISLEAF (node))
         {
           /* formerly remote nodes need a new user_data to be allocated */
-          if (PRTREE2@T@NODE_IS_REMOTE (node))
+          // *** PRIVATE-REMOTE
+          if (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (node))
             {
               const VsgPRTreeParallelConfig *pc = &config->parallel_config;
 
@@ -1113,30 +1149,26 @@ static void _node_insert_child (VsgPRTree2@t@Node *node,
 
       _prtree2@t@node_fix_counts_local (node);
 
-      children_proc = _prtree2@t@node_get_children_proc (node);
+      _prtree2@t@node_get_status_from_children (node, &new_status);
 
-      if (children_proc < 0)
+      if (VSG_PARALLEL_STATUS_IS_PRIVATE (new_status))
         {
-          node->parallel_status.storage = VSG_PARALLEL_SHARED;
-          node->parallel_status.proc = -children_proc - 1; /* set value of first child's proc */
-        }
-      else
-        {
-          g_assert (children_proc == dst);
+          g_assert (VSG_PARALLEL_STATUS_PROC (new_status) == dst);
 
-          if (storage == VSG_PARALLEL_REMOTE)
+          // *** PRIVATE-REMOTE
+          if (storage == VSG_PARALLEL_PRIVATE_REMOTE)
             {
               _flatten_remote (node, config);
             }
-
-          node->parallel_status.storage = storage;
-          node->parallel_status.proc = dst;
         }
+
+      node->parallel_status = new_status;
 
       return;
     }
 
-  if (storage == VSG_PARALLEL_REMOTE)
+  // *** PRIVATE-REMOTE
+  if (storage == VSG_PARALLEL_PRIVATE_REMOTE)
     {
       _flatten_remote (node, config);
     }
@@ -1247,15 +1279,16 @@ void vsg_prtree2@t@_distribute_nodes (VsgPRTree2@t@ *tree,
 
           if (dst == rk || dst < 0)
             { /* we are destination of this message (bcast or not) */
-              VsgParallelStorage storage = VSG_PARALLEL_LOCAL;
+              VsgParallelStorage storage =
+                // *** >= 0 : PRIVATE-LOCAL
+                // *** == -x : SHARED-LOCAL
+                // *** == -x : SHARED-REMOTE
+                (dst >= 0) ? VSG_PARALLEL_PRIVATE_LOCAL :
+                VSG_PARALLEL_SHARED_LOCAL; /* force all shared to be local */
               VsgPackedMsg *unpack = (dst >= 0) ? msg : hdrmsg;
               NodePackData npd = NPD_MIGRATE (pc, unpack);
 
-              if (dst < 0)
-                {
-                  dst = -dst - 1;
-                  storage = VSG_PARALLEL_SHARED;
-                }
+              if (dst < 0) dst = -dst - 1;
 
               /* load node contents */
 
@@ -1267,12 +1300,13 @@ void vsg_prtree2@t@_distribute_nodes (VsgPRTree2@t@ *tree,
           else
             {
               /* we just witness the migration but we have to keep track of
-               * remote nodes location.
+               * remote node locations.
                */
 
               /* insert the node in remote mode */
+              // *** PRIVATE-REMOTE
               _node_insert_child (tree->node, &tree->config,
-                                  VSG_PARALLEL_REMOTE, dst,
+                                  VSG_PARALLEL_PRIVATE_REMOTE, dst,
                                   id, NULL, NULL);
             }
 
@@ -1646,7 +1680,8 @@ static VsgPRTree2@t@Node *_new_visiting_node (VsgPRTree2@t@ *tree,
   /* allocate new node without node's user_data */
   node = vsg_prtree2@t@node_alloc_no_data (&newlb, &newub);
 
-  node->parallel_status.storage = VSG_PARALLEL_REMOTE;
+  // *** PRIVATE-REMOTE
+  node->parallel_status.storage = VSG_PARALLEL_PRIVATE_REMOTE;
   node->parallel_status.proc = src;
 
   return node;
@@ -2091,7 +2126,7 @@ static void _traverse_visiting_nf (VsgPRTree2@t@Node *node,
             }
         }
       else if (node_depth == ref_info->id.depth &&
-               PRTREE2@T@NODE_IS_LOCAL (node) &&
+               PRTREE2@T@NODE_IS_PRIVATE_LOCAL (node) &&
                node_info->point_count != 0)
         {
           niaf->nfc->far_func (ref_info, node_info, niaf->nfc->user_data);
@@ -2469,8 +2504,8 @@ gboolean vsg_prtree2@t@_nf_check_receive (VsgNFConfig2@t@ *nfc, gint tag,
 /*         g_printerr ("\n"); */
 /*         fflush (stderr); */
 
-          g_assert (PRTREE2@T@NODE_IS_LOCAL (node));
-
+        // *** PRIVATE-LOCAL
+        g_assert (PRTREE2@T@NODE_IS_PRIVATE_LOCAL (node));
           {
             NodePackData npd = NPD_VISIT_BACKWARD (pc, &nfc->recv);
             _node_unpack_and_reduce (node, &npd, nfc);
@@ -2545,7 +2580,7 @@ static vsgrloc2 _selector_nf_remote (VsgPRTree2@t@NodeInfo *ref_info,
 
   if (vsg_prtree_key2@t@_is_neighbour (&ref_ancestry_ids[d], node_key))
     {
-      if (VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info)) return 0x0;
+      if (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_LOCAL (node_info)) return 0x0;
 
       if (vsg_prtree_key2@t@_equals (&ref_ancestry_ids[d], node_key))
         {
@@ -2580,6 +2615,7 @@ static guint8 _semifar_threshold_height (VsgPRTree2@t@NodeInfo *node_info, VsgNF
 {
   if (node_info == NULL) return 0;
 
+  // *** SHARED-* (should be LOCAL only, though)
   if (VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info)) return 0;
 
   if (node_info->point_count >= nfc->semifar_threshold) return 0;
@@ -2595,7 +2631,8 @@ static void _traverse_check_remote_neighbours (VsgPRTree2@t@Node *node,
                                                VsgPRTree2@t@NodeInfo *node_info,
                                                NodeRemoteData *data)
 {
-  if (PRTREE2@T@NODE_IS_REMOTE (node))
+  // *** PRIVATE-REMOTE
+  if (PRTREE2@T@NODE_IS_PRIVATE_REMOTE (node))
     {
       gint proc = PRTREE2@T@NODE_PROC (node);
       VsgPRTree2@t@NodeInfo *ref_info = data->ref_info;
@@ -2712,7 +2749,8 @@ vsg_prtree2@t@_node_check_parallel_near_far (VsgNFConfig2@t@ *nfc,
 
   if (!do_traversal) return ret;
 
-  if (VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (info))
+  // *** PRIVATE-LOCAL
+  if (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_LOCAL (info))
     {
       gint i;
       NodeRemoteData nrd;
@@ -2740,6 +2778,7 @@ vsg_prtree2@t@_node_check_parallel_near_far (VsgNFConfig2@t@ *nfc,
 
       ret = nrd.sent && ! nrd.fake_leaf;
     }
+  // *** SHARED-* (should be LOCAL only, though)
   else if (VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (info) &&
            nfc->tree->config.nf_isleaf (info,
                                         nfc->tree->config.nf_isleaf_data))
@@ -2775,6 +2814,7 @@ static void _unpack_shared (VsgPRTree2@t@Node *node,
                             VsgPRTree2@t@NodeInfo *node_info,
                             NodeDataReduce *ndr)
 {
+  // *** SHARED-*
   if (PRTREE2@T@NODE_IS_SHARED (node))
     {
 /*       gint rk; */
@@ -2800,6 +2840,7 @@ static void _pack_shared (VsgPRTree2@t@Node *node,
                           VsgPRTree2@t@NodeInfo *node_info,
                           NodeDataReduce *ndr)
 {
+  // *** SHARED-*
   if (PRTREE2@T@NODE_IS_SHARED (node))
     {
 /*       gint rk; */
@@ -3147,14 +3188,17 @@ static void _remote_depths_array_build (VsgPRTree2@t@Node *node,
                                         VsgPRTree2@t@NodeInfo *node_info,
                                         ArrayAndConfig *aac)
 {
-  if (! PRTREE2@T@NODE_IS_SHARED (node))
+  // *** == PRIVATE-*
+  if (PRTREE2@T@NODE_IS_PRIVATE (node))
     {
       /* detect root of local (remote) subtrees */
+      // *** father == SHARED-*
       if (node_info->father_info == NULL ||
           VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info->father_info))
         {
           guint8 i = 0;
 
+          // *** *-LOCAL
           if (PRTREE2@T@NODE_IS_LOCAL (node))
             i = _prtree2@t@node_mindepth (node, node_info, aac->config);
 
@@ -3169,12 +3213,15 @@ static void _remote_depths_store (VsgPRTree2@t@Node *node,
                                   VsgPRTree2@t@NodeInfo *node_info,
                                   guint8 ** depths)
 {
-  if (! PRTREE2@T@NODE_IS_SHARED (node))
+  // *** == PRIVATE-*
+  if (PRTREE2@T@NODE_IS_PRIVATE (node))
     {
       /* detect root of local (remote) subtrees */
       if (node_info->father_info == NULL ||
+      // *** father == SHARED-*
           VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info->father_info))
         {
+          // *** *-REMOTE
           if (PRTREE2@T@NODE_IS_REMOTE (node))
             PRTREE2@T@NODE_LEAF (node).remote_depth = **depths;
 
@@ -3231,9 +3278,11 @@ struct _LocalNFLeafCountData {
 static void _local_leaves_count (VsgPRTree2@t@NodeInfo *node_info,
                                  LocalNFLeafCountData *lnflcd)
 {
-  if (! VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info))
+  // *** PRIVATE-*
+  if (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE (node_info))
     {
       /* detect root of local (remote) subtrees */
+      // *** SHARED-*
       if (node_info->father_info == NULL ||
           VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info->father_info))
         {
@@ -3242,6 +3291,7 @@ static void _local_leaves_count (VsgPRTree2@t@NodeInfo *node_info,
         }
 
       /* increment local leaves */
+      // *** *-LOCAL
       if (node_info->isleaf && VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info) &&
           node_info->point_count != 0)
         g_array_index (lnflcd->array, gint, lnflcd->array->len-1) ++;
@@ -3251,9 +3301,11 @@ static void _local_leaves_count (VsgPRTree2@t@NodeInfo *node_info,
 static void _local_nf_leaves_count (VsgPRTree2@t@NodeInfo *node_info,
                                     LocalNFLeafCountData *lnflcd)
 {
-  if (! VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info))
+  // *** PRIVATE-*
+  if (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE (node_info))
     {
       /* detect root of local (remote) subtrees */
+      // *** SHARED-*
       if (node_info->father_info == NULL ||
           VSG_PRTREE2@T@_NODE_INFO_IS_SHARED (node_info->father_info))
         {
@@ -3262,6 +3314,7 @@ static void _local_nf_leaves_count (VsgPRTree2@t@NodeInfo *node_info,
         }
 
       /* increment local leaves */
+      // *** *-LOCAL
       if ((PRTREE2@T@_NODE_INFO_CALL_NF_ISLEAF(node_info, lnflcd->config) &&
            (node_info->father_info == NULL || ! PRTREE2@T@_NODE_INFO_CALL_NF_ISLEAF(node_info->father_info, lnflcd->config))) &&
           VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info) &&
@@ -3294,7 +3347,8 @@ static inline gint contiguous_dist_data_dest (ContiguousDistData *cdd)
 static gint _contiguous_dist (VsgPRTree2@t@NodeInfo *node_info,
                              ContiguousDistData *cdd)
 {
-  if (VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info))
+  // *** PRIVATE-LOCAL
+  if (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_LOCAL (node_info))
     {
       gint ret = contiguous_dist_data_dest (cdd);
 
@@ -3308,8 +3362,9 @@ static gint _contiguous_dist (VsgPRTree2@t@NodeInfo *node_info,
         {
           VsgPRTree2@t@NodeInfo *ancestor = node_info;
 
+          // *** PRIVATE-LOCAL
           while (ancestor->father_info &&
-                 VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (ancestor->father_info))
+                 VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_LOCAL (ancestor->father_info))
             ancestor = ancestor->father_info;
 
           cdd->current_index ++;
@@ -3323,7 +3378,8 @@ static gint _contiguous_dist (VsgPRTree2@t@NodeInfo *node_info,
       return ret;
     }
 
-  g_assert (VSG_PRTREE2@T@_NODE_INFO_IS_REMOTE (node_info));
+  // *** PRIVATE_REMOTE
+  g_assert (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_REMOTE (node_info));
 
   cdd->current_lcount += g_array_index (cdd->array, gint, cdd->current_index);
   cdd->current_index ++;
@@ -3354,7 +3410,8 @@ static const VsgPRTreeKey2@t@ _dummy_key = {0, 0, 255};
 static gint _contiguous_dist_virtual_leaf (VsgPRTree2@t@NodeInfo *node_info,
                                            ContiguousDistData *cdd)
 {
-  if (VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info))
+  // *** PRIVATE-LOCAL
+  if (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_LOCAL (node_info))
     {
       gint ret;
 
@@ -3387,8 +3444,9 @@ static gint _contiguous_dist_virtual_leaf (VsgPRTree2@t@NodeInfo *node_info,
         {
           VsgPRTree2@t@NodeInfo *ancestor = node_info;
 
+          // *** PRIVATE-LOCAL
           while (ancestor->father_info &&
-                 VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (ancestor->father_info))
+                 VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_LOCAL (ancestor->father_info))
             ancestor = ancestor->father_info;
 
           cdd->current_index ++;
@@ -3402,7 +3460,8 @@ static gint _contiguous_dist_virtual_leaf (VsgPRTree2@t@NodeInfo *node_info,
       return ret;
     }
 
-  g_assert (VSG_PRTREE2@T@_NODE_INFO_IS_REMOTE (node_info));
+  // *** PRIVATE_REMOTE
+  g_assert (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_REMOTE (node_info));
 
   cdd->current_lcount += g_array_index (cdd->array, gint, cdd->current_index);
   cdd->current_index ++;
@@ -3515,7 +3574,8 @@ struct _ScatterData {
 
 static gint scatter_dist (VsgPRTree2@t@NodeInfo *node_info, ScatterData *sd)
 {
-  if (VSG_PRTREE2@T@_NODE_INFO_IS_LOCAL (node_info))
+  // *** PRIVATE-LOCAL
+  if (VSG_PRTREE2@T@_NODE_INFO_IS_PRIVATE_LOCAL (node_info))
     {
       gint dst = sd->cptr;
 
