@@ -22,6 +22,27 @@
 
 G_BEGIN_DECLS;
 
+/**
+ * VSG_DIM2:
+ *
+ * Macro definiton of dimension 2.
+ */
+#define VSG_DIM2 (2)
+
+/**
+ * VSG_PRTREE2_CN:
+ *
+ * Number of children in a dimension 2 VsgPRTree.
+ */
+#define VSG_PRTREE2_CN ( 1 << VSG_DIM2 )
+
+/**
+ * VSG_PRTREE2_HALF_CN:
+ *
+ * Number of children in a dimension 2 VsgPRTree, divided by 2.
+ */
+#define VSG_PRTREE2_HALF_CN ( 1 << (VSG_DIM2-1) )
+
 /* point objects localization */
 
 /**

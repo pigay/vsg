@@ -22,6 +22,27 @@
 
 G_BEGIN_DECLS;
 
+/**
+ * VSG_DIM3:
+ *
+ * Macro definiton of dimension 3.
+ */
+#define VSG_DIM3 (3)
+
+/**
+ * VSG_PRTREE3_CN:
+ *
+ * Number of children in a dimension 3 VsgPRTree.
+ */
+#define VSG_PRTREE3_CN ( 1 << VSG_DIM3 )
+
+/**
+ * VSG_PRTREE3_HALF_CN:
+ *
+ * Number of children in a dimension 3 VsgPRTree, divided by 2.
+ */
+#define VSG_PRTREE3_HALF_CN ( 1 << (VSG_DIM3-1) )
+
 /* point objects localization */
 
 /**

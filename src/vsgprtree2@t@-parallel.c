@@ -8,6 +8,10 @@
 
 #include "string.h"
 
+#define DIM VSG_DIM2
+#define CN VSG_PRTREE2_CN
+#define HALF_CN VSG_PRTREE2_HALF_CN
+
 /**
  * VsgPRTree2@t@DistributionFunc:
  * @node_info: a #VsgPRTree2@t@NodeInfo
@@ -878,7 +882,7 @@ static void _prtree2@t@node_fix_counts_local (VsgPRTree2@t@Node *node)
   if (PRTREE2@T@NODE_ISINT (node))
     {
       vsgloc2 i;
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         {
           pcnt += PRTREE2@T@NODE_INT (node).children[i]->point_count;
           rcnt += PRTREE2@T@NODE_INT (node).children[i]->region_count;
@@ -901,12 +905,12 @@ static gint _prtree2@t@node_get_children_proc (VsgPRTree2@t@Node *node)
 {
   vsgloc2 i;
   gint children_proc;
-  VsgPRTree2@t@Node *children[4];
+  VsgPRTree2@t@Node *children[CN];
 
   g_assert (PRTREE2@T@NODE_ISINT (node));
 
   memcpy (children, PRTREE2@T@NODE_INT (node).children,
-          4 * sizeof (VsgPRTree2@t@Node *));
+          CN * sizeof (VsgPRTree2@t@Node *));
 
   if (PRTREE2@T@NODE_IS_SHARED (children[0]))
     return -PRTREE2@T@NODE_PROC (children[0]) - 1;
@@ -914,7 +918,7 @@ static gint _prtree2@t@node_get_children_proc (VsgPRTree2@t@Node *node)
     children_proc =
       PRTREE2@T@NODE_PROC (children[0]);
 
-  for (i=1; i<4; i++)
+  for (i=1; i<CN; i++)
     {
       gint proc =
         PRTREE2@T@NODE_PROC (children[i]);
@@ -934,7 +938,7 @@ static void _flatten_remote (VsgPRTree2@t@Node *node,
     {
       gint i;
 
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         {
           vsg_prtree2@t@node_free (PRTREE2@T@NODE_CHILD (node, i), config);
           PRTREE2@T@NODE_CHILD (node, i) = NULL;
@@ -1697,7 +1701,7 @@ static gint _pack_subtree (VsgPRTree2@t@Node *node, VsgPRTreeKey2@t@ *id,
     {
       gint i;
 
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         {
           VsgPRTreeKey2@t@ child_id;
           vsg_prtree_key2@t@_build_child (id, i, &child_id);
@@ -1725,7 +1729,7 @@ static gint _pack_tree (VsgPRTree2@t@Node *node, VsgPRTreeKey2@t@ *id,
     {
       gint i;
 
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         {
           VsgPRTreeKey2@t@ child_id;
           vsg_prtree_key2@t@_build_child (id, i, &child_id);
@@ -2151,7 +2155,7 @@ _prtree2@t@node_traverse_visiting_nf (VsgPRTree2@t@Node *node,
 
   if (PRTREE2@T@NODE_ISINT (node))
     {
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         {
           ipow = VSG_RLOC2_COMP (i);
 
@@ -2676,7 +2680,7 @@ _prtree2@t@node_traverse_check_parallel (VsgPRTree2@t@Node *node,
       vsgrloc2 locmask = _selector_nf_remote (nrd->ref_info, &node_info,
                                               ref_ancestry_ids);
 
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         {
           ipow = VSG_RLOC2_COMP (i);
 
@@ -3117,7 +3121,7 @@ static guint8 _prtree2@t@node_mindepth (const VsgPRTree2@t@Node *node,
 
   /* if (PRTREE2@T@NODE_ISLEAF (node)) return 0; */
   if (PRTREE2@T@_NODE_INFO_NF_ISLEAF (node_info, config)) return 0;
-  for (i=0; i<4; i++)
+  for (i=0; i<CN; i++)
     {
       guint8 tmp;
       VsgPRTree2@t@Node *child = PRTREE2@T@NODE_CHILD (node, i);

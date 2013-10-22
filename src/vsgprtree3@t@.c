@@ -26,6 +26,11 @@
 #include <string.h>
 #include <glib/gprintf.h>
 
+#define DIM VSG_DIM3
+#define CN VSG_PRTREE3_CN
+#define HALF_CN VSG_PRTREE3_HALF_CN
+
+
 #define PRTREE3@T@LEAF_MAXSIZE 5
 
 #define _USE_G_SLICES GLIB_CHECK_VERSION (2, 10, 0)
@@ -266,9 +271,9 @@ static VsgPRTree3@t@Node *_int_alloc (const VsgVector3@t@ *lbound,
 {
   VsgPRTree3@t@Node *node = vsg_prtree3@t@node_alloc (lbound, ubound, config);
   vsgloc3 i;
-  VsgPRTree3@t@Node *children[8];
+  VsgPRTree3@t@Node *children[CN];
 
-  for (i=0; i<8; i++)
+  for (i=0; i<CN; i++)
     {
       VsgVector3@t@ lbound, ubound;
 
@@ -299,7 +304,7 @@ static VsgPRTree3@t@Node *_int_alloc (const VsgVector3@t@ *lbound,
    * are duplicated. For example, Python and its cyclic garbage collector.
    */
   memcpy (PRTREE3@T@NODE_INT (node).children, children,
-          8*sizeof (VsgPRTree3@t@Node*));
+          CN*sizeof (VsgPRTree3@t@Node*));
 
   return node;
 }
@@ -315,7 +320,7 @@ static guint _prtree3@t@node_point_count (const VsgPRTree3@t@Node *node)
   /*     { */
   /*       vsgloc3 i; */
 
-  /*       for (i=0; i<8; i++) */
+  /*       for (i=0; i<CN; i++) */
   /*         result += _prtree3@t@node_point_count (PRTREE3@T@NODE_CHILD (node, i)); */
   /*     } */
 
@@ -331,7 +336,7 @@ static guint _prtree3@t@node_region_count (const VsgPRTree3@t@Node *node)
   /*     { */
   /*       vsgloc3 i; */
 
-  /*       for (i=0; i<8; i++) */
+  /*       for (i=0; i<CN; i++) */
   /*         result += _prtree3@t@node_region_count (PRTREE3@T@NODE_CHILD (node, i)); */
   /*     } */
 
@@ -359,7 +364,7 @@ static GSList *_prtree3@t@node_steal_point (VsgPRTree3@t@Node *node)
     {
       vsgloc3 i;
 
-      for (i=0; i<8; i++)
+      for (i=0; i<CN; i++)
         {
           GSList *stolen;
 
@@ -389,7 +394,7 @@ static GSList *_prtree3@t@node_steal_region (VsgPRTree3@t@Node *node)
     {
       vsgloc3 i;
 
-      for (i=0; i<8; i++)
+      for (i=0; i<CN; i++)
         {
           GSList *stolen;
 
@@ -574,14 +579,14 @@ void vsg_prtree3@t@node_make_int (VsgPRTree3@t@Node *node,
   GSList *stolen_point;
   GSList *stolen_region;
   vsgloc3 i;
-  VsgPRTree3@t@Node *children[8];
+  VsgPRTree3@t@Node *children[CN];
 
   g_return_if_fail (PRTREE3@T@NODE_ISLEAF(node));
 
   stolen_point = _prtree3@t@node_steal_point (node);
   stolen_region = _prtree3@t@node_steal_region (node);
 
-  for (i=0; i<8; i++)
+  for (i=0; i<CN; i++)
     {
       VsgVector3@t@ lbound, ubound;
 
@@ -599,7 +604,7 @@ void vsg_prtree3@t@node_make_int (VsgPRTree3@t@Node *node,
    * are duplicated. For example, Python and its cyclic garbage collector.
    */
   memcpy (PRTREE3@T@NODE_INT (node).children, children,
-          8*sizeof (VsgPRTree3@t@Node*));
+          CN*sizeof (VsgPRTree3@t@Node*));
 
   vsg_prtree3@t@node_insert_point_list(node, stolen_point, config);
   _prtree3@t@node_insert_region_list(node, stolen_region, config, NULL);
@@ -619,7 +624,7 @@ void vsg_prtree3@t@node_free (VsgPRTree3@t@Node *node,
     {
       vsgloc3 i;
 
-      for (i=0; i<8; i++)
+      for (i=0; i<CN; i++)
         vsg_prtree3@t@node_free (PRTREE3@T@NODE_CHILD (node, i), config);
     }
 
@@ -641,7 +646,7 @@ static guint _prtree3@t@node_depth (const VsgPRTree3@t@Node *node)
   if (PRTREE3@T@NODE_ISLEAF (node) ||
       PRTREE3@T@NODE_IS_REMOTE (node)) return 0;
 
-  for (i=0; i<8; i++)
+  for (i=0; i<CN; i++)
     {
       guint tmp = _prtree3@t@node_depth (PRTREE3@T@NODE_CHILD (node, i));
       if (tmp > res) res = tmp;
@@ -662,7 +667,7 @@ static void _prtree3@t@node_flatten (VsgPRTree3@t@Node *node,
   point = _prtree3@t@node_steal_point (node);
   region = _prtree3@t@node_steal_region (node);
 
-  for (i=0; i<8; i++)
+  for (i=0; i<CN; i++)
     {
       vsg_prtree3@t@node_free (PRTREE3@T@NODE_CHILD (node, i), config);
       PRTREE3@T@NODE_CHILD (node, i) = NULL;
@@ -921,7 +926,7 @@ static gboolean _share_region (vsgrloc3 locmask)
   vsgrloc3 ipow;
   guint count = 0;
 
-  for (i=0; i<8; i++)
+  for (i=0; i<CN; i++)
     {
       ipow = VSG_RLOC3_COMP (i);
       if (ipow & locmask)
@@ -985,7 +990,7 @@ _prtree3@t@node_insert_region_list (VsgPRTree3@t@Node *node,
               vsgloc3 i;
               vsgrloc3 ipow;
               
-              for (i=0; i<8; i++)
+              for (i=0; i<CN; i++)
                 {
                   ipow =  VSG_RLOC3_COMP (i);
                   if (locmask & ipow)
@@ -1054,7 +1059,7 @@ _prtree3@t@node_remove_region (VsgPRTree3@t@Node *node,
           vsgloc3 i;
           vsgrloc3 ipow;
               
-          for (i=0; i<8; i++)
+          for (i=0; i<CN; i++)
             {
               ipow = VSG_RLOC3_COMP (i);
               if (locmask & ipow)
@@ -1136,7 +1141,7 @@ _prtree3@t@node_update_user_data_vtable (VsgPRTree3@t@Node *node,
     {
       vsgloc3 i;
 
-      for (i=0; i<8; i++)
+      for (i=0; i<CN; i++)
         {
           _prtree3@t@node_update_user_data_vtable
             (PRTREE3@T@NODE_CHILD (node, i), old_vtable, new_vtable);
@@ -1173,8 +1178,8 @@ _prtree3@t@node_traverse_custom_internal (VsgPRTree3@t@Node *node,
   vsgrloc3 ipow;
   vsgrloc3 locmask = VSG_RLOC3_MASK;
 
-  gint children[8];
-  gpointer children_keys[8];
+  gint children[CN];
+  gpointer children_keys[CN];
 
   _vsg_prtree3@t@node_get_info (node, &node_info, father_info, child_number);
 
@@ -1196,7 +1201,7 @@ _prtree3@t@node_traverse_custom_internal (VsgPRTree3@t@Node *node,
       config->children_order (node_key, children, children_keys,
                               config->children_order_data);
 
-      for (i=0; i<4; i++)
+      for (i=0; i<HALF_CN; i++)
         {
           gint ic = children[i];
 
@@ -1215,7 +1220,7 @@ _prtree3@t@node_traverse_custom_internal (VsgPRTree3@t@Node *node,
 
   if (PRTREE3@T@NODE_ISINT (node))
     {
-      for (i=4; i<8; i++)
+      for (i=HALF_CN; i<CN; i++)
         {
           gint ic = children[i];
 
@@ -1250,8 +1255,8 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
   vsgrloc3 locmask = (selector == NULL) ? VSG_RLOC3_MASK :
     CALL_REGION3@T@_LOC (config, selector, &node->center);
 
-  gint children[8];
-  gpointer children_keys[8];
+  gint children[CN];
+  gpointer children_keys[CN];
 
   _vsg_prtree3@t@node_get_info (node, &node_info, father_info, child_number);
 
@@ -1271,7 +1276,7 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
       config->children_order (node_key, children, children_keys,
                               config->children_order_data);
 
-      for (i=0; i<4; i++)
+      for (i=0; i<HALF_CN; i++)
         {
           gint ic = children[i];
 
@@ -1290,7 +1295,7 @@ _prtree3@t@node_traverse_custom (VsgPRTree3@t@Node *node,
 
   if (PRTREE3@T@NODE_ISINT (node))
     {
-      for (i=4; i<8; i++)
+      for (i=HALF_CN; i<CN; i++)
         {
           gint ic = children[i];
 
@@ -1409,9 +1414,9 @@ static void
 _z_order_data (gpointer key, gint *children, gpointer *children_keys,
                gpointer user_data)
 {
-  static const gint zorder[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+  static const gint zorder[CN] = {0, 1, 2, 3, 4, 5, 6, 7};
 
-  memcpy (children, zorder, 8 * sizeof (gint));
+  memcpy (children, zorder, CN * sizeof (gint));
 }
 
 static void _clone_parallel_status (const VsgPRTree3@t@NodeInfo *node_info,

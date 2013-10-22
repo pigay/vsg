@@ -27,6 +27,10 @@
 
 #include "vsgtiming.h"
 
+#define DIM VSG_DIM3
+#define CN VSG_PRTREE3_CN
+#define HALF_CN VSG_PRTREE3_HALF_CN
+
 /* axis flags */
 #define _X VSG_LOC3_X
 #define _Y VSG_LOC3_Y
@@ -49,7 +53,7 @@
 
 
 /* positive value means far boxes. 0 means neighbours */
-static guint8 n001[8][8] = {
+static guint8 n001[CN][CN] = {
   /*     0, 1, 2, 3, 4, 5, 6, 7 */
   /*0*/ {1, 1, 1, 1, 1, 1, 1, 1},
   /*1*/ {0, 1, 0, 1, 0, 1, 0, 1},
@@ -61,7 +65,7 @@ static guint8 n001[8][8] = {
   /*7*/ {0, 1, 0, 1, 0, 1, 0, 1},
 };
 
-static guint8 n010[8][8] = {
+static guint8 n010[CN][CN] = {
   /*     0, 1, 2, 3, 4, 5, 6, 7 */
   /*0*/ {1, 1, 1, 1, 1, 1, 1, 1},
   /*1*/ {1, 1, 1, 1, 1, 1, 1, 1},
@@ -73,7 +77,7 @@ static guint8 n010[8][8] = {
   /*7*/ {0, 0, 1, 1, 0, 0, 1, 1},
 };
 
-static guint8 n100[8][8] = {
+static guint8 n100[CN][CN] = {
   /*     0, 1, 2, 3, 4, 5, 6, 7 */
   /*0*/ {1, 1, 1, 1, 1, 1, 1, 1},
   /*1*/ {1, 1, 1, 1, 1, 1, 1, 1},
@@ -85,7 +89,7 @@ static guint8 n100[8][8] = {
   /*7*/ {0, 0, 0, 0, 1, 1, 1, 1},
 };
 
-static guint8 n011[8][8] = {
+static guint8 n011[CN][CN] = {
   /*     0, 1, 2, 3, 4, 5, 6, 7 */
   /*0*/ {1, 1, 1, 1, 1, 1, 1, 1},
   /*1*/ {1, 1, 1, 1, 1, 1, 1, 1},
@@ -97,7 +101,7 @@ static guint8 n011[8][8] = {
   /*7*/ {0, 1, 1, 1, 0, 1, 1, 1},
 };
 
-static guint8 n101[8][8] = {
+static guint8 n101[CN][CN] = {
   /*     0, 1, 2, 3, 4, 5, 6, 7 */
   /*0*/ {1, 1, 1, 1, 1, 1, 1, 1},
   /*1*/ {1, 1, 1, 1, 1, 1, 1, 1},
@@ -109,7 +113,7 @@ static guint8 n101[8][8] = {
   /*7*/ {0, 1, 0, 1, 1, 1, 1, 1},
 };
 
-static guint8 n110[8][8] = {
+static guint8 n110[CN][CN] = {
   /*     0, 1, 2, 3, 4, 5, 6, 7 */
   /*0*/ {1, 1, 1, 1, 1, 1, 1, 1},
   /*1*/ {1, 1, 1, 1, 1, 1, 1, 1},
@@ -121,7 +125,7 @@ static guint8 n110[8][8] = {
   /*7*/ {0, 0, 1, 1, 1, 1, 1, 1},
 };
 
-static guint8 n111[8][8] = {
+static guint8 n111[CN][CN] = {
   /*     0, 1, 2, 3, 4, 5, 6, 7 */
   /*0*/ {1, 1, 1, 1, 1, 1, 1, 1},
   /*1*/ {1, 1, 1, 1, 1, 1, 1, 1},
@@ -329,7 +333,7 @@ static void recursive_near_func (VsgPRTree3@t@Node *one,
 
   if (PRTREE3@T@NODE_ISINT (one))
     {
-      for (i=0; i<8; i++)
+      for (i=0; i<CN; i++)
         {
           VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(one, i);
           VsgPRTree3@t@NodeInfo one_child_info;
@@ -347,7 +351,7 @@ static void recursive_near_func (VsgPRTree3@t@Node *one,
     }
   else if (PRTREE3@T@NODE_ISINT (other))
     {
-      for (i=0; i<8; i++)
+      for (i=0; i<CN; i++)
         {
           VsgPRTree3@t@Node *other_child = PRTREE3@T@NODE_CHILD(other, i);
           VsgPRTree3@t@NodeInfo other_child_info;
@@ -401,7 +405,7 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig3@t@ *nfc,
                                       gint8 x, gint8 y, gint8 z)
 {
   vsgloc3 i, j, si, sj;
-  vsgloc3 sym[8] = {
+  vsgloc3 sym[CN] = {
     _SYMMETRY (0, x, y, z),
     _SYMMETRY (1, x, y, z),
     _SYMMETRY (2, x, y, z),
@@ -428,7 +432,7 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig3@t@ *nfc,
 #endif
 
       /* near/far interaction between one and other children */
-      for (i=0; i<8; i++)
+      for (i=0; i<CN; i++)
         {
           VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(one, i);
           VsgPRTree3@t@NodeInfo one_child_info;
@@ -442,7 +446,7 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig3@t@ *nfc,
 
           si = sym[i];
 
-          for (j=0; j<8; j++)
+          for (j=0; j<CN; j++)
             {
               gboolean far;
               VsgPRTree3@t@Node *other_child =
@@ -547,13 +551,13 @@ vsg_prtree3@t@node_near_far_traversal (VsgNFConfig3@t@ *nfc,
   else
     {
       /* interactions in node's children descendants */
-      for (i=0; i<8; i++)
+      for (i=0; i<CN; i++)
         vsg_prtree3@t@node_near_far_traversal (nfc,
                                                PRTREE3@T@NODE_CHILD(node, i),
                                                &node_info, i, parallel_check);
 
       /* interactions between node's children */
-      for (i=0; i<8; i++)
+      for (i=0; i<CN; i++)
         {
           VsgPRTree3@t@Node *one_child = PRTREE3@T@NODE_CHILD(node, i);
           VsgPRTree3@t@NodeInfo one_child_info;
@@ -564,7 +568,7 @@ vsg_prtree3@t@node_near_far_traversal (VsgNFConfig3@t@ *nfc,
 
           _vsg_prtree3@t@node_get_info (one_child, &one_child_info,
                                         &node_info, i);
-          for (j=i+1; j<8; j++)
+          for (j=i+1; j<CN; j++)
             {
               VsgPRTree3@t@Node *other_child =
                 PRTREE3@T@NODE_CHILD(node, j);
@@ -622,7 +626,7 @@ enum _Hilbert3Key {
   HK3_5_4_7,
 };
 
-static gint hilbert3_coords[][8] = {
+static gint hilbert3_coords[][CN] = {
   {0, 1, 5, 4, 6, 7, 3, 2, },
   {6, 2, 0, 4, 5, 1, 3, 7, },
   {6, 7, 5, 4, 0, 1, 3, 2, },
@@ -649,7 +653,7 @@ static gint hilbert3_coords[][8] = {
   {5, 4, 0, 1, 3, 2, 6, 7, },
 };
 
-static Hilbert3Key hilbert3_decompositions[][8] = {
+static Hilbert3Key hilbert3_decompositions[][CN] = {
   {HK3_0_2_1, HK3_0_2_4, HK3_0_1_2, HK3_3_2_7, HK3_5_4_1, HK3_0_1_2, HK3_6_4_2,
    HK3_3_1_2, },
   {HK3_6_7_2, HK3_6_7_4, HK3_6_2_7, HK3_3_7_1, HK3_0_4_2, HK3_6_2_7, HK3_5_4_7,
@@ -706,7 +710,7 @@ static void hilbert3_order (gpointer node_key, gint *children,
   gint i;
   Hilbert3Key hkey = GPOINTER_TO_INT (node_key);
 
-  for (i=0; i<8; i++)
+  for (i=0; i<CN; i++)
     {
       children[i] = hilbert3_coords[hkey][i];
       children_keys[i] = GINT_TO_POINTER (hilbert3_decompositions[hkey][i]);

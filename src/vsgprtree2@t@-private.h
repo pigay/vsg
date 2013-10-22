@@ -79,7 +79,7 @@ struct _VsgPRTree2@t@Leaf {
 
 struct _VsgPRTree2@t@Int {
 
-  VsgPRTree2@t@Node *children[4];
+  VsgPRTree2@t@Node *children[VSG_PRTREE2_CN];
 };
 
 struct _VsgPRTree2@t@Node {

@@ -25,6 +25,10 @@
 
 #include "vsgprtree2@t@-private.h"
 
+#define DIM VSG_DIM2
+#define CN VSG_PRTREE2_CN
+#define HALF_CN VSG_PRTREE2_HALF_CN
+
 /* axis flags */
 #define _X VSG_LOC2_X
 #define _Y VSG_LOC2_Y
@@ -49,7 +53,7 @@
 
 
 /* positive value means far boxes. 0 means neighbours */
-static guint8 n01[4][4] = {
+static guint8 n01[CN][CN] = {
   /*     0, 1, 2, 3 */
   /*0*/ {1, 1, 1, 1},
   /*1*/ {0, 1, 0, 1},
@@ -57,7 +61,7 @@ static guint8 n01[4][4] = {
   /*3*/ {0, 1, 0, 1},
 };
 
-static guint8 n10[4][4] = {
+static guint8 n10[CN][CN] = {
   /*     0, 1, 2, 3 */
   /*0*/ {1, 1, 1, 1},
   /*1*/ {1, 1, 1, 1},
@@ -65,7 +69,7 @@ static guint8 n10[4][4] = {
   /*3*/ {0, 0, 1, 1},
 };
 
-static guint8 n11[4][4] = {
+static guint8 n11[CN][CN] = {
   /*     0, 1, 2, 3 */
   /*0*/ {1, 1, 1, 1},
   /*1*/ {1, 1, 1, 1},
@@ -261,7 +265,7 @@ static void recursive_near_func (VsgPRTree2@t@Node *one,
 
   if (PRTREE2@T@NODE_ISINT (one))
     {
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         {
           VsgPRTree2@t@Node *one_child = PRTREE2@T@NODE_CHILD(one, i);
           VsgPRTree2@t@NodeInfo one_child_info;
@@ -279,7 +283,7 @@ static void recursive_near_func (VsgPRTree2@t@Node *one,
     }
   else if (PRTREE2@T@NODE_ISINT (other))
     {
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         {
           VsgPRTree2@t@Node *other_child = PRTREE2@T@NODE_CHILD(other, i);
           VsgPRTree2@t@NodeInfo other_child_info;
@@ -333,7 +337,7 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
                                       gint8 x, gint8 y)
 {
   vsgloc2 i, j, si, sj;
-  vsgloc2 sym[4] = {
+  vsgloc2 sym[CN] = {
     _SYMMETRY (0, x, y),
     _SYMMETRY (1, x, y),
     _SYMMETRY (2, x, y),
@@ -355,7 +359,7 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
       if (nfc->sz > 1) vsg_prtree2@t@_nf_check_send (nfc);
 #endif
       /* near/far interaction between one and other children */
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         {
           VsgPRTree2@t@Node *one_child = PRTREE2@T@NODE_CHILD(one, i);
           VsgPRTree2@t@NodeInfo one_child_info;
@@ -369,7 +373,7 @@ _sub_neighborhood_near_far_traversal (VsgNFConfig2@t@ *nfc,
 
           si = sym[i];
 
-          for (j=0; j<4; j++)
+          for (j=0; j<CN; j++)
             {
               gboolean far;
               VsgPRTree2@t@Node *other_child =
@@ -473,13 +477,13 @@ vsg_prtree2@t@node_near_far_traversal (VsgNFConfig2@t@ *nfc,
   else
     {
       /* interactions in node's children descendants */
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         vsg_prtree2@t@node_near_far_traversal (nfc,
                                                PRTREE2@T@NODE_CHILD(node, i),
                                                &node_info, i, parallel_check);
 
       /* interactions between node's children */
-      for (i=0; i<4; i++)
+      for (i=0; i<CN; i++)
         {
           VsgPRTree2@t@Node *one_child = PRTREE2@T@NODE_CHILD(node, i);
           VsgPRTree2@t@NodeInfo one_child_info;
@@ -490,7 +494,7 @@ vsg_prtree2@t@node_near_far_traversal (VsgNFConfig2@t@ *nfc,
 
           _vsg_prtree2@t@node_get_info (one_child, &one_child_info,
                                         &node_info, i);
-          for (j=i+1; j<4; j++)
+          for (j=i+1; j<CN; j++)
             {
               VsgPRTree2@t@Node *other_child =
                 PRTREE2@T@NODE_CHILD(node, j);
@@ -528,7 +532,7 @@ enum _Hilbert2Key {
 
 };
 
-static gint hilbert2_coords[][4] = {
+static gint hilbert2_coords[][CN] = {
   {0, 2, 3, 1, },
   {3, 1, 0, 2, },
   {3, 2, 0, 1, },
@@ -536,7 +540,7 @@ static gint hilbert2_coords[][4] = {
 
 };
 
-static Hilbert2Key hilbert2_decompositions[][4] = {
+static Hilbert2Key hilbert2_decompositions[][CN] = {
   {HK2_0_2, HK2_0_1, HK2_0_1, HK2_3_1, },
   {HK2_3_1, HK2_3_2, HK2_3_2, HK2_0_2, },
   {HK2_3_2, HK2_3_1, HK2_3_1, HK2_0_1, },
@@ -550,7 +554,7 @@ static void hilbert2_order (gpointer node_key, gint *children,
   gint i;
   Hilbert2Key hkey = GPOINTER_TO_INT (node_key);
 
-  for (i=0; i<4; i++)
+  for (i=0; i<CN; i++)
     {
       children[i] = hilbert2_coords[hkey][i];
       children_keys[i] = GINT_TO_POINTER (hilbert2_decompositions[hkey][i]);
