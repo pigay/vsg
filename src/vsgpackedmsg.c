@@ -300,6 +300,14 @@ G_CONST_RETURN gint vsg_packed_msg_header_size ()
 
 #endif
 
+static guint64 _send_count = 0;
+static guint64 _recv_count = 0;
+static guint64 _bcast_count = 0;
+
+static guint64 _send_size = 0;
+static guint64 _recv_size = 0;
+static guint64 _bcast_size = 0;
+
 /**
  * VSG_PACKED_MSG_STATIC_INIT:
  * @comm: a #MPI_Comm
@@ -490,6 +498,9 @@ void vsg_packed_msg_send (VsgPackedMsg *pm, gint dst, gint tag)
 
   _trace_write_msg_send (pm, "send", dst, tag);
 
+  _send_count ++;
+  _send_size += pm->position;
+
   ierr = MPI_Send (pm->buffer, pm->position, MPI_PACKED, dst, tag,
                    pm->communicator);
 
@@ -509,6 +520,9 @@ void vsg_packed_msg_bsend (VsgPackedMsg *pm, gint dst, gint tag)
   gint ierr;
 
   _trace_write_msg_send (pm, "bsend", dst, tag);
+
+  _send_count ++;
+  _send_size += pm->position;
 
   ierr = MPI_Bsend (pm->buffer, pm->position, MPI_PACKED, dst, tag,
                     pm->communicator);
@@ -530,6 +544,9 @@ void vsg_packed_msg_rsend (VsgPackedMsg *pm, gint dst, gint tag)
 
   _trace_write_msg_send (pm, "rsend", dst, tag);
 
+  _send_count ++;
+  _send_size += pm->position;
+
   ierr = MPI_Rsend (pm->buffer, pm->position, MPI_PACKED, dst, tag,
                     pm->communicator);
 
@@ -549,6 +566,9 @@ void vsg_packed_msg_ssend (VsgPackedMsg *pm, gint dst, gint tag)
   gint ierr;
 
   _trace_write_msg_send (pm, "ssend", dst, tag);
+
+  _send_count ++;
+  _send_size += pm->position;
 
   ierr = MPI_Ssend (pm->buffer, pm->position, MPI_PACKED, dst, tag,
                     pm->communicator);
@@ -573,6 +593,9 @@ void vsg_packed_msg_isend (VsgPackedMsg *pm, gint dst, gint tag,
 
   _trace_write_msg_send (pm, "isend", dst, tag);
 
+  _send_count ++;
+  _send_size += pm->position;
+
   ierr = MPI_Isend (pm->buffer, pm->position, MPI_PACKED, dst, tag,
                     pm->communicator, request);
 
@@ -595,6 +618,9 @@ void vsg_packed_msg_ibsend (VsgPackedMsg *pm, gint dst, gint tag,
   gint ierr;
 
   _trace_write_msg_send (pm, "ibsend", dst, tag);
+
+  _send_count ++;
+  _send_size += pm->position;
 
   ierr = MPI_Ibsend (pm->buffer, pm->position, MPI_PACKED, dst, tag,
                      pm->communicator, request);
@@ -619,6 +645,9 @@ void vsg_packed_msg_irsend (VsgPackedMsg *pm, gint dst, gint tag,
 
   _trace_write_msg_send (pm, "irsend", dst, tag);
 
+  _send_count ++;
+  _send_size += pm->position;
+
   ierr = MPI_Irsend (pm->buffer, pm->position, MPI_PACKED, dst, tag,
                      pm->communicator, request);
 
@@ -641,6 +670,9 @@ void vsg_packed_msg_issend (VsgPackedMsg *pm, gint dst, gint tag,
   gint ierr;
 
   _trace_write_msg_send (pm, "issend", dst, tag);
+
+  _send_count ++;
+  _send_size += pm->position;
 
   ierr = MPI_Issend (pm->buffer, pm->position, MPI_PACKED, dst, tag,
                      pm->communicator, request);
@@ -692,6 +724,9 @@ void vsg_packed_msg_recv (VsgPackedMsg *pm, gint src, gint tag)
   ierr = MPI_Recv (pm->buffer, rsize, MPI_PACKED, src, tag,
                    pm->communicator, &status);
 
+  _recv_count ++;
+  _recv_size += rsize;
+
   _trace_write_msg_recv (pm, "recv", src, tag);
 
   pm->position = _PM_BEGIN_POS;
@@ -721,6 +756,9 @@ void vsg_packed_msg_recv_probed (VsgPackedMsg *pm, MPI_Status *status)
 
   ierr = MPI_Recv (pm->buffer, rsize, MPI_PACKED, status->MPI_SOURCE,
                    status->MPI_TAG, pm->communicator, status);
+
+  _recv_count ++;
+  _recv_size += rsize;
 
   _trace_write_msg_recv (pm, "recv", status->MPI_SOURCE, status->MPI_TAG);
 
@@ -752,6 +790,9 @@ void vsg_packed_msg_bcast (VsgPackedMsg *pm, gint src)
 
   ierr = MPI_Bcast (pm->buffer, pm->position, MPI_PACKED, src,
                     pm->communicator);
+
+  _bcast_count ++;
+  _bcast_size += pm->position;
 
   if (rk != src)
     _trace_write_msg_recv (pm, "bcast-recv", src, -1);
@@ -813,4 +854,26 @@ void vsg_packed_msg_free (VsgPackedMsg *pm)
   vsg_packed_msg_drop_buffer (pm);
 
   g_free (pm);
+}
+
+void vsg_packed_msg_counters_reset ()
+{
+  _send_count = 0;
+  _recv_count = 0;
+  _bcast_count = 0;
+
+  _send_size = 0;
+  _recv_size = 0;
+  _bcast_size = 0;
+ 
+}
+
+void vsg_packed_msg_get_counters (VsgPackedMsgCounters *counters)
+{
+  counters->send_count = _send_count;
+  counters->recv_count = _recv_count;
+  counters->bcast_count = _bcast_count;
+  counters->send_size = _send_size;
+  counters->recv_size = _recv_size;
+  counters->bcast_size = _bcast_size;
 }

@@ -28,6 +28,7 @@
 G_BEGIN_DECLS;
 
 typedef struct _VsgPackedMsg VsgPackedMsg;
+typedef struct _VsgPackedMsgCounters VsgPackedMsgCounters;
 
 struct _VsgPackedMsg
 {
@@ -39,6 +40,16 @@ struct _VsgPackedMsg
   gint position;
   gint size;
   gboolean own_buffer;
+};
+
+struct _VsgPackedMsgCounters
+{
+  guint64 send_count;
+  guint64 recv_count;
+  guint64 bcast_count;
+  guint64 send_size;
+  guint64 recv_size;
+  guint64 bcast_size;
 };
 
 #define VSG_PACKED_MSG_STATIC_INIT(comm) \
@@ -100,6 +111,10 @@ VsgPackedMsg * vsg_packed_msg_recv_new (MPI_Comm comm, gint src, gint tag);
 void vsg_packed_msg_drop_buffer (VsgPackedMsg *pm);
 
 void vsg_packed_msg_free (VsgPackedMsg *pm);
+
+void vsg_packed_msg_counters_reset ();
+
+void vsg_packed_msg_get_counters (VsgPackedMsgCounters *counters);
 
 G_END_DECLS;
 
