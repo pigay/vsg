@@ -287,11 +287,11 @@ void _pt_write (Pt *pt, FILE *file)
   gchar *color = "#00FF00";
 
   if (pt->count != _ref_count) color = "#FF0000";
-  else return;
+  /* else return; */
 
   fprintf (file, "<circle cx=\"%g\" cy=\"%g\" r=\"%g\" " \
-           "style=\"stroke-width:0.0001;stroke:#000000;fill:%s;\">\n",
-           pt->vector.x, -pt->vector.y, 0.005, color);
+           "style=\"stroke-width:0.001;stroke:#000000;fill:%s;\">\n",
+           pt->vector.x, -pt->vector.y, 0.025, color);
   fprintf (file, "<title>w=%d</title>\n", pt->weight);
   fprintf (file, "<desc>count=%ld</desc>\n", pt->count);
   fprintf (file, "</circle>\n");
@@ -360,12 +360,31 @@ void _traverse_bg_write (VsgPRTree2dNodeInfo *node_info, FILE *file)
   fprintf (file, "</rect>\n");
 }
 
+/* gboolean _center_set = FALSE; */
+/* VsgVector2d _current_center = {1., 1.123}; */
+
 void _traverse_fg_write (VsgPRTree2dNodeInfo *node_info, FILE *file)
 {
   fprintf (file, "<!-- %d: node ", rk);
   vsg_prtree_key2d_write (&node_info->id, file);
   fprintf (file, " -->\n");
-  g_slist_foreach (node_info->point_list, (GFunc) _pt_write, file);
+  /* g_slist_foreach (node_info->point_list, (GFunc) _pt_write, file); */
+
+  /* if (!node_info->isleaf) return; */
+
+  /* if (!_center_set) */
+  /*   { */
+  /*     _center_set = TRUE; */
+  /*     _current_center = node_info->center; */
+  /*   } */
+  /* else */
+  /*   { */
+  /*     fprintf (file, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" " \ */
+  /*              "style=\"stroke-linecap: round; stroke-width: 0.01; stroke: black;\"/>\n", */
+  /*              _current_center.x, - _current_center.y, */
+  /*              node_info->center.x, - node_info->center.y); */
+  /*     _current_center = node_info->center; */
+  /*   } */
 }
 
 static const gchar *_svg_header = 
