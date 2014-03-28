@@ -459,9 +459,9 @@ vsg_matrix4@t@_quaternion@t@_set_inline (VsgMatrix4@t@ *mat,
                                          const VsgQuaternion@t@ *quat)
 {
   /*
-   * Source: http://www.j3d.org/matrix4_faq/matrfaq_latest.html
+   * Source: http://www.j3d.org/matrix_faq/matrfaq_latest.html
    */
-  @type@ xx, xy, xz, xw, yy, yz, yw, zz, zw, ww;
+  @type@ xx, xy, xz, xw, yy, yz, yw, zz, zw/* , ww */;
 
   xx = quat->x * quat->x; /* g_print("xx: %@tcode@\n", xx); */
   xy = quat->x * quat->y; /* g_print("xy: %@tcode@\n", xy); */
@@ -472,7 +472,7 @@ vsg_matrix4@t@_quaternion@t@_set_inline (VsgMatrix4@t@ *mat,
   yw = quat->y * quat->w; /* g_print("yw: %@tcode@\n", yw); */
   zz = quat->z * quat->z; /* g_print("zz: %@tcode@\n", zz); */
   zw = quat->z * quat->w; /* g_print("zw: %@tcode@\n", zw); */
-  ww = quat->w * quat->w; /* g_print("ww: %@tcode@\n", ww); */
+  /* ww = quat->w * quat->w; /\* g_print("ww: %@tcode@\n", ww); *\/ */
         
   vsg_matrix4@t@_set_inline (mat,
                              1. - 2. * (yy+zz), 2. * (xy+zw), 2. * (xz-yw), 0.,
