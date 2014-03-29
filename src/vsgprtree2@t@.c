@@ -177,17 +177,6 @@ static void _node_alloc_data (VsgPRTree2@t@Node *node,
 
 }
 
-VsgPRTree2@t@Node *vsg_prtree2@t@node_alloc (const VsgVector2@t@ *lbound,
-                                             const VsgVector2@t@ *ubound,
-                                             const VsgPRTree2@t@Config *config)
-{
-  VsgPRTree2@t@Node *ret = vsg_prtree2@t@node_alloc_no_data (lbound, ubound);
-
-  _node_alloc_data (ret, &config->parallel_config);
-
-  return ret;
-}
-
 void vsg_prtree2@t@node_dealloc (VsgPRTree2@t@Node *prtree2@t@node)
 {
 
@@ -252,15 +241,19 @@ static void _prtree2@t@node_child_get_bounds (const VsgPRTree2@t@Node *node,
     }
 }
 
-static VsgPRTree2@t@Node *_int_alloc (const VsgVector2@t@ *lbound,
+static VsgPRTree2@t@Node *_root_extend (const VsgVector2@t@ *lbound,
                                       const VsgVector2@t@ *ubound,
                                       VsgPRTree2@t@Node *child,
                                       vsgloc2 loc,
                                       const VsgPRTree2@t@Config *config)
 {
-  VsgPRTree2@t@Node *node = vsg_prtree2@t@node_alloc (lbound, ubound, config);
+  /* VsgPRTree2@t@Node *node = vsg_prtree2@t@node_alloc (lbound, ubound, config); */
+  VsgPRTree2@t@Node *node = vsg_prtree2@t@node_alloc_no_data (lbound, ubound);
   vsgloc2 i;
   VsgPRTree2@t@Node *children[CN];
+
+  if (PRTREE2@T@NODE_IS_LOCAL(child))
+    _node_alloc_data (node, &config->parallel_config);
 
   for (i=0; i<CN; i++)
     {
@@ -2172,11 +2165,11 @@ void vsg_prtree2@t@_bounds_extend (VsgPRTree2@t@ *prtree2@t@,
         new_lbound.y -= diff.y;
 
       loc = VSG_LOC2_MASK & ~(loc);
-      prtree2@t@->node = _int_alloc (&new_lbound,
-                                     &new_ubound,
-                                     prtree2@t@->node,
-                                     loc,
-                                     config);
+      prtree2@t@->node = _root_extend (&new_lbound,
+                                       &new_ubound,
+                                       prtree2@t@->node,
+                                       loc,
+                                       config);
 
       vsg_prtree_key2@t@_build_father (extk, loc, extk);
 
