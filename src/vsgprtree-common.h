@@ -59,14 +59,14 @@ typedef void (*VsgChildrenOrderFunc) (gpointer key, gint *children,
  * @VSG_PARALLEL_SHARED_LOCAL: data is shared among several processors,
  * including current one.
  * @VSG_PARALLEL_SHARED_REMOTE: data is shared among several processors,
- * xcluding current one.
+ * excluding current one.
  * @VSG_PARALLEL_PRIVATE_LOCAL: data is local to current processor (the default in sequential programs).
  * @VSG_PARALLEL_PRIVATE_REMOTE: data is stored on some remote processor.
  *
  * Parallel storage of some data: shared between all processors, local
  * to only one processor or stored on some remote processor.
  *
- * In a non parallel program, data is supposed to be %VSG_PARALLEL_LOCAL.
+ * In a non parallel program, data is supposed to be %VSG_PARALLEL_PRIVATE_LOCAL.
  */
 typedef enum {
   VSG_PARALLEL_PRIVATE_LOCAL = 0,
