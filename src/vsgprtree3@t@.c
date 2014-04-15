@@ -1558,6 +1558,11 @@ gboolean _vsg_prtree3@t@_check_user_data_model (VsgPRTree3@t@ *tree)
 /* public functions */
 /*-------------------------------------------------------------------*/
 
+guint vsg_prtree3@t@_sizeof_node ()
+{
+  return sizeof(VsgPRTree3@t@Node);
+}
+
 GType vsg_prtree3@t@_get_type (void)
 {
   static GType prtree3@t@_type = 0;

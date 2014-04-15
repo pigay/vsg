@@ -141,6 +141,8 @@ void vsg_prtree3@t@_node_info_free (VsgPRTree3@t@NodeInfo *node_info);
 VsgPRTree3@t@NodeInfo *
 vsg_prtree3@t@_node_info_clone (VsgPRTree3@t@NodeInfo *node_info);
 
+guint vsg_prtree3@t@_sizeof_node () G_GNUC_CONST;
+
 GType vsg_prtree3@t@_get_type (void) G_GNUC_CONST;
 
 VsgPRTree3@t@ *
