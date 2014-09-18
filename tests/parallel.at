@@ -29,7 +29,7 @@ AT_CHECK([mpiexec -n 4 commbuffer], 0)
 AT_CLEANUP
 
 AT_SETUP(2D Parallel tree creation)
-AT_KEYWORDS (parallel)
+#AT_KEYWORDS (parallel)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
 AT_CHECK([mpiexec -n 1 prtree2parallel], 0)
 AT_CHECK([mpiexec -n 2 prtree2parallel], 0)
@@ -38,7 +38,7 @@ AT_CHECK([mpiexec -n 4 prtree2parallel], 0)
 AT_CLEANUP
 
 AT_SETUP(2D Parallel tree contiguous distribution)
-AT_KEYWORDS (parallel)
+#AT_KEYWORDS (parallel)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
 AT_CHECK([mpiexec -n 1 prtree2paradist], 0)
 AT_CHECK([mpiexec -n 2 prtree2paradist], 0)
@@ -51,7 +51,7 @@ AT_CHECK([mpiexec -n 4 prtree2paradist --hilbert --np 400], 0)
 AT_CLEANUP
 
 AT_SETUP(2D Parallel tree move points)
-AT_KEYWORDS (parallel)
+#AT_KEYWORDS (parallel)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
 AT_CHECK([mpiexec -n 1 prtree2mv], 0)
 AT_CHECK([mpiexec -n 2 prtree2mv], 0)
@@ -63,7 +63,7 @@ AT_CHECK([mpiexec -n 2 prtree2mv --mpi --move exterior --fill random --np 1000 -
 AT_CLEANUP
 
 AT_SETUP(2D Parallel tree near/far traversal)
-AT_KEYWORDS (parallel)
+#AT_KEYWORDS (parallel)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
 AT_CHECK([mpiexec -n 1 prtree2paranftrav], 0)
 AT_CHECK([mpiexec -n 2 prtree2paranftrav], 0)
@@ -89,7 +89,7 @@ AT_CHECK([mpiexec -n 4 prtree2virt-maxbox --mpi --virtual-maxbox 4 --maxbox 1 --
 AT_CLEANUP
 
 AT_SETUP(3D Parallel tree creation)
-AT_KEYWORDS (parallel)
+#AT_KEYWORDS (parallel)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
 AT_CHECK([mpiexec -n 1 prtree3parallel], 0)
 AT_CHECK([mpiexec -n 2 prtree3parallel], 0)
@@ -98,7 +98,7 @@ AT_CHECK([mpiexec -n 4 prtree3parallel], 0)
 AT_CLEANUP
 
 AT_SETUP(3D Parallel tree move points)
-AT_KEYWORDS (parallel)
+#AT_KEYWORDS (parallel)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
 AT_CHECK([mpiexec -n 1 prtree3mv], 0)
 AT_CHECK([mpiexec -n 2 prtree3mv], 0)
@@ -110,7 +110,7 @@ AT_CHECK([mpiexec -n 2 prtree3mv --mpi --move exterior --fill random --np 1000 -
 AT_CLEANUP
 
 AT_SETUP(3D Parallel tree contiguous distribution)
-AT_KEYWORDS (parallel)
+#AT_KEYWORDS (parallel)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
 AT_CHECK([mpiexec -n 1 prtree3paradist], 0)
 AT_CHECK([mpiexec -n 2 prtree3paradist], 0)
@@ -123,7 +123,7 @@ AT_CHECK([mpiexec -n 4 prtree3paradist --hilbert --np 400], 0)
 AT_CLEANUP
 
 AT_SETUP(3D Parallel tree near/far traversal)
-AT_KEYWORDS (parallel)
+#AT_KEYWORDS (parallel)
 AT_CHECK([test "$DO_MPI_TESTS" = 1 || exit 77])
 AT_CHECK([env VSG_TIMING_SUPPRESS_OUPUT=1 mpiexec -n 1 prtree3paranftrav], 0)
 AT_CHECK([env VSG_TIMING_SUPPRESS_OUPUT=1 mpiexec -n 2 prtree3paranftrav], 0)
