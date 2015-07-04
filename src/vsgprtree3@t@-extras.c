@@ -345,8 +345,14 @@ static void recursive_near_func (VsgPRTree3@t@Node *one,
           VsgPRTree3@t@NodeInfo one_child_info;
 
 #ifdef VSG_HAVE_MPI
-          // *** *-REMOTE
-          if (PRTREE3@T@NODE_IS_REMOTE (one_child)) continue;
+          if (PRTREE3@T@NODE_IS_REMOTE (one_child))
+            {
+              /* skip private remotes, or shared remotes when "other" is remote (visitor)
+               */
+              if (PRTREE3@T@NODE_IS_PRIVATE (one_child) ||
+                  PRTREE3@T@NODE_IS_REMOTE (other))
+                continue;
+            }
 #endif
 
           _vsg_prtree3@t@node_get_info (one_child, &one_child_info, one_info,
@@ -365,7 +371,14 @@ static void recursive_near_func (VsgPRTree3@t@Node *one,
 
 #ifdef VSG_HAVE_MPI
           // *** *-REMOTE
-          if (PRTREE3@T@NODE_IS_REMOTE (other_child)) continue;
+          if (PRTREE3@T@NODE_IS_REMOTE (other_child))
+            {
+              /* skip private remotes, or shared remotes when "one" is remote (visitor)
+               */
+              if (PRTREE3@T@NODE_IS_PRIVATE (other_child) ||
+                  PRTREE3@T@NODE_IS_REMOTE (one))
+                continue;
+            }
 #endif
 
           _vsg_prtree3@t@node_get_info (other_child, &other_child_info,
